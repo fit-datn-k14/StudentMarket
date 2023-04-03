@@ -6,14 +6,18 @@
     /// CreatedBy: NVHuy(18/03/2023)
     public enum Role
     {
+        #region Field
+
         /// <summary>
         /// Quản trị viên
         /// </summary>
-        Admin = 0,
+        Admin = 1,
 
         /// <summary>
         /// Người dùng thường
         /// </summary>
-        User = 1,
+        User = 0,
+
+        #endregion
     }
 }

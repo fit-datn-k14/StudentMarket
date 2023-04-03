@@ -70,6 +70,15 @@ namespace StudentMarket.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Đổi mật khẩu thành công.
+        /// </summary>
+        public static string UsrMsg_ChangePassSuccess {
+            get {
+                return ResourceManager.GetString("UsrMsg_ChangePassSuccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Xoá thành công.
         /// </summary>
         public static string UsrMsg_DeleteSuccess {
@@ -88,6 +97,15 @@ namespace StudentMarket.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Mật khẩu không chính xác.
+        /// </summary>
+        public static string UsrMsg_IncorrectPassword {
+            get {
+                return ResourceManager.GetString("UsrMsg_IncorrectPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Thêm mới thành công.
         /// </summary>
         public static string UsrMsg_InsertSuccess {
@@ -97,11 +115,56 @@ namespace StudentMarket.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Sai thông tin đăng nhập.
+        /// </summary>
+        public static string UsrMsg_LoginFailed {
+            get {
+                return ResourceManager.GetString("UsrMsg_LoginFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Thông tin đăng nhập không được bỏ trống.
+        /// </summary>
+        public static string UsrMsg_LoginInfoEmpty {
+            get {
+                return ResourceManager.GetString("UsrMsg_LoginInfoEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Đăng nhập thành công.
+        /// </summary>
+        public static string UsrMsg_LoginSuccess {
+            get {
+                return ResourceManager.GetString("UsrMsg_LoginSuccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Không tìm thấy bản ghi thoả mãn.
         /// </summary>
         public static string UsrMsg_NotFoundRecord {
             get {
                 return ResourceManager.GetString("UsrMsg_NotFoundRecord", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tên đăng nhập không tồn tại.
+        /// </summary>
+        public static string UsrMsg_NotFoundUserName {
+            get {
+                return ResourceManager.GetString("UsrMsg_NotFoundUserName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mật khẩu không được bỏ trống.
+        /// </summary>
+        public static string UsrMsg_PasswordEmpty {
+            get {
+                return ResourceManager.GetString("UsrMsg_PasswordEmpty", resourceCulture);
             }
         }
         

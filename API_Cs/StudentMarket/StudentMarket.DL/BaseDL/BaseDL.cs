@@ -72,41 +72,30 @@ namespace StudentMarket.DL
         /// CreatedBy: NVHuy(18/03/2023)
         public ServiceResult GetRecordByID(Guid id)
         {
-            try
+            using (var sqlConnection = new MySqlConnection(connectionDB))
             {
-                using (var sqlConnection = new MySqlConnection(connectionDB))
+                sqlConnection.Open();
+                var idName = typeof(T).GetProperties().First().Name;
+                string tableName = EntityUtilities.GetTableName<T>();
+                string stored = $"SELECT * FROM {tableName} WHERE {idName}='{id}'";
+                var record = sqlConnection.QueryFirstOrDefault<T>(stored);
+                if (record != null)
                 {
-                    sqlConnection.Open();
-                    var idName = typeof(T).GetProperties().First().Name;
-                    string tableName = EntityUtilities.GetTableName<T>();
-                    string stored = $"SELECT * FROM {tableName} WHERE {idName}='{id}'";
-                    var record = sqlConnection.QueryFirstOrDefault(stored);
-                    if (record != null)
+                    return new ServiceResult
                     {
-                        return new ServiceResult
-                        {
-                            Success = true,
-                            Data = record,
-                        };
-                    }
-                    else
-                    {
-                        return new ServiceResult
-                        {
-                            Success = false,
-                            ErrorCode = ErrorCodes.NotFoundRecord
-                        };
-                    }
+                        Success = true,
+                        Data = record,
+                    };
                 }
-            }
-            catch (Exception ex)
-            {
-                return new ServiceResult
+                else
                 {
-                    Success = false,
-                    ErrorCode = ErrorCodes.Exception,
-                    DevMsg = ex.Message,
-                };
+                    return new ServiceResult
+                    {
+                        Success = false,
+                        ErrorCode = ErrorCodes.NotFoundRecord,
+                        UserMsg = Resource.UsrMsg_NotFoundRecord
+                    };
+                }
             }
         }
 
@@ -117,52 +106,39 @@ namespace StudentMarket.DL
         /// CreatedBy: NVHuy(19/03/2023)
         public ServiceResult InsertRecord(T record)
         {
-            try
-            {
-                // Chuẩn bị stored procedure
-                string tableName = EntityUtilities.GetTableName<T>();
-                var storedProcedureName = $"Proc_{tableName}_Insert";
-                var properties = typeof(T).GetProperties();
+            // Chuẩn bị stored procedure
+            string tableName = EntityUtilities.GetTableName<T>();
+            var storedProcedureName = $"Proc_{tableName}_Insert";
+            var properties = typeof(T).GetProperties();
 
-                // Chuẩn bị tham số vào cho procedure
-                var parameters = new DynamicParameters();
-                foreach (var property in properties)
-                {
-                    string propertyName = $"@{property.Name}";
-                    var propertyValue = property.GetValue(record);
-                    parameters.Add(propertyName, propertyValue);
-                }
-                // Khởi tạo kết nối tới Database
-                using (var sqlConnection = new MySqlConnection(connectionDB))
-                {
-                    // Thực hiện gọi vào Database để chạy stored procedure
-                    var result = sqlConnection.Execute(storedProcedureName, parameters, commandType: System.Data.CommandType.StoredProcedure);
-                    if (result > 0)
-                    {
-                        return new ServiceResult
-                        {
-                            Success = true,
-                            UserMsg = Resource.UsrMsg_InsertSuccess,
-                        };
-                    }
-                    else
-                    {
-                        return new ServiceResult
-                        {
-                            Success = false,
-                        };
-                    }
-                }
-            }
-            // Try Catch để bắt exception
-            catch (Exception ex)
+            // Chuẩn bị tham số vào cho procedure
+            var parameters = new DynamicParameters();
+            foreach (var property in properties)
             {
-                return new ServiceResult
+                string propertyName = $"@{property.Name}";
+                var propertyValue = property.GetValue(record);
+                parameters.Add(propertyName, propertyValue);
+            }
+            // Khởi tạo kết nối tới Database
+            using (var sqlConnection = new MySqlConnection(connectionDB))
+            {
+                // Thực hiện gọi vào Database để chạy stored procedure
+                var result = sqlConnection.Execute(storedProcedureName, parameters, commandType: System.Data.CommandType.StoredProcedure);
+                if (result > 0)
                 {
-                    Success = false,
-                    ErrorCode = ErrorCodes.Exception,
-                    DevMsg = ex.Message,
-                };
+                    return new ServiceResult
+                    {
+                        Success = true,
+                        UserMsg = Resource.UsrMsg_InsertSuccess,
+                    };
+                }
+                else
+                {
+                    return new ServiceResult
+                    {
+                        Success = false,
+                    };
+                }
             }
         }
 
@@ -173,53 +149,40 @@ namespace StudentMarket.DL
         /// CreatedBy: NVHuy(19/03/2023)
         public ServiceResult UpdateRecordByID(T entity, Guid id)
         {
-            try
-            {
-                // Chuẩn bị stored procedure
-                string tableName = EntityUtilities.GetTableName<T>();
-                var storedProcedureName = $"Proc_{tableName}_Update";
-                var properties = typeof(T).GetProperties();
+            // Chuẩn bị stored procedure
+            string tableName = EntityUtilities.GetTableName<T>();
+            var storedProcedureName = $"Proc_{tableName}_Update";
+            var properties = typeof(T).GetProperties();
 
-                // Chuẩn bị tham số vào cho procedure
-                var parameters = new DynamicParameters();
-                parameters.Add("@Id", id);
-                foreach (var property in properties)
-                {
-                    string propertyName = $"@{property.Name}";
-                    var propertyValue = property.GetValue(entity);
-                    parameters.Add(propertyName, propertyValue);
-                }
-                // Khởi tạo kết nối tới Database
-                using (var sqlConnection = new MySqlConnection(connectionDB))
-                {
-                    // Thực hiện gọi vào Database để chạy stored procedure
-                    var result = sqlConnection.Execute(storedProcedureName, parameters, commandType: System.Data.CommandType.StoredProcedure);
-                    if (result > 0)
-                    {
-                        return new ServiceResult
-                        {
-                            Success = true,
-                            UserMsg = Resource.UsrMsg_UpdateSuccess,
-                        };
-                    }
-                    else
-                    {
-                        return new ServiceResult
-                        {
-                            Success = false,
-                        };
-                    }
-                }
-            }
-            // Try Catch để bắt exception
-            catch (Exception ex)
+            // Chuẩn bị tham số vào cho procedure
+            var parameters = new DynamicParameters();
+            parameters.Add("@Id", id);
+            foreach (var property in properties)
             {
-                return new ServiceResult
+                string propertyName = $"@{property.Name}";
+                var propertyValue = property.GetValue(entity);
+                parameters.Add(propertyName, propertyValue);
+            }
+            // Khởi tạo kết nối tới Database
+            using (var sqlConnection = new MySqlConnection(connectionDB))
+            {
+                // Thực hiện gọi vào Database để chạy stored procedure
+                var result = sqlConnection.Execute(storedProcedureName, parameters, commandType: System.Data.CommandType.StoredProcedure);
+                if (result > 0)
                 {
-                    Success = false,
-                    ErrorCode = ErrorCodes.Exception,
-                    DevMsg = ex.Message,
-                };
+                    return new ServiceResult
+                    {
+                        Success = true,
+                        UserMsg = Resource.UsrMsg_UpdateSuccess,
+                    };
+                }
+                else
+                {
+                    return new ServiceResult
+                    {
+                        Success = false,
+                    };
+                }
             }
         }
 
