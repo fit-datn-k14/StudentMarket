@@ -355,11 +355,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\DATT\\API_Cs\\StudentMarket\\StudentMarket.API\\StudentMarket.API.csproj",
+      "projectUniqueName": "D:\\DATT\\StudentMarket\\API_Cs\\StudentMarket\\StudentMarket.API\\StudentMarket.API.csproj",
       "projectName": "StudentMarket.API",
-      "projectPath": "D:\\DATT\\API_Cs\\StudentMarket\\StudentMarket.API\\StudentMarket.API.csproj",
+      "projectPath": "D:\\DATT\\StudentMarket\\API_Cs\\StudentMarket\\StudentMarket.API\\StudentMarket.API.csproj",
       "packagesPath": "C:\\Users\\ngvan\\.nuget\\packages\\",
-      "outputPath": "D:\\DATT\\API_Cs\\StudentMarket\\StudentMarket.API\\obj\\",
+      "outputPath": "D:\\DATT\\StudentMarket\\API_Cs\\StudentMarket\\StudentMarket.API\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -381,8 +381,8 @@
         "net6.0": {
           "targetAlias": "net6.0",
           "projectReferences": {
-            "D:\\DATT\\API_Cs\\StudentMarket\\StudentMarketBL\\StudentMarket.BL.csproj": {
-              "projectPath": "D:\\DATT\\API_Cs\\StudentMarket\\StudentMarketBL\\StudentMarket.BL.csproj"
+            "D:\\DATT\\StudentMarket\\API_Cs\\StudentMarket\\StudentMarketBL\\StudentMarket.BL.csproj": {
+              "projectPath": "D:\\DATT\\StudentMarket\\API_Cs\\StudentMarket\\StudentMarketBL\\StudentMarket.BL.csproj"
             }
           }
         }

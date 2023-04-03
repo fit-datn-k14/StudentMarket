@@ -9,7 +9,7 @@ namespace StudentMarket.Common.Entities.DTO
 {
     public class ServiceResult
     {
-        #region Field
+        #region Property
 
         /// <summary>
         /// Thành công hay không
@@ -19,7 +19,7 @@ namespace StudentMarket.Common.Entities.DTO
         /// <summary>
         /// Mã kết quả
         /// </summary>
-        public ResultCodes ResultCode { get; set; }
+        public ErrorCodes? ErrorCode { get; set; }
 
         /// <summary>
         /// Thông báo cho user. Không bắt buộc, tùy theo đặc thù từng dịch vụ và client tích hợp

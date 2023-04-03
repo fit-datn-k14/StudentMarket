@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "qvO19xmoAORXOwOhon7N+yxp/Csi6iw5CvHtyBF0xFk1hlaO/aoS6XKBq5YIxgFcQxbNDh7LZtIdC63cfXJO3w==",
+  "dgSpecHash": "HjftTol4VGY5L0bStwQ9lNFP2S1CbrSsStYNF1UzdDHnUE9r6lnubWmE9U0zpX65iW0o7726UnXHeIwDwTRHnw==",
   "success": true,
-  "projectFilePath": "D:\\DATT\\API_Cs\\StudentMarket\\StudentMarket.DL\\StudentMarket.DL.csproj",
+  "projectFilePath": "D:\\DATT\\StudentMarket\\API_Cs\\StudentMarket\\StudentMarket.DL\\StudentMarket.DL.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\ngvan\\.nuget\\packages\\dapper\\2.0.123\\dapper.2.0.123.nupkg.sha512",
     "C:\\Users\\ngvan\\.nuget\\packages\\mysqlconnector\\2.2.5\\mysqlconnector.2.2.5.nupkg.sha512"

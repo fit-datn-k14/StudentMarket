@@ -14,11 +14,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\DATT\\API_Cs\\StudentMarket\\StudentMarket.Common\\StudentMarket.Common.csproj",
+      "projectUniqueName": "D:\\DATT\\StudentMarket\\API_Cs\\StudentMarket\\StudentMarket.Common\\StudentMarket.Common.csproj",
       "projectName": "StudentMarket.Common",
-      "projectPath": "D:\\DATT\\API_Cs\\StudentMarket\\StudentMarket.Common\\StudentMarket.Common.csproj",
+      "projectPath": "D:\\DATT\\StudentMarket\\API_Cs\\StudentMarket\\StudentMarket.Common\\StudentMarket.Common.csproj",
       "packagesPath": "C:\\Users\\ngvan\\.nuget\\packages\\",
-      "outputPath": "D:\\DATT\\API_Cs\\StudentMarket\\StudentMarket.Common\\obj\\",
+      "outputPath": "D:\\DATT\\StudentMarket\\API_Cs\\StudentMarket\\StudentMarket.Common\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

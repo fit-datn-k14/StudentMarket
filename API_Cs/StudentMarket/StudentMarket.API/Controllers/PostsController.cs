@@ -7,7 +7,7 @@ namespace StudentMarket.API.Controllers
 {
     [Route("api/v1/[controller]")]
     [ApiController]
-    public class PostsController : BasesController<Post>
+    public class PostsController : BaseController<Post>
     {
         #region Field
         private IPostBL _postBL;

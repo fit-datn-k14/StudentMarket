@@ -6,7 +6,7 @@ namespace StudentMarket.API.Controllers
 {
     [Route("api/v1/[controller]")]
     [ApiController]
-    public class CategoriesController : BasesController<Category>
+    public class CategoriesController : BaseController<Category>
     {
         #region Field
         private ICategoryBL _categoryBL;

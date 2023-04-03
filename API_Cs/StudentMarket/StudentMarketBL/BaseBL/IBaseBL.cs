@@ -55,6 +55,37 @@ namespace StudentMarket.BL
         /// CreatedBy: NVHuy(18/03/2023)
         public ServiceResult DeleteRecordByID(Guid id);
 
+        /// <summary>
+        /// Xoá nhiều bản ghi theo danh sách id
+        /// </summary>
+        /// <returns>Thông báo</returns>
+        /// CreatedBy: NVHuy(19/03/2023)
+        public ServiceResult DeleteMultiRecordByID(List<Guid> ids);
+
+        /// <summary>
+        /// Validate kiểm tra dữ liệu required không được trống
+        /// </summary>
+        /// <param name="record"></param>
+        /// <returns></returns>
+        /// CreatedBy: NVHuy (27/03/2023)
+        public List<string> ValidateRequestData(T record);
+
+        /// <summary>
+        /// Validate kiểm tra mã không được trùng
+        /// </summary>
+        /// <param name="record"></param>
+        /// <returns></returns>
+        /// CreatedBy: NVHuy (27/03/2023)
+        public List<string> ValidateFailuresDuplicate(T record);
+
+        /// <summary>
+        /// Validate kiểm tra các điều kiện khác
+        /// </summary>
+        /// <param name="record"></param>
+        /// <returns></returns>
+        /// CreatedBy: NVHuy (27/03/2023)
+        public List<string> ValidateRequestDataCustom(T record);
+
         #endregion
     }
 }

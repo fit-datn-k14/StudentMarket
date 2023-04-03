@@ -3,6 +3,7 @@ using StudentMarket.BL;
 using StudentMarket.Common;
 using StudentMarket.Common.Entities;
 using StudentMarket.Common.Entities.DTO;
+using StudentMarket.Common.Enums;
 using System.Reflection;
 
 namespace StudentMarket.API
@@ -14,7 +15,7 @@ namespace StudentMarket.API
     /// CreatedBy: NVHuy(19/03/2023)
     [Route("api/v1/[controller]")]
     [ApiController]
-    public class BasesController<T> : ControllerBase
+    public class BaseController<T> : ControllerBase
     {
         #region Field
         private IBaseBL<T> _baseBL;
@@ -22,7 +23,7 @@ namespace StudentMarket.API
 
         #region Constructor
 
-        public BasesController(IBaseBL<T> baseBL)
+        public BaseController(IBaseBL<T> baseBL)
         {
             _baseBL = baseBL;
         }
@@ -34,168 +35,156 @@ namespace StudentMarket.API
         /// <summary>
         /// API lấy tất cả bản ghi
         /// </summary>
-        /// <param name="record"></param>
         /// <returns>Danh sách bản ghi</returns>
         /// CreatedBy: NVHuy(20/03/2023)
         [HttpGet]
-        public IActionResult GetAllRecords()
+        public ServiceResult GetAllRecords()
         {
             try
             {
                 var serviceResult = _baseBL.GetAllRecords();
-                if (serviceResult.Success)
-                {
-                    return Ok(serviceResult);
-                }
-                else
-                {
-                    return BadRequest(serviceResult);
-                }
+                return serviceResult;
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new ServiceResult
+                return new ServiceResult
                 {
                     Success = false,
-                    ResultCode = Common.Enums.ResultCodes.Exception,
+                    ErrorCode = ErrorCodes.Exception,
                     UserMsg = Resource.UsrMsg_Exception,
                     DevMsg = ex.Message
-                });
+                };
             }
         }
 
         /// <summary>
         /// API lấy một bản ghi theo id
         /// </summary>
-        /// <param name="record"></param>
+        /// <param name="id">id muốn lấy thông tin</param>
         /// <returns>Bản ghi tương ứng</returns>
         /// CreatedBy: NVHuy(20/03/2023)
         [HttpGet("{id}")]
-        public IActionResult GetRecordByID([FromRoute] Guid id)
+        public ServiceResult GetRecordByID([FromRoute] Guid id)
         {
             try
             {
                 var serviceResult = _baseBL.GetRecordByID(id);
-                if (serviceResult.Success)
-                {
-                    return Ok(serviceResult);
-                }
-                else
-                {
-                    return BadRequest(serviceResult);
-                }
+                return serviceResult;
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new ServiceResult
+                return new ServiceResult
                 {
                     Success = false,
-                    ResultCode = Common.Enums.ResultCodes.Exception,
+                    ErrorCode = ErrorCodes.Exception,
                     UserMsg = Resource.UsrMsg_Exception,
                     DevMsg = ex.Message
-                });
+                };
             }
         }
 
         /// <summary>
         /// API thêm một bản ghi
         /// </summary>
-        /// <param name="record"></param>
+        /// <param name="record">Thông tin bản ghi</param>
         /// <returns>Thông báo</returns>
         /// CreatedBy: NVHuy(20/03/2023)
         [HttpPost]
-        public IActionResult InsertRecord([FromBody] T record)
+        public ServiceResult InsertRecord([FromBody] T record)
         {
             try
             {
                 var serviceResult = _baseBL.InsertRecord(record);
-
-                if (serviceResult.Success)
-                {
-                    return Ok(serviceResult);
-                }
-                else
-                {
-                    return BadRequest(serviceResult);
-                }
+                return serviceResult;
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new ServiceResult
+                return new ServiceResult
                 {
                     Success = false,
-                    ResultCode = Common.Enums.ResultCodes.Exception,
+                    ErrorCode = ErrorCodes.Exception,
                     UserMsg = Resource.UsrMsg_Exception,
                     DevMsg = ex.Message
-                });
+                };
             }
         }
 
         /// <summary>
-        /// API Chỉnh sửa một bản ghi
+        /// API chỉnh sửa bản ghi
         /// </summary>
-        /// <param name="record"></param>
+        /// <param name="id">id bản ghi muốn sửa</param>
+        /// <param name="record">thông tin mới</param>
         /// <returns>Thông báo</returns>
         /// CreatedBy: NVHuy(20/03/2023)
         [HttpPut("{id}")]
-        public IActionResult UpdateRecord([FromRoute] Guid id, [FromBody] T record)
+        public ServiceResult UpdateRecord([FromRoute] Guid id, [FromBody] T record)
         {
             try
             {
                 var serviceResult = _baseBL.UpdateRecordByID(record, id);
-
-                if (serviceResult.Success)
-                {
-                    return Ok(serviceResult);
-                }
-                else
-                {
-                    return BadRequest(serviceResult);
-                }
+                return serviceResult;
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new ServiceResult
+                return new ServiceResult
                 {
                     Success = false,
-                    ResultCode = Common.Enums.ResultCodes.Exception,
+                    ErrorCode = ErrorCodes.Exception,
                     UserMsg = Resource.UsrMsg_Exception,
                     DevMsg = ex.Message
-                });
+                };
             }
         }
 
         /// <summary>
-        /// API Xoá một bản ghi theo id
+        /// Xoá 1 bản ghi theo id
         /// </summary>
-        /// <param name="record"></param>
+        /// <param name="id">id muốn xoá</param>
         /// <returns>Thông báo</returns>
         /// CreatedBy: NVHuy(20/03/2023)
         [HttpDelete("{id}")]
-        public IActionResult DeleteRecord([FromRoute] Guid id)
+        public ServiceResult DeleteRecord([FromRoute] Guid id)
         {
             try
             {
                 var serviceResult = _baseBL.DeleteRecordByID(id);
-
-                if (serviceResult.Success)
-                {
-                    return Ok(serviceResult);
-                }
-                else
-                {
-                    return BadRequest(serviceResult);
-                }
+                return serviceResult;
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new ServiceResult
+                return new ServiceResult
                 {
                     Success = false,
-                    ResultCode = Common.Enums.ResultCodes.Exception,
+                    ErrorCode = ErrorCodes.Exception,
                     UserMsg = Resource.UsrMsg_Exception,
                     DevMsg = ex.Message
-                });
+                };
+            }
+        }
+
+        /// <summary>
+        /// API xoá nhiều bản ghi theo danh sách ids
+        /// </summary>
+        /// <param name="ids">danh sách ids</param>
+        /// <returns>Thông báo</returns>
+        /// CreatedBy: NVHuy(27/03/2023)
+        [HttpDelete]
+        public ServiceResult DeleteMultiRecord(List<Guid> ids)
+        {
+            try
+            {
+                var serviceResult = _baseBL.DeleteMultiRecordByID(ids);
+                return serviceResult;
+            }
+            catch (Exception ex)
+            {
+                return new ServiceResult
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.Exception,
+                    UserMsg = Resource.UsrMsg_Exception,
+                    DevMsg = ex.Message
+                };
             }
         }
 

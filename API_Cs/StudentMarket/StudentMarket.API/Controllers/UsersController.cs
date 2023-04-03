@@ -6,7 +6,7 @@ namespace StudentMarket.API.Controllers
 {
     [Route("api/v1/[controller]")]
     [ApiController]
-    public class UsersController : BasesController<User>
+    public class UsersController : BaseController<User>
     {
         #region Field
         private IUserBL _userBL;

@@ -6,7 +6,7 @@ namespace StudentMarket.API.Controllers
 {
     [Route("api/v1/[controller]")]
     [ApiController]
-    public class CommentsController : BasesController<Comment>
+    public class CommentsController : BaseController<Comment>
     {
         #region Field
         private ICommentBL _commentBL;

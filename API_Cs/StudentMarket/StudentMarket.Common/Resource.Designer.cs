@@ -97,6 +97,15 @@ namespace StudentMarket.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Không tìm thấy bản ghi thoả mãn.
+        /// </summary>
+        public static string UsrMsg_NotFoundRecord {
+            get {
+                return ResourceManager.GetString("UsrMsg_NotFoundRecord", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cập nhật thành công.
         /// </summary>
         public static string UsrMsg_UpdateSuccess {

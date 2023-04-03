@@ -4,6 +4,7 @@ using StudentMarket.Common.Utilities;
 using MySqlConnector;
 using StudentMarket.DL;
 using StudentMarket.Common.Entities.DTO;
+using StudentMarket.Common.Enums;
 
 namespace StudentMarket.DL
 {
@@ -57,7 +58,7 @@ namespace StudentMarket.DL
                 return new ServiceResult
                 {
                     Success = false,
-                    ResultCode = Common.Enums.ResultCodes.Exception,
+                    ErrorCode = ErrorCodes.Exception,
                     DevMsg = ex.Message,
                 };
             }
@@ -93,17 +94,17 @@ namespace StudentMarket.DL
                         return new ServiceResult
                         {
                             Success = false,
-                            ResultCode = Common.Enums.ResultCodes.NotFoundRecord
+                            ErrorCode = ErrorCodes.NotFoundRecord
                         };
                     }
                 }
             }
-            catch (Exception ex )
+            catch (Exception ex)
             {
                 return new ServiceResult
                 {
                     Success = false,
-                    ResultCode = Common.Enums.ResultCodes.Exception,
+                    ErrorCode = ErrorCodes.Exception,
                     DevMsg = ex.Message,
                 };
             }
@@ -159,7 +160,7 @@ namespace StudentMarket.DL
                 return new ServiceResult
                 {
                     Success = false,
-                    ResultCode = Common.Enums.ResultCodes.Exception,
+                    ErrorCode = ErrorCodes.Exception,
                     DevMsg = ex.Message,
                 };
             }
@@ -193,7 +194,7 @@ namespace StudentMarket.DL
                 {
                     // Thực hiện gọi vào Database để chạy stored procedure
                     var result = sqlConnection.Execute(storedProcedureName, parameters, commandType: System.Data.CommandType.StoredProcedure);
-                    if(result > 0)
+                    if (result > 0)
                     {
                         return new ServiceResult
                         {
@@ -216,7 +217,7 @@ namespace StudentMarket.DL
                 return new ServiceResult
                 {
                     Success = false,
-                    ResultCode = Common.Enums.ResultCodes.Exception,
+                    ErrorCode = ErrorCodes.Exception,
                     DevMsg = ex.Message,
                 };
             }
@@ -250,6 +251,7 @@ namespace StudentMarket.DL
                         return new ServiceResult
                         {
                             Success = false,
+                            UserMsg = Resource.UsrMsg_NotFoundRecord,
                         };
                     }
                 }
@@ -260,9 +262,60 @@ namespace StudentMarket.DL
                 return new ServiceResult
                 {
                     Success = false,
-                    ResultCode = Common.Enums.ResultCodes.Exception,
+                    ErrorCode = ErrorCodes.Exception,
                     DevMsg = ex.Message,
                 };
+            }
+        }
+
+        /// <summary>
+        /// Xoá nhiều bản ghi theo danh sách id
+        /// </summary>
+        /// <returns>Thông báo</returns>
+        /// CreatedBy: NVHuy(19/03/2023)
+        public ServiceResult DeleteMultiRecordByID(List<Guid> ids)
+        {
+            using (var sqlConnection = new MySqlConnection(connectionDB))
+            {
+                sqlConnection.Open();
+                var transaction = sqlConnection.BeginTransaction();
+                try
+                {
+                    var idName = typeof(T).GetProperties().First().Name;
+                    string tableName = EntityUtilities.GetTableName<T>();
+                    string listIds = string.Join("','", ids);
+                    string stored = $"Delete FROM {tableName} Where {idName} IN ('{listIds}')";
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@Ids", string.Join(",", ids));
+
+                    var result = sqlConnection.Execute(stored, parameters, transaction);
+
+                    if (result == ids.Count())
+                    {
+                        transaction.Commit();
+                        return new ServiceResult
+                        {
+                            Success = true,
+                            UserMsg = Resource.UsrMsg_DeleteSuccess,
+                        };
+                    }
+                    else
+                    {
+                        throw new Exception();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+
+                    return new ServiceResult
+                    {
+                        Success = false,
+                        ErrorCode = ErrorCodes.Exception,
+                        UserMsg = "Gặp lỗi trong khi xoá",
+                        DevMsg = ex.Message,
+                    };
+                }
             }
         }
 
@@ -273,7 +326,7 @@ namespace StudentMarket.DL
         /// <param name="code"></param>
         /// <returns></returns>
         /// CreatedBy: NVHuy(25/03/2023)
-        public bool CheckDuplicateCode(string codeName, string code)
+        public Object GetRecordByCode(string codeName, string code)
         {
             try
             {
@@ -282,21 +335,14 @@ namespace StudentMarket.DL
                     sqlConnection.Open();
                     string tableName = EntityUtilities.GetTableName<T>();
                     string stored = $"SELECT * FROM {tableName} WHERE {codeName}='{code}'";
-                    var record = sqlConnection.QueryFirstOrDefault(stored);
-                    if (record != null)
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
+                    var record = sqlConnection.QueryFirstOrDefault<T>(stored);
+                    return record;
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message );
-                return false;
+                Console.WriteLine(ex.Message);
+                return null;
             }
         }
 

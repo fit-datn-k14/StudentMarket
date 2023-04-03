@@ -24,3 +24,17 @@ D:\DATT\API_Cs\StudentMarket\StudentMarket.Common\obj\Debug\net6.0\StudentMarket
 D:\DATT\API_Cs\StudentMarket\StudentMarket.Common\obj\Debug\net6.0\ref\StudentMarket.Common.dll
 D:\DATT\API_Cs\StudentMarket\StudentMarket.Common\obj\Debug\net6.0\StudentMarket.Common.Resource.resources
 D:\DATT\API_Cs\StudentMarket\StudentMarket.Common\obj\Debug\net6.0\StudentMarket.Common.csproj.GenerateResource.cache
+D:\DATT\StudentMarket\API_Cs\StudentMarket\StudentMarket.Common\bin\Debug\net6.0\StudentMarket.Common.deps.json
+D:\DATT\StudentMarket\API_Cs\StudentMarket\StudentMarket.Common\bin\Debug\net6.0\StudentMarket.Common.dll
+D:\DATT\StudentMarket\API_Cs\StudentMarket\StudentMarket.Common\bin\Debug\net6.0\StudentMarket.Common.pdb
+D:\DATT\StudentMarket\API_Cs\StudentMarket\StudentMarket.Common\obj\Debug\net6.0\StudentMarket.Common.csproj.AssemblyReference.cache
+D:\DATT\StudentMarket\API_Cs\StudentMarket\StudentMarket.Common\obj\Debug\net6.0\StudentMarket.Common.Resource.resources
+D:\DATT\StudentMarket\API_Cs\StudentMarket\StudentMarket.Common\obj\Debug\net6.0\StudentMarket.Common.csproj.GenerateResource.cache
+D:\DATT\StudentMarket\API_Cs\StudentMarket\StudentMarket.Common\obj\Debug\net6.0\StudentMarket.Common.GeneratedMSBuildEditorConfig.editorconfig
+D:\DATT\StudentMarket\API_Cs\StudentMarket\StudentMarket.Common\obj\Debug\net6.0\StudentMarket.Common.AssemblyInfoInputs.cache
+D:\DATT\StudentMarket\API_Cs\StudentMarket\StudentMarket.Common\obj\Debug\net6.0\StudentMarket.Common.AssemblyInfo.cs
+D:\DATT\StudentMarket\API_Cs\StudentMarket\StudentMarket.Common\obj\Debug\net6.0\StudentMarket.Common.csproj.CoreCompileInputs.cache
+D:\DATT\StudentMarket\API_Cs\StudentMarket\StudentMarket.Common\obj\Debug\net6.0\StudentMarket.Common.dll
+D:\DATT\StudentMarket\API_Cs\StudentMarket\StudentMarket.Common\obj\Debug\net6.0\refint\StudentMarket.Common.dll
+D:\DATT\StudentMarket\API_Cs\StudentMarket\StudentMarket.Common\obj\Debug\net6.0\StudentMarket.Common.pdb
+D:\DATT\StudentMarket\API_Cs\StudentMarket\StudentMarket.Common\obj\Debug\net6.0\ref\StudentMarket.Common.dll

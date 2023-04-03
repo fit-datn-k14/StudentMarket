@@ -4,12 +4,9 @@
     /// Enum mã lỗi
     /// </summary>
     /// CreatedBy: NVHuy(18/03/2023)
-    public enum ResultCodes
+    public enum ErrorCodes
     {
-        /// <summary>
-        /// Thành công
-        /// </summary>
-        Success = 0,
+        #region Field
 
         /// <summary>
         /// Lỗi do validate dữ liệu thất bại
@@ -32,5 +29,6 @@
         /// </summary>
         Exception = 4,
 
+        #endregion
     }
 }

@@ -51,13 +51,21 @@ namespace StudentMarket.DL
         public ServiceResult DeleteRecordByID(Guid id);
 
         /// <summary>
+        /// Xoá nhiều bản ghi theo danh sách id
+        /// </summary>
+        /// <returns>Thông báo</returns>
+        /// CreatedBy: NVHuy(19/03/2023)
+        public ServiceResult DeleteMultiRecordByID(List<Guid> ids);
+
+        /// <summary>
         /// Kiểm tra Code đã tồn tại chưa
         /// </summary>
         /// <param name="codeName"></param>
         /// <param name="code"></param>
         /// <returns></returns>
         /// CreatedBy: NVHuy(25/03/2023)
-        public bool CheckDuplicateCode(string codeName, string code);
+        public Object GetRecordByCode(string codeName, string code);
+
         #endregion
     }
 }

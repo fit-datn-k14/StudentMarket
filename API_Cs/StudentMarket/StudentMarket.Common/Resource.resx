@@ -129,6 +129,9 @@
   <data name="UsrMsg_InsertSuccess" xml:space="preserve">
     <value>Thêm mới thành công</value>
   </data>
+  <data name="UsrMsg_NotFoundRecord" xml:space="preserve">
+    <value>Không tìm thấy bản ghi thoả mãn</value>
+  </data>
   <data name="UsrMsg_UpdateSuccess" xml:space="preserve">
     <value>Cập nhật thành công</value>
   </data>
