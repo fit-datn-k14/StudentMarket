@@ -1,0 +1,94 @@
+.input-wrapper {
+    width: 100%;
+}
+
+.input-wrapper>label {
+    font-weight: 700;
+    min-height: 19px;
+    display: block;
+    padding-bottom: 8px;
+}
+
+.error-input {
+    border: 1px solid red;
+}
+
+.input-wrapper {
+    position: relative;
+}
+
+.error-message {
+    display: none;
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 50%;
+    width: fit-content;
+    white-space: nowrap;
+    height: 24px;
+    box-sizing: border-box;
+    border-radius: 4px;
+    background-color: #F06666;
+    color: #fff;
+    font-size: 12px;
+    padding: 4px 8px;
+    text-align: center;
+    z-index: 2;
+    transform: translateX(-50%)
+}
+
+.error-message::before {
+    content: "";
+    display: block;
+    position: absolute;
+    top: -5px;
+    left: 50%;
+    transform: translateX(-50%) rotate(180deg);
+    border-style: solid;
+    border-width: 8px 8px 0px 8px;
+    border-color: #F06666 transparent transparent transparent;
+}
+
+input:hover~.error-message {
+    display: block;
+}
+
+.input-wrapper>input {
+    border-radius: 4px;
+    padding-left: 12px;
+    padding-right: 8px;
+    height: 36px;
+    border: 1px solid #E0E0E0;
+    outline: none;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+
+.input-wrapper>input:focus {
+    border: 1px solid #50b83c !important;
+}
+
+.input-wrapper p {
+    display: inline-block;
+}
+
+.error-element>input {
+    border-color: #E61D1D;
+}
+
+.error-element>.error-message {
+    font-size: 12px;
+    color: #E61D1D;
+}
+
+.error-input {
+    border: 1px solid red !important;
+}
+
+.input-wrapper {
+    position: relative;
+}
+
+input:hover~.error-message {
+    display: block;
+}

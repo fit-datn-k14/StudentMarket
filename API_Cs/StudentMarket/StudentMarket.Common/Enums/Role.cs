@@ -11,7 +11,12 @@
         /// <summary>
         /// Quản trị viên
         /// </summary>
-        Admin = 1,
+        Admin = 2,
+
+        /// <summary>
+        /// Kiểm duyệt viên
+        /// </summary>
+        Checker = 1,
 
         /// <summary>
         /// Người dùng thường

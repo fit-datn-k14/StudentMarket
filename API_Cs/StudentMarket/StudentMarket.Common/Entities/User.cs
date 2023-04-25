@@ -37,6 +37,8 @@ namespace StudentMarket.Common.Entities
 
         public string? Address { get; set; }
 
+        public Guid? LocationID { get; set; }
+
         public string? IdentityNumber { get; set; }
 
         public DateTime? IdentityDate { get; set; }
@@ -46,8 +48,6 @@ namespace StudentMarket.Common.Entities
         public string? Avatar { get; set; }
 
         public Role? Role { get; set; }
-
-        public Guid? LocationID { get; set; } 
 
         #endregion
     }

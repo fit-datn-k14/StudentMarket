@@ -40,6 +40,10 @@ namespace StudentMarket.Common.Entities
         [Required(ErrorMessage = "Danh mục sản phẩm không được bỏ trống")]
         public Guid CategoryID { get; set; }
 
+        public Guid? LocationID { get; set; }
+
+        public string? LocationName { get; set; }
+
         #endregion
     }
 }

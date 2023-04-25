@@ -6,13 +6,7 @@
     /// CreatedBy: NVHuy(18/03/2023)
     public class PagingData<T>
     {
-         #region Property
-
-        /// <summary>
-        /// Danh sách thỏa mãn điều kiện lọc và phân trang 
-        /// </summary>
-        public List<T> Data { get; set; } = new List<T>();
-
+        #region Property
 
         /// <summary>
         /// Tổng số bản ghi thỏa mãn điều kiện
@@ -23,6 +17,13 @@
         /// Tổng số trang
         /// </summary>
         public int TotalPages { get; set; }
+
+        /// <summary>
+        /// Danh sách thỏa mãn điều kiện lọc và phân trang 
+        /// </summary>
+        public List<T> Data { get; set; } = new List<T>();
+
+
 
         #endregion
     }

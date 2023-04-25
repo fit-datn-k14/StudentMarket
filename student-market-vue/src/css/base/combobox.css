@@ -1,0 +1,88 @@
+.hcombobox {
+    display: flex;
+    position: relative;
+    border-radius: 4px;
+    border: 1px solid #E6E6E6;
+}
+
+.hcombobox:has(input:focus) {
+    border: 1px solid var(--primary-color);
+}
+
+.hcombobox__input {
+    width: 100%;
+    height: 36px;
+    outline: none;
+    border: unset;
+    border-radius: 4px 0 0 4px;
+}
+
+.hcombobox__button {
+    height: 36px;
+    width: 36px;
+    border-radius: 0 4px 4px 0;
+    outline: unset;
+    border: unset;
+    background-color: #fff;
+    cursor: pointer;
+    border-left: 1px solid #E6E6E6;
+
+}
+
+.hcombobox__icon {
+    background: url('@/assets/img/Sprites.64af8f61.svg') no-repeat -1129px -365px;
+    width: 14px;
+    height: 8px;
+    margin: auto;
+}
+
+.hcombobox__list {
+    width: 100%;
+    overflow: auto;
+    max-height: 180px;
+    padding: 0 8px;
+    box-sizing: border-box;
+}
+
+.hcombobox__datalist {
+    position: absolute;
+    z-index: 3;
+    background-color: #fff;
+    width: 100%;
+    box-shadow: 0 0 4px #ccc;
+    border-radius: 4px;
+    padding: 8px 0 8px;
+    box-sizing: border-box;
+}
+
+.hcombobox__datalist.topdown {
+    top: calc(100% + 2px);
+}
+
+.hcombobox__datalist.bottomup {
+    bottom: calc(100% + 2px);
+}
+
+.hcombobox__option {
+    width: 100%;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    padding: 0 8px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.hcombobox__option:hover {
+    background-color: var(--primary-color-hover);
+    color: var(--primary-color);
+}
+
+.hcombobox__option--selected {
+    background-color: var(--primary-color-light);
+    color: #fff;
+}
+
+.rotate-180 {
+    transform: rotate(-180deg);
+}

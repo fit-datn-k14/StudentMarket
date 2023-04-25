@@ -1,0 +1,105 @@
+<template>
+  <!--  -->
+  <div class="input-wrapper">
+    <label v-if="label" for="hinput" :title="title"
+      >{{ label }}<span v-if="required" class="color-red">&nbsp;*</span></label
+    >
+    <input
+      ref="hinput"
+      :type="type"
+      autocomplete="off"
+      :class="{ 'error-input': isEmpty }"
+      :placeholder="placeholder"
+      v-model="value"
+      @input="onInput"
+      @blur="onValidateFieldEmpty"
+    />
+    <div v-show="isEmpty" :class="{ 'error-message': isEmpty }">
+      {{ errorMessage }}
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  name: "HInput",
+  props: {
+    modelValue: [String, Number, Boolean],
+    label: {
+      type: String,
+      required: false,
+      default: null,
+    },
+    type: {
+      type: String,
+      required: false,
+      default: "text",
+    },
+    required: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    title: {
+      type: String,
+      required: false,
+      default: null,
+    },
+    placeholder: {
+      type: String,
+      required: false,
+      default: null,
+    },
+  },
+  watch: {
+    modelValue: function (newVal) {
+      this.value = newVal;
+    },
+  },
+  created() {
+    if (this.modelValue) {
+      this.value = this.modelValue;
+    }
+  },
+  methods: {
+    /**
+     * binding 2 chiều
+     * Author: NVHUY (09/03/2001)
+     */
+    onInput() {
+      if (this.value) {
+        this.$emit("update:modelValue", this.value.trim());
+      } else {
+        this.$emit("update:modelValue", null);
+      }
+    },
+    /**
+     * Kiểm tra dữ liệu trống
+     * Author: NVHUY (09/03/2001)
+     */
+    onValidateFieldEmpty() {
+      if ((!this.value || !this.value.trim()) && this.required) {
+        this.isEmpty = true;
+        this.errorMessage = this.label + " không được bỏ trống!";
+      } else {
+        this.isEmpty = false;
+        this.errorMessage = "";
+      }
+    },
+  },
+  data() {
+    return {
+      value: "",
+      errorMessage: "",
+      isEmpty: false,
+    };
+  },
+};
+</script>
+
+<style scoped>
+</style>
+
+<style scoped>
+@import url(@/css/base/input.css);
+</style>

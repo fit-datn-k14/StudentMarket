@@ -14,4 +14,8 @@
     <ProjectReference Include="..\StudentMarketBL\StudentMarket.BL.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="image\" />
+  </ItemGroup>
+
 </Project>

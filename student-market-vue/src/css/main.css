@@ -1,0 +1,48 @@
+@font-face {
+    font-family: Roboto;
+    src: url(../assets/fonts/Roboto-Regular.woff2);
+}
+
+:root {
+    --primary-color: #50b83c;
+    --primary-color-light: #57c841;
+    --primary-color-hover: rgba(80, 184, 60, 0.1);
+    --red-color: #E03C31;
+    --text-color: #2c2c2c;
+    --grey-color: #999;
+    --border-color: #ccc;
+    --select2-single-height: 32px;
+}
+
+* {
+    margin: 0;
+    font-family: Roboto;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+ul {
+    list-style: none;
+}
+
+a {
+    text-decoration: none;
+}
+
+body {
+    font-family: "Lexend Regular", Roboto, Arial;
+    font-size: 14px;
+}
+
+.invalid-input {
+    color: red;
+    font-size: 12px;
+}
+
+input.ng-touched.ng-invalid {
+    border: 1px solid red;
+}
+
+.color-red {
+    color: red !important;
+}

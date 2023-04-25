@@ -1,0 +1,152 @@
+table {
+    border-spacing: 0;
+}
+
+.text-align-center {
+    text-align: center;
+}
+
+.text-align-left {
+    text-align: left;
+}
+
+.text-align-right {
+    text-align: right;
+}
+
+.checkbox-col {
+    border-right: 1px dotted #e0e0e0;
+}
+
+th {
+    padding-right: 20px;
+}
+
+th.data-col+th.data-col,
+th.function-col {
+    border-left: 1px solid #c7c7c7;
+}
+
+th.checkbox-col {
+    border-right: 1px solid #c7c7c7;
+}
+
+td.data-col+td.data-col,
+.function-col {
+    border-left: 1px dotted #e0e0e0;
+    min-width: 120px;
+}
+
+td.function-col {
+    display: flex;
+    align-items: center;
+}
+
+.function-col {
+    position: sticky;
+    right: 0;
+}
+
+.function-col input {
+    color: #0075c0;
+}
+
+tr.row,
+td {
+    height: 48px;
+}
+
+thead {
+    position: sticky;
+    top: 0;
+    z-index: 4;
+}
+
+.action .dropdownlist {
+    z-index: 1000;
+    display: block;
+    position: absolute;
+    top: 36px;
+    right: 16px;
+}
+
+tr:nth-last-child(-n+2):not(:nth-child(-n+12)) .dropdownlist {
+    top: -56px;
+}
+
+.table {
+    width: 100%;
+    overflow: auto;
+    flex-grow: 1;
+}
+
+td.action {
+    z-index: 3 !important;
+}
+
+
+.selected-row>td {
+    background-color: #F2FFF0;
+}
+
+.pagination {
+    max-width: 320px;
+    display: flex;
+    justify-content: space-between;
+    list-style: none;
+    column-gap: 4px;
+    padding-left: 8px;
+}
+
+a.page-link {
+    text-decoration: unset;
+    display: block;
+    min-width: 28px;
+    text-align: center;
+    padding: 6px 4px;
+}
+
+.page-item.active {
+    box-sizing: border-box;
+    border: 1px solid #c7c7c7;
+}
+
+.page-item {
+    cursor: pointer;
+}
+
+.page-item.active,
+.page-item.disabled {
+    cursor: default;
+}
+
+.page-item.disabled {
+    color: #00000078;
+}
+
+
+.th-filter-icon {
+    position: absolute !important;
+    left: -4px;
+    top: 0;
+}
+
+th:hover>.btn-filter {
+    display: block;
+}
+
+th>.btn-filter {
+    display: none;
+    position: relative;
+    float: right;
+}
+
+.btn-sort {
+    height: 8px !important;
+}
+
+.th-text {
+    height: 24px;
+    display: flex;
+    align-items: center;
+}

@@ -50,6 +50,29 @@ namespace StudentMarket.API.Controllers
         }
 
         /// <summary>
+        /// API đăng ký
+        /// </summary>
+        /// <param name="newAccount"></param>
+        /// <returns></returns>
+        [HttpPost("Register")]
+        public ServiceResult Register([FromBody] User newAccount)
+        {
+            try
+            {
+                return _userBL.InsertRecord(newAccount);
+            }
+            catch (Exception ex)
+            {
+                return new ServiceResult
+                {
+                    Success = false,
+                    UserMsg = Resource.UsrMsg_Exception,
+                    DevMsg = ex.Message
+                };
+            }
+        }
+
+        /// <summary>
         /// Đổi mật khẩu
         /// </summary>
         /// <param name="id"></param>

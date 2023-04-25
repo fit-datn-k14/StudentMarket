@@ -1,0 +1,116 @@
+input {
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 16px;
+    box-sizing: border-box;
+    font-weight: 500px;
+}
+
+input[disabled] {
+    pointer-events: none;
+    opacity: 56%;
+}
+
+/* Nút chính */
+.btn-pri {
+    background-color: var(--primary-color);
+    color: #fff;
+    border-radius: 4px;
+    border: none;
+    box-sizing: border-box;
+}
+
+.btn-pri:hover {
+    background-color: var(--primary-color-light);
+    cursor: pointer;
+}
+
+/* Nút phụ */
+.btn-second {
+    background-color: #fff;
+    color: #1f1f1f;
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    box-sizing: border-box;
+}
+
+.btn-second:hover {
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+    cursor: pointer;
+}
+
+/* Link button  */
+.btn-link {
+    border: none;
+    background: none;
+    height: 36px;
+    color: #1f1f1f;
+    min-width: 0px;
+    text-align: left;
+    justify-content: start;
+}
+
+.btn-link:hover {
+    color: #1f1f1fa4;
+}
+
+.selected {
+    border: 1px solid #e6e6e6;
+    color: #1f1f1f;
+    background-color: inherit;
+    height: 24px;
+    min-width: 24px;
+    vertical-align: center;
+    box-sizing: border-box;
+}
+
+.btn-icon {
+    padding: 6px;
+    width: 36px;
+    height: 36px;
+}
+
+.btn-pri:focus,
+.btn-second:focus {
+    outline-color: #babec5;
+}
+
+.hbutton-wrapper {
+    position: relative;
+}
+
+.tooltip {
+    position: absolute;
+    display: none;
+    width: fit-content;
+    white-space: nowrap;
+    padding: 4px 8px;
+    box-sizing: border-box;
+    background-color: #4b4c51;
+    border-radius: 4px;
+    font-size: 14px;
+    color: #fff;
+    top: calc(100% + 6px);
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+}
+
+.tooltip::before {
+    content: "";
+    display: block;
+    position: absolute;
+    top: -6px;
+    left: 50%;
+    transform: translateX(-50%) rotate(180deg);
+    border-style: solid;
+    border-width: 8px 8px 0px 8px;
+    border-color: #4b4c51 transparent transparent transparent;
+}
+
+.hbutton-wrapper:has(input:hover) .tooltip {
+    display: block;
+}
