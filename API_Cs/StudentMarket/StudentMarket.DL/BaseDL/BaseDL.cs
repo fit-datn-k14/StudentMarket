@@ -5,6 +5,9 @@ using MySqlConnector;
 using StudentMarket.DL;
 using StudentMarket.Common.Entities.DTO;
 using StudentMarket.Common.Enums;
+using System.Diagnostics.SymbolStore;
+using StudentMarket.Common.Entities;
+using System.Data.SqlClient;
 
 namespace StudentMarket.DL
 {
@@ -70,14 +73,14 @@ namespace StudentMarket.DL
         /// <param name="id"></param>
         /// <returns>Bản ghi tương ứng</returns>
         /// CreatedBy: NVHuy(18/03/2023)
-        public ServiceResult GetRecordByID(Guid id)
+        public virtual ServiceResult GetRecordByID(Guid id)
         {
             using (var sqlConnection = new MySqlConnection(connectionDB))
             {
                 sqlConnection.Open();
                 var idName = typeof(T).GetProperties().First().Name;
                 string tableName = EntityUtilities.GetTableName<T>();
-                string stored = $"SELECT * FROM {tableName} WHERE {idName}='{id}'";
+                string stored = $"SELECT * FROM view_{tableName} WHERE {idName}='{id}'";
                 var record = sqlConnection.QueryFirstOrDefault<T>(stored);
                 if (record != null)
                 {
@@ -106,11 +109,11 @@ namespace StudentMarket.DL
         /// CreatedBy: NVHuy(19/03/2023)
         public ServiceResult InsertRecord(T record)
         {
+
             // Chuẩn bị stored procedure
             string tableName = EntityUtilities.GetTableName<T>();
             var storedProcedureName = $"Proc_{tableName}_Insert";
             var properties = typeof(T).GetProperties();
-
             // Chuẩn bị tham số vào cho procedure
             var parameters = new DynamicParameters();
             foreach (var property in properties)
@@ -122,23 +125,41 @@ namespace StudentMarket.DL
             // Khởi tạo kết nối tới Database
             using (var sqlConnection = new MySqlConnection(connectionDB))
             {
+                sqlConnection.Open();
                 // Thực hiện gọi vào Database để chạy stored procedure
-                var result = sqlConnection.Execute(storedProcedureName, parameters, commandType: System.Data.CommandType.StoredProcedure);
-                if (result > 0)
+                MySqlTransaction transaction = sqlConnection.BeginTransaction();
+                try
                 {
-                    return new ServiceResult
+                    var result = sqlConnection.Execute(storedProcedureName, parameters, transaction, commandType: System.Data.CommandType.StoredProcedure);
+                    Boolean custom = InsertCustom(sqlConnection, transaction, record);
+                    if (result > 0 && custom)
                     {
-                        Success = true,
-                        UserMsg = Resource.UsrMsg_InsertSuccess,
-                    };
+                        transaction.Commit();
+                        return new ServiceResult
+                        {
+                            Success = true,
+                            UserMsg = Resource.UsrMsg_InsertSuccess,
+                            Data = record
+                        };
+                    }
+                    else
+                    {
+                        throw new Exception();
+                    }
                 }
-                else
+                catch (Exception ex)
                 {
+                    transaction.Rollback();
+
                     return new ServiceResult
                     {
                         Success = false,
+                        ErrorCode = ErrorCodes.Exception,
+                        UserMsg = "Gặp lỗi trong khi xoá",
+                        DevMsg = ex.Message,
                     };
                 }
+
             }
         }
 
@@ -306,6 +327,106 @@ namespace StudentMarket.DL
             {
                 Console.WriteLine(ex.Message);
                 return null;
+            }
+        }
+
+        /// <summary>
+        /// Sinh mã nhân viên mới
+        /// </summary>
+        /// <returns>Mã mới</returns>
+        /// CreatedBy: NVHuy(19/03/2023)
+        public ServiceResult GetNewCode()
+        {
+            try
+            {
+                string tableName = EntityUtilities.GetTableName<T>();
+                // Chuẩn bị stored procedure
+                var storedProcedureName = $"Proc_{tableName}_NewCode";
+
+                // Khởi tạo kết nối tới Database
+                using (var sqlConnection = new MySqlConnection(connectionDB))
+                {
+                    // Thực hiện gọi vào Database để chạy stored procedure và trả về kết quả
+                    var result = sqlConnection.ExecuteScalar<string>(storedProcedureName, commandType: System.Data.CommandType.StoredProcedure);
+                    return new ServiceResult
+                    {
+                        Success = true,
+                        Data = result
+                    };
+                }
+            }
+            // Try Catch để bắt exception
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return new ServiceResult
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.Exception,
+                    UserMsg = Resource.UsrMsg_Exception,
+                    DevMsg = ex.Message
+                };
+            }
+        }
+
+        /// <summary>
+        /// Thêm các bảng phụ
+        /// </summary>
+        /// <param name="record"></param>
+        /// <returns></returns>
+        /// CreatedBy: NVHuy (27/03/2023)
+        public virtual Boolean InsertCustom(MySqlConnection sqlConnection, MySqlTransaction transaction, T record)
+        {
+            return true;
+        }
+
+
+        /// <summary>
+        /// Lấy dữ liệu trong DB thoả mãn điều kiện lọc
+        /// </summary>
+        /// <param name="condition">chuỗi điều kiện lọc cột</param>
+        /// <param name="keyword">từ khoá tìm kiếm</param>
+        /// <param name="fromRecord">bản ghi bắt đầu</param>
+        /// <param name="pageSize">số bản ghi</param>
+        /// <returns>Danh sách thoả mãn</returns>
+        /// CreatedBy: NVHuy (31/03/2023)
+        public ServiceResult Filter(string condition, string keyword, int fromRecord, int pageSize)
+        {
+            try
+            {
+
+                string tableName = EntityUtilities.GetTableName<T>();
+                // Chuẩn bị stored procedure
+                var storedProcedureName = $"Proc_{tableName}_Filter";
+                var parameters = new DynamicParameters();
+                parameters.Add("@Condition", condition);
+                parameters.Add("@Keyword", keyword);
+                parameters.Add("@FromRecord", fromRecord);
+                parameters.Add("@PageSize", pageSize);
+                using (var sqlConnection = new MySqlConnection(connectionDB))
+                {
+                    sqlConnection.Open();
+                    var multiResult = sqlConnection.QueryMultiple(storedProcedureName, parameters, commandType: System.Data.CommandType.StoredProcedure);
+
+                    var records = multiResult.Read<T>().ToList();
+                    var totalCount = multiResult.Read<int>().Single();
+                    return new ServiceResult
+                    {
+                        Success = true,
+                        Data = new PagingData<T>()
+                        {
+                            Data = records,
+
+                            TotalRecords = totalCount,
+
+                            TotalPages = (int)Math.Ceiling(totalCount / (double)pageSize),
+                        },
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                return new ServiceResult(ErrorCodes.Exception, ex.Message);
             }
         }
 

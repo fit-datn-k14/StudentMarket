@@ -1,38 +1,32 @@
 <template>
-  <div class="container">
-    <div class="row">
-      <div class="col-md-6 offset-md-3 mt-5">
-        <div class="card">
-          <div class="card-header">Đăng nhập</div>
-          <div class="card-body">
-            <form>
-              <div class="form-group">
-                <label for="username">Tên đăng nhập</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  id="username"
-                  v-model="username"
-                />
-              </div>
-              <div class="form-group">
-                <label for="password">Mật khẩu</label>
-                <input
-                  type="password"
-                  class="form-control"
-                  id="password"
-                  v-model="password"
-                />
-              </div>
-              <button
-                type="submit"
-                class="btn btn-primary"
-                @click.prevent="login"
-              >
-                Đăng nhập
-              </button>
-            </form>
-          </div>
+  <div class="the-login">
+    <div class="row justify-content-center">
+      <div class="form_login col-md-3 row g-lg-3">
+        <h2>Đăng Nhập</h2>
+        <h-input
+          ref="txtUserName"
+          label="Tên Đăng Nhập"
+          :required="true"
+          v-model="username"
+        />
+        <h-input
+          ref="txtPassword"
+          label="Mật Khẩu"
+          type="password"
+          :required="true"
+          v-model="password"
+        />
+        <div class="errorMessage">{{ errorMessage }}</div>
+        <HButton
+          class="btnLogin"
+          ref="btn-login"
+          type="btn-pri"
+          value="Đăng Nhập"
+          @click.prevent="login"
+        />
+        <div class="link-register">
+          Bạn chưa có tài khoản?
+          <router-link to="/dang-ky">Đăng ký ngay</router-link>
         </div>
       </div>
     </div>
@@ -41,27 +35,35 @@
 
 <script>
 import axios from "axios";
+import { eventBus } from "@/js/eventbus";
 import { saveUserToLocalStorage } from "@/stores/localStorage.js";
 export default {
+  name: "TheLogin",
   data() {
     return {
       username: "",
       password: "",
+      errorMessage: null,
     };
   },
   methods: {
     login() {
       axios
         .post("https://localhost:9999/api/v1/Users/Login", {
-          username: this.username,
-          password: this.password,
+          UserName: this.username,
+          Password: this.password,
         })
         .then((response) => {
-          // Lưu thông tin tài khoản vào localStorage
-          var user = response.data.Data;
-          saveUserToLocalStorage(user);
-          // Chuyển hướng đến trang chủ
-          this.$router.push("/trang-chu");
+          if (response.data.Success) {
+            // Lưu thông tin tài khoản vào localStorage
+            var user = response.data.Data;
+            saveUserToLocalStorage(user);
+            eventBus.emit("login");
+            // Chuyển hướng đến trang chủ
+            this.$router.push("/trang-chu");
+          } else {
+            this.errorMessage = response.data.UserMsg;
+          }
         })
         .catch((error) => {
           console.log(error);
@@ -72,61 +74,24 @@ export default {
 </script>
 
 <style scoped>
-.login-container {
+.form_login {
+  margin-top: 48px;
+  background-color: #fff;
+  padding: 12px;
+  border-radius: 8px;
+  padding-bottom: 48px;
+}
+
+.btnLogin {
   display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
-  height: 100vh;
-  background-color: #f5f5f5;
 }
 
-h1 {
-  margin-bottom: 2rem;
+.link-register {
+  text-align: center;
 }
 
-form {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-  max-width: 400px;
-  background-color: white;
-  padding: 2rem;
-  border-radius: 5px;
-  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
-}
-
-.form-group {
-  margin-bottom: 1rem;
-}
-
-label {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-weight: bold;
-}
-
-input {
-  padding: 0.5rem;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-  width: 100%;
-}
-
-button[type="submit"] {
-  margin-top: 2rem;
-  padding: 0.5rem 1rem;
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background-color 0.2s ease-in-out;
-}
-
-button[type="submit"]:hover {
-  background-color: #388e3c;
+.the-login a {
+  text-decoration: none;
 }
 </style>

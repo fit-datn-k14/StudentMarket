@@ -15,7 +15,7 @@
             class="data-col"
             @click="toggleSort(index, $event)"
           >
-            <span class="btn-filter">
+            <span v-if="col.condition.type" class="btn-filter">
               <h-icon
                 class="th-filter-icon"
                 position="-1683px -560px"
@@ -41,7 +41,7 @@
       </thead>
       <tbody>
         <tr
-          class="row"
+          class="tbrow"
           v-for="(item, indexItem) in dataArray"
           :key="indexItem"
           style="height: 48px"
@@ -62,7 +62,7 @@
           >
             <h-input v-if="modEdit" v-model="item[col.dataField]"></h-input>
             <div v-if="!modEdit">
-              {{ formatData(col, item[col.dataField]) }}
+              {{ HCommon.formatData(col, item[col.dataField]) }}
             </div>
           </td>
           <td
@@ -71,6 +71,14 @@
             :class="{ action: indexItem == selectAction }"
           >
             <input
+              v-if="modDetail"
+              @click="displayDetail(item)"
+              class="btn-link btn-edit"
+              type="button"
+              value="Chi Tiết"
+            />
+            <input
+              v-else
               @click="displayEditPopupDetail(item)"
               class="btn-link btn-edit"
               type="button"
@@ -111,7 +119,7 @@
     </table>
     <div v-if="pagination" class="paging">
       <div class="paging__left">
-        Tổng số:&nbsp;<b>{{ totalRecords }}</b
+        Tổng số:&nbsp;<strong>{{ totalRecords }}</strong
         >&nbsp;bản ghi
       </div>
       <div class="paging__right">
@@ -127,8 +135,8 @@
         <h-paging
           :page-count="totalPages"
           :click-handler="pageChange"
-          :prev-text="'Trước'"
-          :next-text="'Sau'"
+          prev-text="&#10096;"
+          next-text="&#10097;"
           :container-class="'pagination'"
           v-model="pageTable.pageNumber"
         ></h-paging>
@@ -151,7 +159,7 @@ export default {
     HFilterBox,
   },
   props: {
-    modEdit: {
+    modDetail: {
       type: Boolean,
     },
     modelValue: {
@@ -404,6 +412,14 @@ export default {
      */
     displayEditPopupDetail(item) {
       this.$emit("tableFunction", "openEditPopup", item);
+    },
+
+    /**
+     * Đến trang chi tiết
+     * Author: Nguyễn Văn Huy (06/03/2023)
+     */
+    displayDetail(item) {
+      this.$emit("tableFunction", "displayDetail", item);
     },
 
     /**

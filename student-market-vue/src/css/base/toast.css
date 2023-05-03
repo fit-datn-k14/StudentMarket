@@ -1,4 +1,4 @@
-.toast {
+.toastct {
     position: fixed;
     top: 20px;
     left: 50%;
@@ -9,7 +9,7 @@
     box-shadow: 0 0 4px rgba(23, 27, 42, 0.24);
     border-radius: 4px;
     animation: show_toast 0.3s ease both;
-    z-index: 100;
+    z-index: 10000;
 }
 
 .toast__container {

@@ -66,6 +66,24 @@ namespace StudentMarket.DL
         /// CreatedBy: NVHuy(25/03/2023)
         public Object GetRecordByCode(string codeName, string code);
 
+        /// <summary>
+        /// Sinh mã nhân viên mới
+        /// </summary>
+        /// <returns>Mã mới</returns>
+        /// CreatedBy: NVHuy(19/03/2023)
+        public ServiceResult GetNewCode();
+
+        /// <summary>
+        /// Lấy dữ liệu trong DB thoả mãn điều kiện lọc
+        /// </summary>
+        /// <param name="condition">chuỗi điều kiện lọc cột</param>
+        /// <param name="keyword">từ khoá tìm kiếm</param>
+        /// <param name="fromRecord">bản ghi bắt đầu</param>
+        /// <param name="pageSize">số bản ghi</param>
+        /// <returns>Danh sách thoả mãn</returns>
+        /// CreatedBy: NVHuy (31/03/2023)
+        public ServiceResult Filter(string condition, string keyword, int fromRecord, int pageSize);
+
         #endregion
     }
 }

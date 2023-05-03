@@ -19,6 +19,7 @@ namespace StudentMarket.API
     {
         #region Field
         private IBaseBL<T> _baseBL;
+        private readonly string _uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "uploads");
         #endregion
 
         #region Constructor
@@ -31,6 +32,26 @@ namespace StudentMarket.API
         #endregion
 
         #region Method
+
+        /// <summary>
+        /// API sinh mã mới
+        /// </summary>
+        /// <returns>Mã mới</returns>
+        /// CreatedBy: NVHuy(20/03/2023)
+        [HttpGet("NewCode")]
+        public ServiceResult GetNewEmployeeCode()
+        {
+            try
+            {
+                var serviceResult = _baseBL.GetNewCode();
+                return serviceResult;
+            }
+            catch (Exception ex)
+            {
+                return new ServiceResult(ErrorCodes.Exception, ex.Message);
+            }
+        }
+
 
         /// <summary>
         /// API lấy tất cả bản ghi
@@ -47,13 +68,7 @@ namespace StudentMarket.API
             }
             catch (Exception ex)
             {
-                return new ServiceResult
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.Exception,
-                    UserMsg = Resource.UsrMsg_Exception,
-                    DevMsg = ex.Message
-                };
+                return new ServiceResult(ErrorCodes.Exception, ex.Message);
             }
         }
 
@@ -73,13 +88,7 @@ namespace StudentMarket.API
             }
             catch (Exception ex)
             {
-                return new ServiceResult
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.Exception,
-                    UserMsg = Resource.UsrMsg_Exception,
-                    DevMsg = ex.Message
-                };
+                return new ServiceResult(ErrorCodes.Exception, ex.Message);
             }
         }
 
@@ -99,13 +108,7 @@ namespace StudentMarket.API
             }
             catch (Exception ex)
             {
-                return new ServiceResult
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.Exception,
-                    UserMsg = Resource.UsrMsg_Exception,
-                    DevMsg = ex.Message
-                };
+                return new ServiceResult(ErrorCodes.Exception, ex.Message);
             }
         }
 
@@ -126,13 +129,7 @@ namespace StudentMarket.API
             }
             catch (Exception ex)
             {
-                return new ServiceResult
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.Exception,
-                    UserMsg = Resource.UsrMsg_Exception,
-                    DevMsg = ex.Message
-                };
+                return new ServiceResult(ErrorCodes.Exception, ex.Message);
             }
         }
 
@@ -152,13 +149,7 @@ namespace StudentMarket.API
             }
             catch (Exception ex)
             {
-                return new ServiceResult
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.Exception,
-                    UserMsg = Resource.UsrMsg_Exception,
-                    DevMsg = ex.Message
-                };
+                return new ServiceResult(ErrorCodes.Exception, ex.Message);
             }
         }
 
@@ -178,13 +169,26 @@ namespace StudentMarket.API
             }
             catch (Exception ex)
             {
-                return new ServiceResult
-                {
-                    Success = false,
-                    ErrorCode = ErrorCodes.Exception,
-                    UserMsg = Resource.UsrMsg_Exception,
-                    DevMsg = ex.Message
-                };
+                return new ServiceResult(ErrorCodes.Exception, ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Lọc nhiều cột
+        /// </summary>
+        /// <returns>Danh sách dữ liệu</returns>
+        /// CreatedBy: NVHuy(27/03/2023)
+        [HttpPost("Filter")]
+        public ServiceResult QueryFilter([FromBody] FilterQueryAdmin filterQuery)
+        {
+            try
+            {
+                var serviceResult = _baseBL.Filter(filterQuery);
+                return serviceResult;
+            }
+            catch (Exception ex)
+            {
+                return new ServiceResult(ErrorCodes.Exception, ex.Message);
             }
         }
 

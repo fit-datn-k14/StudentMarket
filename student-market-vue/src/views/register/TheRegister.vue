@@ -19,12 +19,14 @@
         <h-input
           ref="txtPassword"
           label="Mật khẩu"
+          type="password"
           :required="true"
           v-model="newAccount.Password"
         />
         <h-input
           ref="txtPasswordConfirm"
           label="Nhập lại mật khẩu"
+          type="password"
           :required="true"
           v-model="newAccount.PasswordConfirm"
         />
@@ -42,9 +44,11 @@
   </div>
 </template>
 <script>
+import { eventBus } from "@/js/eventbus";
 import axios from "axios";
 import { saveUserToLocalStorage } from "@/stores/localStorage";
 export default {
+  name: "TheRegister",
   data() {
     return {
       newAccount: {},
@@ -53,6 +57,28 @@ export default {
     };
   },
   methods: {
+    login(user) {
+      axios
+        .post("https://localhost:9999/api/v1/Users/Login", {
+          UserName: user.UserName,
+          Password: user.Password,
+        })
+        .then((response) => {
+          if (response.data.Success) {
+            // Lưu thông tin tài khoản vào localStorage
+            var user = response.data.Data;
+            saveUserToLocalStorage(user);
+            eventBus.emit("login");
+            // Chuyển hướng đến trang chủ
+            this.$router.push("/trang-chu");
+          } else {
+            this.errorMessage = response.data.UserMsg;
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
     /**
      * Kiểm tra dữ liệu hợp lệ
      * Author: Nguyễn Văn Huy (30/03/2023)
@@ -78,9 +104,8 @@ export default {
           .then((response) => {
             if (response.data.Success) {
               // Lưu thông tin tài khoản vào localStorage
-              saveUserToLocalStorage("user", response.data);
-              // Chuyển hướng đến trang chủ
-              this.$router.push("/trang-chu");
+              var user = response.data.Data;
+              this.login(user);
             }
           })
           .catch((error) => {

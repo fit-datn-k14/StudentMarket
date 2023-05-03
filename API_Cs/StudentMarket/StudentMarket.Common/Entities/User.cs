@@ -17,14 +17,11 @@ namespace StudentMarket.Common.Entities
         [Key]
         public Guid UserID { get; set; }
 
-        [Required(ErrorMessage = "Tên tài khoản không thể bỏ trống")]
-        [DuplicateCode(ErrorMessage = "Tên tài khoản đã tồn tại")]
         public string UserName { get; set; }
 
         [Required(ErrorMessage = "Họ tên không được bỏ trống")]
         public string FullName { get; set; }
 
-        [Required(ErrorMessage = "Mật khẩu không được bỏ trống")]
         public string Password { get; set; }
 
         public Gender? Gender { get; set; }
@@ -39,13 +36,15 @@ namespace StudentMarket.Common.Entities
 
         public Guid? LocationID { get; set; }
 
+        public string? LocationName { get; set; }
+
         public string? IdentityNumber { get; set; }
 
         public DateTime? IdentityDate { get; set; }
             
         public string? IdentityPlace { get; set; }
 
-        public string? Avatar { get; set; }
+        public Guid? Avatar { get; set; }
 
         public Role? Role { get; set; }
 

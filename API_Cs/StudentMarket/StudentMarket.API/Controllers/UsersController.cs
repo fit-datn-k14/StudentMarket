@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;    
+using Microsoft.AspNetCore.Mvc;
+using StudentMarket.API.Entities;
 using StudentMarket.BL.UserBL;
 using StudentMarket.Common;
 using StudentMarket.Common.Entities;
@@ -96,6 +98,72 @@ namespace StudentMarket.API.Controllers
                     DevMsg = ex.Message
                 };
             }
+        }
+
+        [HttpPut]
+        public async Task<ServiceResult> ChangeUserInfo([FromForm] UserDataModel userData)
+        {
+            try
+            {
+                var user = userData.User;
+                var image = userData.Image;
+                Guid avatar = new Guid();
+                if (image != null)
+                {
+                    avatar = await UploadImage(image, user.UserID);
+                    user.Avatar = avatar;
+                }
+
+                var serviceResult = _userBL.UpdateRecordByID(user,user.UserID);
+
+                if (!serviceResult.Success && image != null)
+                {
+                    DeleteAvatar(avatar);
+                }
+
+                return serviceResult;
+            }
+            catch (Exception ex)
+            {
+                return new ServiceResult
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.Exception,
+                    UserMsg = Resource.UsrMsg_Exception,
+                    DevMsg = ex.Message
+                };
+            }
+        }
+
+        private void DeleteAvatar(Guid id)
+        {
+            string imageName = id.ToString();
+            string folderPath = Path.Combine("images", "users", "avatar");
+            string filePath = Directory.GetFiles(folderPath, imageName + ".*")[0];
+            FileInfo file = new FileInfo(filePath);
+            if (file.Exists)
+            {
+                file.Delete();
+            }
+        }
+
+
+        private async Task<Guid> UploadImage(IFormFile image, Guid userId)
+        {
+            // Khởi tạo danh sách các đường dẫn ảnh
+            var avatar = Guid.NewGuid();
+
+            var folderPath = Path.Combine("images", "users", "avatar");
+            if (!Directory.Exists(folderPath))
+            {
+                Directory.CreateDirectory(folderPath);
+            }
+            var filePath = Path.Combine(folderPath, avatar + Path.GetExtension(image.FileName));
+            using (var fileStream = new FileStream(filePath, FileMode.Create))
+            {
+                await image.CopyToAsync(fileStream);
+            }
+            return avatar;
         }
 
         #endregion

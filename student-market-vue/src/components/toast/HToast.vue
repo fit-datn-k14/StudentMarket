@@ -2,7 +2,7 @@
   <div
     ref="toast"
     v-show="isShowToast"
-    class="toast"
+    class="toastct"
     @animationend="onAnimationEnd"
   >
     <div :class="`toast--${type}`">

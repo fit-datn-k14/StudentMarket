@@ -16,7 +16,7 @@
         /// <summary>
         /// Kiểm duyệt viên
         /// </summary>
-        Checker = 1,
+        Censor = 1,
 
         /// <summary>
         /// Người dùng thường

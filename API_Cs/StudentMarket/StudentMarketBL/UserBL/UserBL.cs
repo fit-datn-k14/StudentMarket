@@ -76,7 +76,7 @@ namespace StudentMarket.BL.UserBL
                 var user = (User)serviceResult.Data;
                 if(user.Password == oldPassword)
                 {
-                    return _userDL.ChangePassword(id, newPassword);
+                    return _userDL.ChangePassword(id, account.NewPassword);
                 }
                 else
                 {
@@ -97,8 +97,6 @@ namespace StudentMarket.BL.UserBL
                     UserMsg = Resource.UsrMsg_NotFoundRecord
                 };
             }
-
-            return new ServiceResult();
         }
 
         public string EncodeToSHA256(string input)

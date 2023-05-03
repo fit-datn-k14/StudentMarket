@@ -92,3 +92,24 @@ input:hover~.error-message {
 input:hover~.error-message {
     display: block;
 }
+
+.form-group-row textarea {
+    width: 100%;
+}
+
+textarea {
+    width: 100%;
+    resize: none;
+    border-radius: 3px;
+    border: 1px solid #e0e0e0;
+    font-family: inherit;
+    display: block;
+    padding: 8px;
+    color: #000;
+    line-height: 28px;
+}
+
+textarea:focus {
+    outline: unset;
+    border-color: var(--primary-color);
+}

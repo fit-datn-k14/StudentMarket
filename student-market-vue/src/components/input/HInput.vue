@@ -4,7 +4,9 @@
     <label v-if="label" for="hinput" :title="title"
       >{{ label }}<span v-if="required" class="color-red">&nbsp;*</span></label
     >
+    <textarea v-if="type == 'textarea'"></textarea>
     <input
+      v-else
       ref="hinput"
       :type="type"
       autocomplete="off"

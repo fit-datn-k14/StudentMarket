@@ -31,6 +31,10 @@ namespace StudentMarket.Common.Entities
         [Required(ErrorMessage = "Bài đăng không được bỏ trống")]
         public Guid PostID { get; set; }
 
+        public Guid? Avatar { get; set; }
+
+        public string? FullName { get; set; }
+
         #endregion
     }
 }

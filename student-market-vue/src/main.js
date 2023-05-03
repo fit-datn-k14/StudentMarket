@@ -9,8 +9,11 @@ import jQuery from 'jquery'
 global.jQuery = jQuery
 var $ = jQuery
 window.$ = $
-import HCommon from "./js/common.js"
-import HEnum from "./js/enum"
+import HCommon from "./js/base/common.js"
+import HConfig from "./js/base/config"
+import HEnum from "./js/base/enum"
+import HResource from "./js/base/resource"
+
 import 'popper.js'
 import HButton from './components/button/HButton.vue'
 import HCheckbox from './components/checkbox/HCheckbox.vue'
@@ -18,7 +21,6 @@ import HInput from './components/input/HInput.vue'
 import HIcon from './components/icon/HIcon.vue'
 import HCombobox from './components/combobox/HCombobox.vue'
 import HTable from './components/table/HTable.vue'
-import HGridTree from './components/table/HGridTree.vue'
 import HPopup from './components/popup/HPopup.vue'
 import HDialog from './components/dialog/HDialog.vue'
 import HDatePicker from './components/datepicker/HDatePicker.vue'
@@ -27,7 +29,7 @@ import Paginate from "vuejs-paginate-next";
 import PostList from "@/components/postlist/HPostList.vue";
 import HToast from "@/components/toast/HToast.vue"
 import axios from 'axios';
-import { keywordStore } from '@/stores/keyword'
+import { useKeyword } from '@/stores/keyword'
 const store = createPinia()
 
 
@@ -36,12 +38,14 @@ const app = createApp(App)
 app.use(createPinia());
 
 app.use(store)
-app.provide('keywordStore', keywordStore)
+app.provide('keywordStore', useKeyword)
 
 app.use(router)
 app.use(vClickOutside)
 app.config.globalProperties.HCommon = HCommon;
+app.config.globalProperties.HConfig = HConfig;
 app.config.globalProperties.HEnum = HEnum;
+app.config.globalProperties.HResource = HResource;
 app.config.globalProperties.axios = axios;
 
 app.component('HButton', HButton)
@@ -57,6 +61,5 @@ app.component('HPaging', Paginate)
 app.component('HPostList', PostList)
 app.component('HPopup', HPopup)
 app.component('HTable', HTable)
-app.component('HGridTree', HGridTree)
 
 app.mount('#app')

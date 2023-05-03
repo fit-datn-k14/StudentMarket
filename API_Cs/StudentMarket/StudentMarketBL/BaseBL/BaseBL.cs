@@ -12,6 +12,9 @@ using System.ComponentModel.DataAnnotations;
 using StudentMarket.Common;
 using StudentMarket.Common.Attributes;
 using System.Reflection;
+using Dapper;
+using Misa.Web01.TCDN.Common.Entities.DTO;
+using Misa.Web01.TCDN.Common.Enums;
 
 namespace StudentMarket.BL
 {
@@ -46,6 +49,16 @@ namespace StudentMarket.BL
         public ServiceResult GetAllRecords()
         {
             return _baseDL.GetAllRecords();
+        }
+
+        /// <summary>
+        /// Lấy mã mới
+        /// </summary>
+        /// <returns>Mã mới</returns>
+        /// CreatedBy: NVHuy(18/03/2023)
+        public ServiceResult GetNewCode()
+        {
+            return _baseDL.GetNewCode();
         }
 
         /// <summary>
@@ -226,6 +239,122 @@ namespace StudentMarket.BL
         {
             return new List<string>();
         }
+
+        /// <summary>
+        /// Lấy dữ liệu để Xuất Excel
+        /// </summary>
+        /// <param name="keyword"></param>
+        /// <returns></returns>
+        /// CreatedBy: NVHuy(26/03/2023)
+        //public IEnumerable<T> GetDataForExcel(FilterQuery filterQuery)
+        //{
+        //    try
+        //    {
+        //        var parameters = new DynamicParameters();
+        //        var stringQuery = new StringBuilder("SELECT * FROM View_Employees ");
+        //        stringQuery.Append(BuildStringQuery(filterQuery));
+        //        return _employeeDL.GetDataForExcel(stringQuery.ToString());
+        //    }
+        //    catch
+        //    {
+        //        throw;
+        //    }
+
+        //}
+
+        /// <summary>
+        /// Lọc dữ liệu
+        /// </summary>
+        /// <param name="filterQuery"></param>
+        /// <returns></returns>
+        /// CreatedBy: NVHuy(27/03/2023)
+        public ServiceResult Filter(FilterQueryAdmin filterQuery)
+        {
+            try
+            {
+                string stringQuery = BuildStringQuery(filterQuery);
+
+                int fromRecord = (filterQuery.pageNumber - 1) * filterQuery.pageSize;
+
+                return _baseDL.Filter(stringQuery.ToString(),filterQuery.keyword, fromRecord, filterQuery.pageSize);
+            }
+            catch (Exception ex)
+            {
+                return new ServiceResult(ErrorCodes.Exception,ex.Message);
+            }
+
+        }
+
+        /// <summary>
+        /// Tạo chuỗi query từ thông tin filter
+        /// </summary>
+        /// <param name="filterQuery"></param>
+        /// <returns>chuỗi query</returns>
+        /// CreatedBy: NVHuy(02/04/2023)
+        public string BuildStringQuery(FilterQueryAdmin filterQuery)
+        {
+            var filterConditions = filterQuery.filterConditions;
+            var sortCondition = filterQuery.sortCondition;
+            var stringQuery = new StringBuilder("");
+            if (filterConditions != null && filterConditions.Count > 0)
+            {
+                for (int i = 0; i < filterConditions.Count; i++)
+                {
+                    stringQuery.Append(" AND ");
+                    var condition = filterConditions[i];
+                    var conditionConvertedSQL = ConvertConditionToSql(condition);
+
+                    stringQuery.AppendFormat(conditionConvertedSQL);
+                }
+            }
+
+            if (sortCondition != null && sortCondition.Field != null && sortCondition.Option != null)
+            {
+                string stringSort = (sortCondition.Option == OptionSort.Ascending) ? $" ORDER BY {sortCondition.Field}" : $" ORDER BY {sortCondition.Field} DESC ";
+                stringQuery.Append(stringSort);
+            }
+
+            return stringQuery.ToString();
+        }
+
+        /// <summary>
+        /// Chuyển đổi điều kiện thành chuỗi SQL
+        /// </summary>
+        /// <param name="condition"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        /// CreatedBy: NVHuy(29/03/2023)
+        public string ConvertConditionToSql(FilterCondition condition)
+        {
+            string field = condition.Field;
+            string value = condition.Value;
+            switch (condition.Operator)
+            {
+                case "contains":
+                    return field + $" LIKE '%{value}%'";
+                case "startWith":
+                    return field + $" LIKE '{value}%'";
+                case "endWith":
+                    return field + $" LIKE '%{value}'";
+                case "smaller":
+                    return field + $" < '{value}'";
+                case "smallerOrEqual":
+                    return field + $" <= '{value}'";
+                case "bigger":
+                    return field + $" > '{value}'";
+                case "biggerOrEqual":
+                    return field + $" >= '{value}'";
+                case "equal":
+                    return field + $" = '{value}'";
+                case "isNull":
+                    return field + $" IS NULL";
+                case "isNotNull":
+                    return field + $" IS NOT NULL";
+                default:
+                    return "";
+            }
+        }
+
 
         #endregion
     }

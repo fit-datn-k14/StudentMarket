@@ -1,3 +1,12 @@
+@import url(./base/radiobutton.css);
+
+
+/* Components */
+@import url(./base/radiobutton.css);
+@import url(./components/dropdownlist.css);
+@import url(./base/checkbox.css);
+@import url(./base/toast.css);
+
 @font-face {
     font-family: Roboto;
     src: url(../assets/fonts/Roboto-Regular.woff2);
@@ -21,12 +30,31 @@
     box-sizing: border-box;
 }
 
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+/* Handle */
+/* Handle on hover */
+::-webkit-scrollbar-thumb,
+::-webkit-scrollbar-thumb:hover {
+    background: #cdd3d6;
+    border-radius: 4px;
+}
+
 ul {
     list-style: none;
+    margin: 0;
 }
 
 a {
-    text-decoration: none;
+    text-decoration: unset !important;
 }
 
 body {
@@ -45,4 +73,15 @@ input.ng-touched.ng-invalid {
 
 .color-red {
     color: red !important;
+}
+
+.bgshadow {
+    display: block;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: #00000050;
+    z-index: 10;
 }

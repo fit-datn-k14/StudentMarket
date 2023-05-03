@@ -1,7 +1,7 @@
 <template>
   <div>
-    <div class="shadow"></div>
-    <div class="h-dialog-wrapper">
+    <div class="bgshadow"></div>
+    <div class="h-dialog-wrapper shadow">
       <div v-if="title" class="h-dialog__title">
         {{ title }}
       </div>

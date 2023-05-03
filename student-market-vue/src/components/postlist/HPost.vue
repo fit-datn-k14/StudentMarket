@@ -1,11 +1,14 @@
 <template>
   <router-link
-    :to="'/post/' + post.PostCode"
+    :to="'/post/' + post.PostID"
     class="d-flex align-items-center post"
     :class="displayType"
   >
     <div class="post__left">
-      <img class="post__img" src="../../assets/img/SV_Logo.jpg" />
+      <img
+        class="post__img"
+        :src="URL + `Images/posts/${post.PostID}/${post.ImageName}`"
+      />
       <div>{{ post.NumberOfPhotos }} ảnh</div>
     </div>
     <div class="post__right">
@@ -54,6 +57,16 @@ export default {
       required: false,
       default: "type-1",
     },
+  },
+  methods: {
+    setDefaultImage(event) {
+      event.target.src = this.defaultImage;
+    },
+  },
+  data() {
+    return {
+      URL: "https://localhost:9999/api/v1/",
+    };
   },
 };
 </script>

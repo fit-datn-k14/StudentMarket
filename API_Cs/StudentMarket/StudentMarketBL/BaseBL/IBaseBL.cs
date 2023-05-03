@@ -16,6 +16,13 @@ namespace StudentMarket.BL
         #region Method
 
         /// <summary>
+        /// Lấy mã mới
+        /// </summary>
+        /// <returns>Mã mới</returns>
+        /// CreatedBy: NVHuy(18/03/2023)
+        public ServiceResult GetNewCode();
+
+        /// <summary>
         /// API thêm mới bản ghi
         /// </summary>
         /// <param name="record"></param>
@@ -85,6 +92,16 @@ namespace StudentMarket.BL
         /// <returns></returns>
         /// CreatedBy: NVHuy (27/03/2023)
         public List<string> ValidateRequestDataCustom(T record);
+
+        /// <summary>
+        /// Lọc dữ liệu
+        /// </summary>
+        /// <param name="filterQuery"></param>
+        /// <returns></returns>
+        /// CreatedBy: NVHuy(27/03/2023)
+        public ServiceResult Filter(FilterQueryAdmin filterQuery);
+
+
 
         #endregion
     }

@@ -23,26 +23,33 @@ namespace StudentMarket.Common.Entities
         [Key]
         public Guid PostID { get; set; }
 
-        [Required(ErrorMessage = "Mã bài đăng không được bỏ trống")]
         [DuplicateCode(ErrorMessage = "Mã bài đăng đã tồn tại")]
-        public string PostCode { get; set; }
+        public string? PostCode { get; set; }
 
         [Required(ErrorMessage = "Tiêu đề không được bỏ trống")]
         public string Title { get; set; }
 
-        public string Describe { get; set; }
+        public string PostDescribe { get; set; }
 
-        public Approved Approved { get; set; } = Approved.Approved;
+        public Approved Approved { get; set; } = Approved.UnApproved;
 
         [Required(ErrorMessage = "Người đăng bài không được bỏ trống")]
         public Guid UserID { get; set; }
+        public string? FullName { get; set; }
 
         [Required(ErrorMessage = "Danh mục sản phẩm không được bỏ trống")]
         public Guid CategoryID { get; set; }
+        public string? CategoryName { get; set; }
 
         public Guid? LocationID { get; set; }
 
         public string? LocationName { get; set; }
+        public string? Address { get; set; }
+        public decimal? Price { get; set; }
+
+        public Guid? ImageName { get; set; }
+
+        public List<Guid> ListImages { get; set; }
 
         #endregion
     }

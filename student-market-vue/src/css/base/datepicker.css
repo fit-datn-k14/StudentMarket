@@ -27,6 +27,7 @@ input:hover~.error-message-date {
 }
 
 .datepicker-default {
+    justify-content: start;
     position: relative;
     font-style: italic;
     text-transform: uppercase;

@@ -20,6 +20,12 @@
                 <div class="arrow"></div>
               </router-link>
             </li>
+            <li v-if="censor">
+              <router-link to="/admin" class="link">
+                <div class="text">Admin</div>
+                <div class="arrow"></div>
+              </router-link>
+            </li>
           </ul>
         </div>
         <div class="searchbox">
@@ -36,9 +42,9 @@
         <div class="login-group me-4 d-flex align-items-center">
           <div class="all-btn d-flex align-items-center">
             <router-link
-              to="/"
+              to="/tin-nhan"
               class="favorite-post-link"
-              title="Danh sách tin yêu thích"
+              title="Tin nhắn"
             >
               <i class="header-icon fa-sharp fa-solid fa-comment"></i>
             </router-link>
@@ -51,15 +57,6 @@
             </router-link>
 
             <div><i class="bell-icon fa-solid fa-bell header-icon"></i></div>
-            <router-link to="/dang-nhap" class="link">
-              <div class="text">Đăng nhập</div>
-              <div class="arrow"></div>
-            </router-link>
-            <span class="line"></span>
-            <router-link to="/dang-ky" class="link">
-              <div class="text">Đăng ký</div>
-              <div class="arrow"></div>
-            </router-link>
 
             <router-link to="/dang-tin">
               <HButton
@@ -70,6 +67,35 @@
                 :disabled="false"
               />
             </router-link>
+            <router-link v-if="!user" to="/dang-nhap" class="link">
+              <div class="text">Đăng nhập</div>
+              <div class="arrow"></div>
+            </router-link>
+            <span v-if="!user" class="line"></span>
+            <router-link v-if="!user" to="/dang-ky" class="link">
+              <div class="text">Đăng ký</div>
+              <div class="arrow"></div>
+            </router-link>
+            <div
+              v-else
+              class="header__userinfo"
+              @click="showDropdown = !showDropdown"
+            >
+              <img
+                class="theheader__avatar"
+                :src="URL + `Images/users/avatar/${user.Avatar}`"
+              />
+              <span>{{ user.FullName }}</span>
+              <div v-show="showDropdown" class="header__dropdown">
+                <router-link to="/cai-dat-tai-khoan" class="link">
+                  <div class="text">Cài Đặt Tài Khoản</div>
+                </router-link>
+                <router-link to="/doi-mat-khau" class="link">
+                  <div class="text">Đổi mật khẩu</div>
+                </router-link>
+                <HButton type="btn-link" value="Đăng Xuất" @click="logout" />
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -78,19 +104,45 @@
 </template>
   
   <script>
+import { isCensor } from "../stores/utils.js";
 import { eventBus } from "@/js/eventbus";
+import {
+  getUserFromLocalStorage,
+  removeUserFromLocalStorage,
+} from "@/stores/localStorage.js";
+import HConfig from "@/js/base/config.js";
 export default {
   name: "TheHeader",
+  created() {
+    this.setUser();
+  },
   methods: {
     onSearch() {
       eventBus.emit("search", this.txtSearch);
       this.$router.push("/trang-chu");
     },
+    logout() {
+      removeUserFromLocalStorage();
+      this.setUser();
+    },
+    setUser() {
+      this.user = getUserFromLocalStorage();
+      this.censor = isCensor();
+    },
+  },
+  mounted() {
+    eventBus.on("login", () => {
+      this.setUser();
+    });
   },
   data() {
     return {
+      URL: HConfig.URL,
       showDropdown: false,
       txtSearch: "",
+      censor: false,
+      user: {},
+      userInfo: {},
       headerList: [
         {
           link: "/trang-chu",
@@ -105,7 +157,7 @@ export default {
         {
           link: "/quan-ly-tin-dang",
           icon: "",
-          title: "Quản Lý Tin Đăng",
+          title: "Tin Của Tôi",
         },
       ],
     };
@@ -190,6 +242,7 @@ div.text {
   padding: 8px 11px;
   display: block;
   font-weight: bold;
+  border: 1px solid transparent;
 }
 
 .login-group a:hover {
@@ -217,11 +270,11 @@ div.text {
   margin: 15px 0;
 }
 .header-box .searchbox {
+  margin: 0 28px;
   width: 460px;
 }
 .searchbox {
   position: relative;
-  margin: 0 28px;
   max-width: 720px;
   flex-grow: 1;
 }
@@ -241,6 +294,55 @@ div:has(.bell-icon):hover bell-icon {
 }
 .bell-icon {
   padding: 8px;
+}
+
+.header__userinfo {
+  display: flex;
+  column-gap: 8px;
+  align-items: center;
+  border: 1px solid var(--border-color);
+  padding: 2px;
+  border-radius: 20px;
+  position: relative;
+  cursor: pointer;
+}
+
+.header__userinfo img {
+  width: 36px;
+  height: 36px;
+  border-radius: 18px;
+}
+
+.header__userinfo span {
+  white-space: nowrap;
+  overflow: hidden;
+  font-size: 16px;
+  padding-right: 8px;
+}
+
+.header__dropdown {
+  position: absolute;
+  width: 100%;
+  border-radius: 4px;
+  right: 0;
+  top: 42px;
+  background-color: #fff;
+  border: 1px solid var(--border-color);
+}
+
+.header__dropdown input {
+  font-weight: bold;
+  text-decoration: unset;
+  padding: 8px 11px;
+}
+
+.header__dropdown input:hover {
+}
+
+.header__dropdown > div:hover input,
+.header__dropdown > a:hover {
+  background-color: #fff;
+  color: var(--primary-color);
 }
 </style>
   

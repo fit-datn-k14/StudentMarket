@@ -33,6 +33,7 @@ export default {
 
 <style scoped>
 .footer {
+  height: 240px;
   background-color: #f8f9fa;
   padding: 50px 0;
 }

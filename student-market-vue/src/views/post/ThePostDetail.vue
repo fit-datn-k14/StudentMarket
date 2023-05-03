@@ -4,74 +4,336 @@
       <div class="row">
         <div class="col-md-5">
           <div class="single-product-img">
-            <img src="../../assets/img/SV_Logo.jpg" alt="" />
+            <img
+              class="ppd__img border border-dark"
+              :src="URL + `Images/posts/${id}/${ImageID}`"
+            />
+            <div class="imglist">
+              <img
+                v-for="(imgID, indexImg) in Post.ListImages"
+                :key="indexImg"
+                :src="URL + `Images/posts/${id}/${imgID}`"
+                @click="ImageID = imgID"
+              />
+            </div>
           </div>
         </div>
         <div class="col-md-7">
           <div class="single-product-content">
-            <h3>{{ title }}</h3>
-            <p class="single-product-pricing">
-              <span>Per Kg</span> {{ price }}
+            <h3>{{ Post.Title }}</h3>
+            <p v-if="Post.Price" class="single-product-pricing">
+              {{ Post.Price }} đ
             </p>
-            <p>{{ description }}</p>
-            <div class="single-product-form">
-              <form>
-                <input type="number" placeholder="0" v-model="quantity" />
-              </form>
-              <button class="cart-btn" @click="addToCart">
-                <i class="fas fa-shopping-cart"></i> Add to Cart
-              </button>
+            <p v-else class="single-product-pricing">Liên hệ</p>
+            <p class="single-product-categories">
+              <strong>Danh Mục: </strong>{{ Post.CategoryName }}
+            </p>
+            <p v-if="Post.Address" class="single-product-categories">
+              <strong>Địa Chỉ: </strong>{{ Post.Address }}
+            </p>
+            <strong>Chi Tiết Sản Phẩm:</strong>
+            <p v-if="Post.PostDescribe" class="single-product-describe">
+              {{ Post.PostDescribe }}
+            </p>
+            <p v-else class="single-product-describe">Không có mô tả</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="container tpd__seller">
+      <div>
+        <img
+          class="seller__avatar border border-dark"
+          :src="URL + `Images/users/avatar/${this.Seller.ImageName}`"
+        />
+        <div>
+          <div class="seller__name">
+            {{ Seller.FullName }}
+          </div>
+          <div class="btn-mess">
+            <router-link :to="`/tin-nhan/${Post.UserID}}`"
+              >Nhắn Tin</router-link
+            >
+          </div>
+        </div>
+      </div>
+      <div>
+        <p class="">
+          <strong>Số Điện Thoại: </strong><span>{{ Seller.PhoneNumber }}</span>
+        </p>
+        <p class="">
+          <strong>Email: </strong><span>{{ Seller.Email }}</span>
+        </p>
+        <p class="">
+          <strong>Địa Chỉ: </strong><span>{{ Seller.LocationName }}</span>
+        </p>
+      </div>
+    </div>
+    <div class="container tpd__comments">
+      <div>
+        <h2>Bình luận</h2>
+        <div class="listcomments">
+          <div v-for="comment in Comments" :key="comment.CommentID">
+            <img
+              class="user__avatar border border-dark"
+              :src="URL + `Images/users/avatar/${comment.Avatar}`"
+            />
+            <div>
+              <div class="cmt__fullname">
+                {{ comment.FullName }}
+                <span class="comment__time"
+                  >&nbsp;{{ HCommon.postTime(comment.CreatedDate) }}&nbsp;</span
+                >
+              </div>
+              <div class="cmt__content">{{ comment.Content }}</div>
             </div>
-            <div><strong>Categories: </strong>{{ categories }}</div>
-            <h4>Share:</h4>
-            <ul class="product-share">
-              <li>
-                <a href=""><i class="fab fa-facebook-f"></i></a>
-              </li>
-              <li>
-                <a href=""><i class="fab fa-twitter"></i></a>
-              </li>
-              <li>
-                <a href=""><i class="fab fa-google-plus-g"></i></a>
-              </li>
-              <li>
-                <a href=""><i class="fab fa-linkedin"></i></a>
-              </li>
-            </ul>
+          </div>
+        </div>
+        <div class="addCommentBox">
+          <img
+            class="user__avatar border border-dark"
+            :src="URL + `Images/users/avatar/${this.User.ImageName}`"
+          />
+          <h-input
+            ref="txtNewComment"
+            type="textarea"
+            v-model="newComment.Content"
+            @keyup.enter="addComment"
+            placeholder="Viết bình luận..."
+          />
+          <div class="icon-send" @click="addComment">
+            <i class="fa-solid fa-location-arrow"></i>
           </div>
         </div>
       </div>
     </div>
   </div>
+  <h-loading v-if="isLoading"></h-loading>
 </template>
   <script>
+import HConfig from "@/js/base/config";
+import HInput from "@/components/input/HInput.vue";
+import { getUserFromLocalStorage } from "@/stores/localStorage.js";
 export default {
+  components: { HInput },
   name: "ThePostDetail",
-  data() {
-    return {
-      title: "Green apples have polyphenols",
-      image: "@/assets/img/SV_Logo.jpg",
-      price: 50,
-      description:
-        "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dicta sint dignissimos, rem commodi cum voluptatem quae reprehenderit repudiandae ea tempora incidunt ipsa, quisquam animi perferendis eos eum modi! Tempora, earum.",
-      categories: "Fruits, Organic",
-      quantity: 0,
-    };
+  props: {
+    id: {
+      type: String,
+      required: true,
+    },
+  },
+  async created() {
+    this.User = getUserFromLocalStorage();
+    await this.loadData();
+    this.ImageID = this.Post.ImageName;
+    await this.getSeller();
+    await this.getComments();
+    this.newComment.PostID = this.id;
+    this.newComment.UserID = this.User.UserID;
   },
   methods: {
-    addToCart() {
-      // Implement addToCart functionality here
+    addComment() {
+      if (this.newComment.Content) {
+        var url = HConfig.API.Comments;
+        this.axios
+          .post(url, this.newComment)
+          .then((response) => {
+            if (response.data.Success) {
+              this.newComment.Content = null;
+              this.getComments();
+            }
+          })
+          .catch((error) => {
+            this.errorMessage = error;
+          });
+      }
     },
+
+    async loadData() {
+      this.isLoading = true;
+      try {
+        var url = this.HConfig.API.Posts + this.id;
+        await this.axios.get(url).then((response) => {
+          if (response.data.Success) {
+            this.Post = response.data.Data;
+            this.isLoading = false;
+          } else {
+            this.errorMessage = response.data.UserMsg;
+            this.dialogType = this.HEnum.DialogType.Error;
+          }
+        });
+      } catch (error) {
+        this.errorMessage = this.HResource.Text.MessageException;
+        this.dialogType = this.HEnum.DialogType.Error;
+      }
+    },
+    async getSeller() {
+      this.isLoading = true;
+      try {
+        var url = this.HConfig.API.Users + this.Post.UserID;
+        await this.axios.get(url).then((response) => {
+          if (response.data.Success) {
+            this.Seller = response.data.Data;
+            this.isLoading = false;
+          } else {
+            this.errorMessage = response.data.UserMsg;
+            this.dialogType = this.HEnum.DialogType.Error;
+          }
+        });
+      } catch (error) {
+        this.errorMessage = this.HResource.Text.MessageException;
+        this.dialogType = this.HEnum.DialogType.Error;
+      }
+    },
+    async getComments() {
+      this.isLoading = true;
+      try {
+        var url = this.HConfig.API.Comments + this.Post.PostID;
+        await this.axios.get(url).then((response) => {
+          if (response.data.Success) {
+            this.Comments = response.data.Data;
+            this.isLoading = false;
+          } else {
+            this.errorMessage = response.data.UserMsg;
+            this.dialogType = this.HEnum.DialogType.Error;
+          }
+        });
+      } catch (error) {
+        this.errorMessage = this.HResource.Text.MessageException;
+        this.dialogType = this.HEnum.DialogType.Error;
+      }
+    },
+  },
+
+  data() {
+    return {
+      URL: HConfig.URL,
+      User: {},
+      Post: {},
+      Seller: {},
+      Comments: [],
+      newComment: {},
+      ImageID: null,
+      isLoading: true,
+    };
   },
 };
 </script>
 
 <style scoped>
+.addCommentBox {
+  display: flex;
+  padding-top: 12px;
+}
+
+.listcomments {
+  display: flex;
+  flex-direction: column;
+  row-gap: 8px;
+}
+.listcomments > div {
+  display: flex;
+  padding: 12px 0;
+  align-items: start;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.cmt__fullname {
+  font-weight: bold;
+}
+
+.comment__time {
+  font-weight: normal;
+}
+
+.tpd__comments img {
+  width: 40px;
+  height: 40px;
+  border-radius: 20px;
+  margin-right: 12px;
+}
+.addCommentBox {
+  position: relative;
+}
+.addCommentBox > .icon-send {
+  position: absolute;
+  right: 8px;
+  bottom: 0;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+.addCommentBox i {
+  font-size: 32px;
+  text-align: center;
+  rotate: 45deg;
+  color: var(--primary-color);
+}
+.tpd__seller {
+  height: 132px;
+  display: flex;
+  column-gap: 16px;
+}
+.tpd__seller > div:first-child {
+  display: flex;
+  align-items: center;
+  column-gap: 8px;
+  width: 40%;
+}
+.tpd__seller > div:last-child {
+  display: flex;
+  align-items: center;
+  column-gap: 20px;
+  width: 40%;
+}
+
+.tpd__seller span {
+  display: block;
+}
+
+.seller__name {
+  font-size: 24px;
+  font-weight: 600;
+}
+.seller__avatar {
+  height: 84px;
+  width: 84px;
+  border-radius: 42px;
+}
+.ppd__img {
+  width: 100%;
+}
+
+.single-product-describe {
+  min-height: 180px;
+}
+.imglist {
+  display: flex;
+  column-gap: 2%;
+  margin-top: 16px;
+}
+.imglist img {
+  width: 15%;
+  box-sizing: border-box;
+  border: 1px solid var(--border-color);
+}
+
 .single-product {
   padding: 70px 0;
 }
 
-.single-product-img img {
+.single-product > div {
+  background-color: #fff;
+  padding: 24px;
+  border-radius: 4px;
+  margin-bottom: 12px;
+}
+
+.single-product-img {
   width: 100%;
 }
 
@@ -89,36 +351,32 @@ export default {
   font-size: 24px;
   font-weight: 600;
   margin-bottom: 30px;
+  color: var(--red-color);
 }
 
 .single-product-pricing span {
   font-size: 18px;
-  font-weight: 400;
   margin-right: 10px;
 }
 
 .single-product-content p {
   font-size: 18px;
-  font-weight: 400;
   line-height: 28px;
   margin-bottom: 30px;
 }
 
-.single-product-form {
+.btn-mess {
+  background-color: var(--primary-color);
+  width: 96px;
+  height: 32px;
   display: flex;
+  justify-content: center;
   align-items: center;
-  margin-bottom: 30px;
+  border-radius: 16px;
 }
 
-.single-product-form input[type="number"] {
-  width: 70px;
-  height: 40px;
-  font-size: 18px;
-  font-weight: 400;
-  border: 1px solid #ddd;
-  border-radius: 3px;
-  text-align: center;
-  margin-right: 20px;
+.btn-mess a {
+  color: #fff;
 }
 
 .cart-btn {
@@ -139,33 +397,16 @@ export default {
 
 .single-product-content strong {
   font-weight: 700;
+  font-size: 18px;
+}
+
+.single-product-categories {
 }
 
 .product-share {
   display: flex;
   align-items: center;
   margin-top: 40px;
-}
-
-.product-share li {
-  margin-right: 20px;
-}
-
-.product-share a {
-  display: inline-block;
-  width: 40px;
-  height: 40px;
-  line-height: 40px;
-  text-align: center;
-  background-color: #eee;
-  color: #333;
-  border-radius: 50%;
-  transition: all 0.3s ease;
-}
-
-.product-share a:hover {
-  background-color: #000;
-  color: #fff;
 }
 
 body {

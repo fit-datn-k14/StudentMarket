@@ -37,7 +37,7 @@
     <h-date-picker v-if="conditionType == 'date'" v-model="txtFilter" />
     <h-combobox
       v-if="conditionType == 'select'"
-      :data="dataComboboxGender"
+      :data="dataCombobox"
       propText="text"
       propValue="value"
       v-model="txtFilter"
@@ -58,10 +58,6 @@ export default {
     position: {
       type: Object,
       required: true,
-    },
-    title: {
-      type: String,
-      required: false,
     },
   },
   created() {
@@ -91,9 +87,24 @@ export default {
       this.isShowFilter = true;
       this.column = this.modelValue;
       this.titleFilter = this.modelValue["title"];
+      this.formatType = this.modelValue["formatType"];
+      this.buildDataCombobox();
       this.conditionType = this.modelValue.condition.type;
       this.operatorValue = this.modelValue.condition.operator;
       this.txtFilter = this.modelValue.condition.conditionValue;
+    },
+    buildDataCombobox() {
+      switch (this.formatType) {
+        case "gender":
+          this.dataCombobox = this.dataComboboxGender;
+          break;
+        case "approved":
+          this.dataCombobox = this.dataComboboxApproved;
+          break;
+        default:
+          this.dataCombobox = this.dataComboboxGender;
+      }
+      console.log(this.dataCombobox);
     },
     /**
      * Thực hiện lọc
@@ -129,7 +140,9 @@ export default {
     onClickUnfiltered() {
       if (this.column.condition.conditionValue != null) {
         this.column.condition.conditionValue = null;
-        this.column.condition.operator = this.optionsOperator[0];
+        if (this.optionsOperator) {
+          this.column.condition.operator = this.optionsOperator[0];
+        }
         this.isShowFilter = false;
         this.$emit("onClickFilter");
       } else {
@@ -173,14 +186,21 @@ export default {
   },
   data() {
     return {
+      dataCombobox: [],
       dataComboboxGender: [
         { text: "Nữ", value: "0" },
         { text: "Nam", value: "1" },
         { text: "Khác", value: "2" },
       ],
+      dataComboboxApproved: [
+        { text: "Chưa duyệt", value: "0" },
+        { text: "Đã duyệt", value: "1" },
+        { text: "Từ chối", value: "2" },
+      ],
       allowCloseFilterBox: true,
       isShowOptionsOperator: false,
       titleFilter: "",
+      formatType: "",
       operatorValue: "",
       selectedColumn: -1,
       conditionType: "",

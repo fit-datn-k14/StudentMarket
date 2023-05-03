@@ -41,7 +41,7 @@ namespace StudentMarket.Common.Entities.DTO
 
         /// <summary>
         /// Số bản ghi trên 1 trang
-        /// </summary>
+        /// </summary>  
         public int PageSize { get; set; } = 20;
 
         #endregion

@@ -36,6 +36,24 @@ namespace StudentMarket.Common.Entities.DTO
         /// </summary>
         public object? Data { get; set; }
 
+        public ServiceResult() { }
+
+        /// <summary>
+        /// Khởi tạo kết quả trả về ngoại lệ
+        /// </summary>
+        /// <param name="errorCodes"></param>
+        /// <param name="devMsg"></param>
+        public ServiceResult(ErrorCodes errorCodes, object? devMsg)
+        {
+            if (errorCodes == ErrorCodes.Exception)
+            {
+                Success = false;
+                ErrorCode = ErrorCodes.Exception;
+                UserMsg = Resource.UsrMsg_Exception;
+                DevMsg = devMsg;
+            }
+        }
+
         #endregion
     }
 }

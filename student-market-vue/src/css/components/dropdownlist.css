@@ -1,0 +1,43 @@
+.dropdownlist {
+    border: 1px solid #fff;
+    animation: showSelect step-end 0.3s;
+    box-sizing: border-box;
+    box-shadow: 0 0 4px rgba(23, 27, 42, 0.24);
+    background-color: #fff;
+    padding: 0;
+}
+
+.dropdownlist ul li {
+    list-style: none;
+    height: 36px;
+    font-size: 14px;
+    line-height: 36px;
+}
+
+.dropdownlist ul {
+    padding: 0;
+    margin: 0;
+}
+
+.dropdownlist ul li:hover {
+    background-color: #2d9e1c;
+    color: #fff;
+    cursor: pointer;
+}
+
+.dropdownlist input {
+    width: 100%;
+    text-align: left;
+    height: 32px;
+    text-decoration: none;
+}
+
+.dropdownlist-btn {
+    width: 20px;
+    height: 20px;
+}
+
+.dropdownlist .btn-link:hover {
+    color: #fff;
+    opacity: 1;
+}

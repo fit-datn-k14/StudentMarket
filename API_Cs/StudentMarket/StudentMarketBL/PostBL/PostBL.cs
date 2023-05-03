@@ -1,5 +1,9 @@
-﻿using StudentMarket.Common.Entities;
+﻿using StudentMarket.BL.UserBL;
+using StudentMarket.Common;
+using StudentMarket.Common.Entities;
 using StudentMarket.Common.Entities.DTO;
+using StudentMarket.DL.CategoryDL;
+using StudentMarket.DL.LocationDL;
 using StudentMarket.DL.PostDL;
 using System.Text;
 
@@ -10,14 +14,20 @@ namespace StudentMarket.BL.PostBL
         #region field
 
         private IPostDL _postDL;
+        private ILocationDL _locationDL;
+        private IUserBL _userBL;
+        private ICategoryDL _categoryDL;
 
         #endregion
 
         #region contructor
 
-        public PostBL(IPostDL postDL) : base(postDL)
+        public PostBL(IPostDL postDL, ICategoryDL categoryDL, ILocationDL locationDL, IUserBL userBL) : base(postDL)
         {
             _postDL = postDL;
+            _categoryDL = categoryDL;
+            _locationDL = locationDL;
+            _userBL = userBL;
         }
 
         #endregion
@@ -66,11 +76,64 @@ namespace StudentMarket.BL.PostBL
             }
 
             stringQuery.Append(sortString);
-
-
-
-
             return stringQuery.ToString();
+        }
+
+        #endregion
+
+        #region Override
+
+        /// <summary>
+        /// Validate kiểm tra các điều kiện khác
+        /// </summary>
+        /// <param name="record"></param>
+        /// <returns></returns>
+        /// CreatedBy: NVHuy (27/03/2023)
+        public override List<string> ValidateRequestDataCustom(Post record)
+        {
+            List<string> validateRequestDataCustom = new List<string>();
+            
+            if (record != null && record.CategoryID != null)
+            {
+                var categoryID = record?.CategoryID;
+                ServiceResult serviceResult = _categoryDL.GetRecordByID((Guid)categoryID);
+                if (!serviceResult.Success)
+                {
+                    validateRequestDataCustom.Add("Danh mục không tồn tại");
+                }
+            }
+            if (record != null && record.LocationID != null)
+            {
+                var locationID = record?.LocationID;
+                ServiceResult serviceResult = _locationDL.GetRecordByID((Guid)locationID);
+                if (!serviceResult.Success)
+                {
+                    validateRequestDataCustom.Add("Khu vực không tồn tại");
+                }
+            }
+            if (record != null && record.UserID != null)
+            {
+                var userID = record?.UserID;
+                ServiceResult serviceResult = _userBL.GetRecordByID((Guid)userID);
+                if (!serviceResult.Success)
+                {
+                    validateRequestDataCustom.Add("Người dùng không tồn tại");
+                }
+            }
+
+            record.PostCode = _postDL.GetNewCode().Data.ToString();
+
+            var name = "Admin";
+
+            if (record != null && record.CreatedBy == null)
+            {
+                record.CreatedBy = name;
+            }
+            DateTime now = DateTime.Now;
+            record.ModifiedBy = record.CreatedBy;
+            record.CreatedDate = now;
+            record.ModifiedDate = now;
+            return validateRequestDataCustom;
         }
 
         #endregion
