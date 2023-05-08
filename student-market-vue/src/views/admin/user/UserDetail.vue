@@ -359,12 +359,12 @@ export default {
     onValidate() {
       if (!this.User.FullName) {
         this.errorMessage = this.HResource.Message.FullNameEmpty;
-        this.$refs.txtFullName.onValidateFieldEmpty();
+        this.$refs.txtFullName.onValidate();
       }
 
       if (!this.User.UserName) {
         this.errorMessage = this.HResource.Message.UserNameEmpty;
-        this.$refs.txtUserName.onValidateFieldEmpty();
+        this.$refs.txtUserName.onValidate();
       }
 
       if (this.User.DateOfBirth) {

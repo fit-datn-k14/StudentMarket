@@ -77,8 +77,8 @@ export default {
             this.errorMessage = response.data.UserMsg;
           }
         })
-        .catch((error) => {
-          console.log(error);
+        .catch(() => {
+          this.errorMessage = this.HResource.Message.Exception;
         });
     },
     /**
@@ -107,20 +107,19 @@ export default {
       }
 
       if (this.newAccount.NewPassword != this.newAccount.PasswordConfirm) {
-        console.log(this.newAccount);
         this.errorMessage = "Xác nhận mật khẩu không khớp";
         this.$refs.txtNewPasswordConfirm.errorMessage =
           "Xác nhận mật khẩu không khớp";
       }
 
       if (this.newAccount.Password) {
-        this.$refs.txtOldPassword.onValidateFieldEmpty();
+        this.$refs.txtOldPassword.onValidate();
       }
       if (this.newAccount.NewPassword) {
-        this.$refs.txtNewPassword.onValidateFieldEmpty();
+        this.$refs.txtNewPassword.onValidate();
       }
       if (this.newAccount.PasswordConfirm) {
-        this.$refs.txtNewPasswordConfirm.onValidateFieldEmpty();
+        this.$refs.txtNewPasswordConfirm.onValidate();
       }
     },
 
@@ -142,8 +141,8 @@ export default {
               this.errorMessage = response.data.UserMsg;
             }
           })
-          .catch((error) => {
-            console.log(error);
+          .catch(() => {
+            this.errorMessage = this.HResource.Message.Exception;
           });
       }
     },

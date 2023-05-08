@@ -15,15 +15,17 @@ import MessageDetail from '@/views/messages/MessageDetail'
 import ChangePassword from '@/views/login/ChangePassword'
 import ChangeUserInfo from '@/views/login/ChangeUserInfo'
 import UserDetail from '@/views/login/UserDetail'
+import MyPostList from '@/views/post/MyPostList'
 
 const routes = [
     { path: '/', component: TheHome },
     { path: '/trang-chu', component: TheHome },
+    { path: '/quan-ly-tin-dang', component: MyPostList, meta: { requiresAuth: true }, },
     { path: '/dang-nhap', component: TheLogin },
     { path: '/dang-ky', component: TheRegister },
-    { path: '/doi-mat-khau', component: ChangePassword },
-    { path: '/thay-doi-thong-tin-ca-nhan', component: ChangeUserInfo },
-    { path: '/cai-dat-tai-khoan', component: UserDetail },
+    { path: '/doi-mat-khau', component: ChangePassword, meta: { requiresAuth: true }, },
+    { path: '/thay-doi-thong-tin-ca-nhan', component: ChangeUserInfo, meta: { requiresAuth: true }, },
+    { path: '/cai-dat-tai-khoan', component: UserDetail, meta: { requiresAuth: true }, },
     { path: '/dang-tin', component: ThePostPost, meta: { requiresAuth: true }, },
     { path: '/403', component: NotFound },
     { path: '/:pathMatch(.*)*', component: NotFound },
@@ -46,13 +48,20 @@ const routes = [
             { path: 'khong-du-quyen', component: NotAuth },
         ]
     },
-    { path: '/tin-nhan', component: TheMessages, meta: { requiresAuth: true }, },
     {
-        path: '/tin-nhan/:id',
-        name: 'the-message',
-        component: MessageDetail,
-        props: true,
+        path: '/tin-nhan',
+        component: TheMessages,
+        meta: { requiresAuth: true },
+        children: [
+            {
+                path: '/tin-nhan/:id',
+                name: 'the-message',
+                component: MessageDetail,
+                props: true,
+            },
+        ]
     },
+
     // ...
 ];
 

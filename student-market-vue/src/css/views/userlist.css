@@ -3,3 +3,51 @@
     font-weight: 600;
     text-decoration: none !important;
 }
+
+.av__container {
+    padding: 0 24px;
+}
+
+.av__title {
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.ac__content {
+    background: #fff;
+}
+
+.table__top {
+    padding: 0 8px;
+}
+
+.table__top,
+.table__top>div {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    column-gap: 8px;
+    height: 56px;
+}
+
+.btn-multiaction {
+    width: 172px;
+    height: 36px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-left: 16px;
+    box-sizing: border-box;
+    font-weight: 500px;
+    background-color: #fff;
+    border: 1px solid #1f1f20;
+}
+
+.btn-multiaction:disabled {
+    border-color: #d6d6d7;
+    background-color: #bdbec1;
+}

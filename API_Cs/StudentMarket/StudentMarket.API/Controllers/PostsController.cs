@@ -19,24 +19,20 @@ namespace StudentMarket.API.Controllers
         private readonly string _uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "uploads");
         private IPostBL _postBL;
         #endregion
-        
+
         #region Contructor
 
         public PostsController(IPostBL postBL, IWebHostEnvironment hostingEnvironment)
         {
             _hostingEnvironment = hostingEnvironment;
             _postBL = postBL;
-        } 
+        }
         #endregion
 
 
         #region Method
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="loginInfo"></param>
-        /// <returns>Thông tin người dùng</returns>
+
         [HttpPost("Search")]
         public ServiceResult Search([FromBody] FilterQuery filterQuery)
         {
@@ -56,14 +52,14 @@ namespace StudentMarket.API.Controllers
         }
 
         [HttpPost]
-        public async Task<ServiceResult> AddPost([FromForm]PostDataModel postData)
+        public async Task<ServiceResult> AddPost([FromForm] PostDataModel postData)
         {
             try
             {
                 var post = postData.Post;
                 var images = postData.Images;
                 post.PostID = Guid.NewGuid();
-                if(images != null)
+                if (images != null)
                 {
                     var imageUrls = await UploadImages(images, post.PostID);
                     post.ImageName = imageUrls[0];
@@ -99,26 +95,91 @@ namespace StudentMarket.API.Controllers
         /// <returns>Thông báo</returns>
         /// CreatedBy: NVHuy(20/03/2023)
         [HttpPut("{id}")]
-        public ServiceResult UpdateRecord([FromRoute] Guid id, [FromBody] Post record)
+        public async Task<ServiceResult> UpdateRecord([FromRoute] Guid id, [FromBody] PostDataModel postData)
         {
             try
             {
-                var serviceResult = _postBL.UpdateRecordByID(record, id);
+                var post = postData.Post;
+                var images = postData.Images;
+                var imagesDel = postData.ImagesDel;
+                post.PostID = Guid.NewGuid();
+                if (images.Count > 0)
+                {
+                    var imageUrls = await UploadImages(images, post.PostID);
+                    if (post.ImageName == null)
+                    {
+                        post.ImageName = imageUrls[0];
+                    }
+                    post.ListImages = imageUrls.ToList();
+                }
+                if (imagesDel.Count > 0)
+                {
+                    DeleteImages(imagesDel, post.PostID);
+                }
+
+                var serviceResult = _postBL.InsertRecord(post);
+
+                if (!serviceResult.Success)
+                {
+                    DeleteFolder(post.PostID);
+                }
+
                 return serviceResult;
             }
             catch (Exception ex)
             {
-                return new ServiceResult(ErrorCodes.Exception, ex.Message);
+                return new ServiceResult
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.Exception,
+                    UserMsg = Resource.UsrMsg_Exception,
+                    DevMsg = ex.Message
+                };
+            }
+        }
+
+        /// <summary>
+        /// API chỉnh sửa bản ghi
+        /// </summary>
+        /// <param name="id">id bản ghi muốn sửa</param>
+        /// <param name="record">thông tin mới</param>
+        /// <returns>Thông báo</returns>
+        /// CreatedBy: NVHuy(20/03/2023)
+        [HttpPut("Approved/{id}")]
+        public async Task<ServiceResult> SetApproved([FromRoute] Guid id, [FromQuery] Approved approved)
+        {
+            try
+            {
+                ServiceResult serviceResult = _postBL.SetApproved(id,approved);
+
+                return serviceResult;
+            }
+            catch (Exception ex)
+            {
+                return new ServiceResult
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.Exception,
+                    UserMsg = Resource.UsrMsg_Exception,
+                    DevMsg = ex.Message
+                };
             }
         }
 
 
+        /// <summary>
+        /// Lưu ảnh vào hệ thống
+        /// </summary>
+        /// <param name="images">Ảnh cần lưu</param>
+        /// <param name="postId">Id bài đăng tương ứng</param>
+        /// <returns>Danh sách ảnh</returns>
+        /// /// CreatedBy: NVHuy(20/03/2023)
         private async Task<List<Guid>> UploadImages(List<IFormFile> images, Guid postId)
         {
             // Khởi tạo danh sách các đường dẫn ảnh
             var imageUrls = new List<Guid>();
 
-            if(images != null)
+            if (images != null)
             {
                 foreach (var image in images)
                 {
@@ -142,10 +203,24 @@ namespace StudentMarket.API.Controllers
                 }
             }
             // Lặp qua từng file ảnh được tải lên
-            
+
 
             // Trả về danh sách các đường dẫn ảnh
             return imageUrls;
+        }
+
+        private void DeleteImages(List<Guid> imagesDel, Guid postId)
+        {
+            foreach (var image in imagesDel)
+            {
+                string folderPath = Path.Combine("images", "posts", postId.ToString());
+                string filePath = Directory.GetFiles(folderPath, image + ".*")[0];
+                FileInfo file = new FileInfo(filePath);
+                if (file.Exists)
+                {
+                    file.Delete();
+                }
+            }
         }
 
         private void DeleteFolder(Guid id)
@@ -216,7 +291,24 @@ namespace StudentMarket.API.Controllers
             }
         }
 
-
+        /// <summary>
+        /// Lấy danh sách bài đăng theo id của người dùng
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>Danh sách bài đăng của người dùng</returns>
+        /// CreatedBy: NVHuy(27/03/2023)
+        [HttpGet("GetByUser/{id}")]
+        public ServiceResult GetListPostsByUser(Guid id)
+        {
+            try
+            {
+                return _postBL.GetListPostsByUser(id);
+            }
+            catch (Exception ex)
+            {
+                return new ServiceResult(ErrorCodes.Exception, ex.Message);
+            }
+        }
 
         #endregion
     }

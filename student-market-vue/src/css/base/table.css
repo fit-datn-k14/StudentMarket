@@ -37,6 +37,20 @@ td.data-col+td.data-col,
     min-width: 120px;
 }
 
+td.data-col {
+    overflow: hidden;
+    white-space: nowrap;
+    max-width: 240px;
+    text-overflow: ellipsis;
+}
+
+td.data-col div {
+
+    overflow: hidden;
+    max-width: 208px;
+    text-overflow: ellipsis;
+}
+
 td.function-col {
     display: flex;
     align-items: center;
@@ -89,6 +103,7 @@ tr:nth-last-child(-n+2):not(:nth-child(-n+12)) .dropdownlist {
 
 td.action {
     z-index: 3 !important;
+
 }
 
 

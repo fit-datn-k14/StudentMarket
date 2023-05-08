@@ -1,5 +1,7 @@
 ﻿
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
+using StudentMarket.API.Hubs;
 using StudentMarket.BL.MessageBL;
 using StudentMarket.Common.Entities;
 using StudentMarket.Common.Entities.DTO;
@@ -12,14 +14,16 @@ namespace StudentMarket.API.Controllers
     public class MessagesController : ControllerBase
     {
         #region Field
+        private readonly ChatHub _hubContext;
         private IMessageBL _messageBL;
         #endregion
 
         #region Contructor
 
-        public MessagesController(IMessageBL messageBL)
+        public MessagesController(IMessageBL messageBL, ChatHub chatHub)
         {
             _messageBL = messageBL;
+            _hubContext = chatHub;
         }
 
         #endregion
@@ -50,12 +54,12 @@ namespace StudentMarket.API.Controllers
         /// </summary>
         /// <param name="UserID"></param>
         /// <returns></returns>
-        [HttpGet("Mess/{UserID}")]
-        public ServiceResult Getlist([FromRoute] Guid UserID, [FromBody] Guid withUser)
+        [HttpPost("ListMess")]
+        public ServiceResult Getlist([FromBody] MessageDataModel messageData)
         {
             try
             {
-                var serviceResult = _messageBL.GetListMessages(UserID,withUser);
+                var serviceResult = _messageBL.GetListMessages(messageData);    
                 return serviceResult;
             }
             catch (Exception ex)
@@ -63,6 +67,30 @@ namespace StudentMarket.API.Controllers
                 return new ServiceResult(ErrorCodes.Exception, ex.Message);
             }
         }
+
+        [HttpPost]
+        public async Task<ServiceResult> InsertRecord([FromBody] Message record)
+        {
+            try
+            {
+                var serviceResult = _messageBL.InsertRecord(record);
+                if (serviceResult.Success)
+                {
+                    Message result = (Message)serviceResult.Data;
+                    if (result != null)
+                    {
+                        // Gửi tin nhắn tới các người dùng cùng thuộc một group với record
+                        await _hubContext.SendMessage(result);
+                    }
+                }
+                return serviceResult;
+            }
+            catch (Exception ex)
+            {
+                return new ServiceResult(ErrorCodes.Exception, ex.Message);
+            }
+        }
+
 
         #endregion
     }

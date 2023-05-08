@@ -82,6 +82,96 @@ namespace StudentMarket.DL.PostDL
                 };
             }
         }
+        
+        /// <summary>
+        /// Lấy toàn bộ bản ghi trong bảng
+        /// </summary>
+        /// <returns>Danh sách bản ghi</returns>
+        /// CreatedBy: NVHuy(19/03/2023)
+        public ServiceResult GetListPostsByUser(Guid userId)
+        {
+            try
+            {
+                using (var connection = new MySqlConnection(connectionDB))
+                {
+                    var stored = $"SELECT * FROM view_Posts WHERE UserID = @UserID";
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@UserID", userId);
+
+                    var records = connection.Query<Post>(stored, parameters);
+
+                    if (records != null)
+                    {
+                        return new ServiceResult
+                        {
+                            Success = true,
+                            Data = records.ToList(),
+                        };
+                    }
+                    else
+                    {
+                        return new ServiceResult
+                        {
+                            Success = false,
+                            UserMsg = Resource.UsrMsg_NotFoundRecord,
+                        };
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return new ServiceResult
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.Exception,
+                    DevMsg = ex.Message,
+                };
+            }
+        }
+
+        /// <summary>
+        /// Phê duyệt
+        /// </summary>
+        /// <returns>Thông báo</returns>
+        /// CreatedBy: NVHuy(19/03/2023)
+        public ServiceResult SetApproved(Guid postId, Approved approved)
+        {
+            try
+            {
+                using (var connection = new MySqlConnection(connectionDB))
+                {
+                    int a = (int)approved;
+                    var stored = $"UPDATE posts p SET p.Approved = {a} WHERE p.PostID = '{postId}'";
+
+                    var records = connection.Execute(stored);
+
+                    if (records > 0)
+                    {
+                        return new ServiceResult
+                        {
+                            Success = true,
+                        };
+                    }
+                    else
+                    {
+                        return new ServiceResult
+                        {
+                            Success = false,
+                            UserMsg = Resource.UsrMsg_NotFoundRecord,
+                        };
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return new ServiceResult
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.Exception,
+                    DevMsg = ex.Message,
+                };
+            }
+        }
 
         #endregion
 
@@ -104,7 +194,6 @@ namespace StudentMarket.DL.PostDL
                 foreach (var image in listImages)
                 {
                     var storedProcedureName = $"Proc_ImagesPost_Insert";
-                    parameters = new DynamicParameters();
                     parameters.Add("@Img", image);
                     parameters.Add("@Post", postId);
 

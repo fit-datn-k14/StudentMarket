@@ -41,3 +41,9 @@
     color: #fff;
     opacity: 1;
 }
+
+.dropdownmulti.dropdownlist {
+    left: 170px;
+    right: unset;
+    transform: translateX(-100%);
+}

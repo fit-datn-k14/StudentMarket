@@ -1,0 +1,25 @@
+.the-login>.row {
+    min-height: 360px;
+}
+
+.form_login {
+    width: 360px !important;
+    margin-top: 48px;
+    background-color: #fff;
+    padding: 12px;
+    border-radius: 8px;
+    padding-bottom: 48px;
+}
+
+.btnLogin {
+    display: flex;
+    justify-content: center;
+}
+
+.link-register {
+    text-align: center;
+}
+
+.the-login a {
+    text-decoration: none;
+}

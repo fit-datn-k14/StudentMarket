@@ -1,6 +1,6 @@
 <template>
   <div class="single-product mt-150 mb-150">
-    <div class="container">
+    <div class="container tpd__post">
       <div class="row">
         <div class="col-md-5">
           <div class="single-product-img">
@@ -20,7 +20,16 @@
         </div>
         <div class="col-md-7">
           <div class="single-product-content">
-            <h3>{{ Post.Title }}</h3>
+            <div class="tpd__title">
+              <h3>{{ Post.Title }}</h3>
+              <h-button
+                v-if="Post.UserID == User.UserID"
+                class="edit-post"
+                type="btn-pri"
+                value="Chỉnh Sửa"
+                @click="onClickEdit"
+              />
+            </div>
             <p v-if="Post.Price" class="single-product-pricing">
               {{ Post.Price }} đ
             </p>
@@ -44,16 +53,14 @@
       <div>
         <img
           class="seller__avatar border border-dark"
-          :src="URL + `Images/users/avatar/${this.Seller.ImageName}`"
+          :src="URL + `Images/users/avatar/${this.Seller.Avatar}`"
         />
         <div>
           <div class="seller__name">
             {{ Seller.FullName }}
           </div>
-          <div class="btn-mess">
-            <router-link :to="`/tin-nhan/${Post.UserID}}`"
-              >Nhắn Tin</router-link
-            >
+          <div class="btn-mess" v-if="Post.UserID != User.UserID">
+            <router-link :to="`/tin-nhan/${Post.UserID}`">Nhắn Tin</router-link>
           </div>
         </div>
       </div>
@@ -82,7 +89,9 @@
               <div class="cmt__fullname">
                 {{ comment.FullName }}
                 <span class="comment__time"
-                  >&nbsp;{{ HCommon.postTime(comment.CreatedDate) }}&nbsp;</span
+                  >&nbsp;{{
+                    HCommon.formatTime(comment.CreatedDate)
+                  }}&nbsp;</span
                 >
               </div>
               <div class="cmt__content">{{ comment.Content }}</div>
@@ -91,8 +100,14 @@
         </div>
         <div class="addCommentBox">
           <img
+            v-if="User"
             class="user__avatar border border-dark"
-            :src="URL + `Images/users/avatar/${this.User.ImageName}`"
+            :src="URL + `Images/users/avatar/${User.Avatar}`"
+          />
+          <img
+            v-else
+            class="user__avatar border border-dark"
+            :src="URL + `Images/users/avatar/null`"
           />
           <h-input
             ref="txtNewComment"
@@ -102,7 +117,7 @@
             placeholder="Viết bình luận..."
           />
           <div class="icon-send" @click="addComment">
-            <i class="fa-solid fa-location-arrow"></i>
+            <i class="fa-regular fa-paper-plane"></i>
           </div>
         </div>
       </div>
@@ -131,6 +146,7 @@ export default {
     await this.getComments();
     this.newComment.PostID = this.id;
     this.newComment.UserID = this.User.UserID;
+    this.newComment.Content = null;
   },
   methods: {
     addComment() {
@@ -227,9 +243,13 @@ export default {
   padding-top: 12px;
 }
 
+.tpd__post {
+  position: relative;
+}
 .listcomments {
   display: flex;
   flex-direction: column;
+  flex-direction: column-reverse;
   row-gap: 8px;
 }
 .listcomments > div {
@@ -252,6 +272,9 @@ export default {
   height: 40px;
   border-radius: 20px;
   margin-right: 12px;
+  aspect-ratio: 1 / 1;
+  -o-object-fit: cover;
+  object-fit: cover;
 }
 .addCommentBox {
   position: relative;
@@ -268,9 +291,8 @@ export default {
   cursor: pointer;
 }
 .addCommentBox i {
-  font-size: 32px;
+  font-size: 24px;
   text-align: center;
-  rotate: 45deg;
   color: var(--primary-color);
 }
 .tpd__seller {
@@ -303,6 +325,9 @@ export default {
   height: 84px;
   width: 84px;
   border-radius: 42px;
+  aspect-ratio: 1 / 1;
+  -o-object-fit: cover;
+  object-fit: cover;
 }
 .ppd__img {
   width: 100%;
@@ -417,5 +442,14 @@ body {
   line-height: 1.8;
   color: #051922;
   overflow-x: hidden;
+}
+
+.edit-post {
+  top: -24px;
+  right: 24px;
+}
+.tpd__title {
+  display: flex;
+  justify-content: space-between;
 }
 </style>

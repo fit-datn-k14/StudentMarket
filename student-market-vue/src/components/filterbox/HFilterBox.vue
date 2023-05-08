@@ -104,7 +104,6 @@ export default {
         default:
           this.dataCombobox = this.dataComboboxGender;
       }
-      console.log(this.dataCombobox);
     },
     /**
      * Thực hiện lọc

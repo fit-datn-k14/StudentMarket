@@ -12,6 +12,14 @@ const HEnum = {
         Error: 0,
         Confirm: 1,
         Warning: 2,
+    },
+    optionNotify: {
+        All: 0,
+        Unread: 1,
+    },
+    seen: {
+        Seen: 0,
+        Unread: 1,
     }
 };
 export default HEnum;

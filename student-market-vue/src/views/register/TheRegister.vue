@@ -30,7 +30,7 @@
           :required="true"
           v-model="newAccount.PasswordConfirm"
         />
-        <div class="errorMessage">{{ errorMessage }}</div>
+        <div class="errorMessage text-danger">{{ errorMessage }}</div>
         <HButton
           class="btnRegister"
           type="btn-pri"
@@ -39,6 +39,10 @@
           title="Đăng ký"
           @click="register"
         ></HButton>
+        <div class="link-login">
+          Bạn đã có tài khoản?
+          <router-link to="/dang-nhap">Đăng nhập ngay</router-link>
+        </div>
       </div>
     </div>
   </div>
@@ -75,8 +79,8 @@ export default {
             this.errorMessage = response.data.UserMsg;
           }
         })
-        .catch((error) => {
-          console.log(error);
+        .catch(() => {
+          this.errorMessage = this.HResource.Message.Exception;
         });
     },
     /**
@@ -84,15 +88,28 @@ export default {
      * Author: Nguyễn Văn Huy (30/03/2023)
      */
     onValidate() {
+      this.errorMessage = null;
+      this.$refs.txtUserName.onValidate();
+      this.$refs.txtFullName.onValidate();
+      this.$refs.txtPassword.onValidate();
+      this.$refs.txtPasswordConfirm.onValidate();
+      if (!this.newAccount.Password) {
+        this.errorMessage = "Mật khẩu không được bỏ trống";
+      }
+      if (this.newAccount.Password != this.newAccount.PasswordConfirm) {
+        this.errorMessage = "Mật khẩu không trùng khớp";
+        this.$refs.txtPasswordConfirm.errorMessage =
+          "Mật khẩu không trùng khớp";
+      }
+      if (!this.newAccount.FullName) {
+        this.errorMessage = "Tên không được bỏ trống";
+      }
       if (this.newAccount.UserName && this.newAccount.UserName.length > 24) {
         this.errorMessage = "Tài khoản quá dài";
-        console.log(this.errorMessage);
         this.$refs.txtUserName.errorMessage = "Tài khoản quá dài";
-        console.log(this.$refs.txtUserName.errorMessage);
       }
-
-      if (this.newAccount.FullName) {
-        this.$refs.txtFullName.onValidateFieldEmpty();
+      if (!this.newAccount.UserName) {
+        this.errorMessage = "Tài khoản không được bỏ trống";
       }
     },
 
@@ -106,10 +123,12 @@ export default {
               // Lưu thông tin tài khoản vào localStorage
               var user = response.data.Data;
               this.login(user);
+            } else {
+              this.errorMessage = response.data.UserMsg;
             }
           })
-          .catch((error) => {
-            console.log(error);
+          .catch(() => {
+            this.errorMessage = this.HResource.Message.Exception;
           });
       }
     },
@@ -117,17 +136,6 @@ export default {
 };
 </script>
 
-<style>
-.btnRegister .btn-pri {
-  width: 100%;
-}
-.btnRegister {
-  margin-top: 24px;
-}
-.register {
-  margin: auto;
-  width: 900px;
-  background-color: #fff;
-  padding: 24px;
-}
+<style scoped>
+@import url(@/css/views/register.css);
 </style>

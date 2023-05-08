@@ -5,7 +5,9 @@ const HConfig = {
         Users: "https://localhost:9999/api/v1/Users/",
         Locations: "https://localhost:9999/api/v1/Locations/",
         Posts: "https://localhost:9999/api/v1/Posts/",
-        Comments: "https://localhost:9999/api/v1/Comments/"
+        Comments: "https://localhost:9999/api/v1/Comments/",
+        Messages: "https://localhost:9999/api/v1/Messages/",
+        Notifications: "https://localhost:9999/api/v1/Notifications/"
     },
     ListUserColumns: [
         {
@@ -147,20 +149,10 @@ const HConfig = {
             },
         },
         {
-            title: "Khu Vực",
-            dataField: "LocationName",
-            width: "160px",
-            condition: {
-                type: "contains",
-                operator: "contains",
-                conditionValue: null,
-            },
-        },
-        {
             title: "Thời Gian",
             formatType: "createdDate",
             dataField: "CreatedDate",
-            width: "220px",
+            width: "160px",
             condition: {
                 type: null,
                 operator: null,
@@ -176,6 +168,16 @@ const HConfig = {
                 type: "select",
                 operator: "equal",
                 conditionValue: "0",
+            },
+        },
+        {
+            title: "Khu Vực",
+            dataField: "LocationName",
+            width: "160px",
+            condition: {
+                type: "contains",
+                operator: "contains",
+                conditionValue: null,
             },
         },
     ],

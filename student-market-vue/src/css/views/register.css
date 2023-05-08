@@ -1,0 +1,19 @@
+.btnRegister .btn-pri {
+    width: 100%;
+}
+
+.btnRegister {
+    margin-top: 24px;
+}
+
+.register {
+    margin: auto;
+    width: 900px;
+    background-color: #fff;
+    padding: 24px;
+}
+
+.link-login {
+    display: flex;
+    justify-content: center;
+}

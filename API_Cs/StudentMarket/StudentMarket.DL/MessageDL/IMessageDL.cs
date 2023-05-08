@@ -1,5 +1,6 @@
 ﻿using StudentMarket.Common.Entities;
 using StudentMarket.Common.Entities.DTO;
+using StudentMarket.DL.UserDL;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,14 +16,14 @@ namespace StudentMarket.DL.MessageDL
         /// </summary>
         /// <param name="UserID"></param>
         /// <returns>Danh sách User có tin nhắn</returns>
-        public List<Guid> GetUsersByID(Guid UserID);
+        public List<Guid> GetListIDByUserID(Guid UserID);
 
         /// <summary>
         /// Lấy danh sách Users
         /// </summary>
         /// <param name="ids"></param>
         /// <returns>danh sách Users</returns>
-        public List<User> GetListUsers(List<Guid> ids);
+        public ServiceResult GetUsersByID(Guid userID);
 
         /// <summary>
         /// Lấy danh sách tin nhắn

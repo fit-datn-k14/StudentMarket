@@ -130,16 +130,16 @@ namespace StudentMarket.DL
                 MySqlTransaction transaction = sqlConnection.BeginTransaction();
                 try
                 {
-                    var result = sqlConnection.Execute(storedProcedureName, parameters, transaction, commandType: System.Data.CommandType.StoredProcedure);
+                    var result = sqlConnection.QueryFirstOrDefault<T>(storedProcedureName, parameters, transaction, commandType: System.Data.CommandType.StoredProcedure);
                     Boolean custom = InsertCustom(sqlConnection, transaction, record);
-                    if (result > 0 && custom)
+                    if (result != null && custom)
                     {
                         transaction.Commit();
                         return new ServiceResult
                         {
                             Success = true,
                             UserMsg = Resource.UsrMsg_InsertSuccess,
-                            Data = record
+                            Data = result
                         };
                     }
                     else
@@ -155,7 +155,7 @@ namespace StudentMarket.DL
                     {
                         Success = false,
                         ErrorCode = ErrorCodes.Exception,
-                        UserMsg = "Gặp lỗi trong khi xoá",
+                        UserMsg = Resource.DevMsg_Invalid,
                         DevMsg = ex.Message,
                     };
                 }
@@ -188,13 +188,14 @@ namespace StudentMarket.DL
             using (var sqlConnection = new MySqlConnection(connectionDB))
             {
                 // Thực hiện gọi vào Database để chạy stored procedure
-                var result = sqlConnection.Execute(storedProcedureName, parameters, commandType: System.Data.CommandType.StoredProcedure);
-                if (result > 0)
+                var result = sqlConnection.QueryFirstOrDefault<T>(storedProcedureName, parameters, commandType: System.Data.CommandType.StoredProcedure);
+                if (result != null)
                 {
                     return new ServiceResult
                     {
                         Success = true,
                         UserMsg = Resource.UsrMsg_UpdateSuccess,
+                        Data = result
                     };
                 }
                 else
@@ -376,6 +377,17 @@ namespace StudentMarket.DL
         /// <returns></returns>
         /// CreatedBy: NVHuy (27/03/2023)
         public virtual Boolean InsertCustom(MySqlConnection sqlConnection, MySqlTransaction transaction, T record)
+        {
+            return true;
+        }
+
+        /// <summary>
+        /// Thêm các bảng phụ
+        /// </summary>
+        /// <param name="record"></param>
+        /// <returns></returns>
+        /// CreatedBy: NVHuy (27/03/2023)
+        public virtual Boolean UpdateCustom(MySqlConnection sqlConnection, MySqlTransaction transaction, T record)
         {
             return true;
         }

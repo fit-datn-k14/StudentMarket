@@ -24,7 +24,7 @@
             </button>
             <div
               v-if="isShowDropList"
-              class="dropdownlist"
+              class="dropdownmulti dropdownlist"
               v-click-outside="closeDrop"
             >
               <ul>
@@ -38,7 +38,7 @@
                     :value="actionItem.name"
                     @click="
                       selectAction = -1;
-                      onClickAction(actionItem.key, item);
+                      onClickMultiAction(actionItem.key);
                     "
                   />
                 </li>
@@ -133,7 +133,6 @@ export default {
   },
   created() {
     this.columns = this.HConfig.ListUserColumns;
-    console.log(this.columns);
     this.toast = { content: null, type: null };
     this.loadData();
     window.addEventListener("keydown", this.keydownList);
@@ -209,6 +208,13 @@ export default {
     },
   },
   methods: {
+    onClickMultiAction(key) {
+      switch (key) {
+        case "delete":
+          this.onClickMultiDelete();
+      }
+    },
+
     keydownList(event) {
       if (event.ctrlKey && event.keyCode === 49) {
         // 49 là mã ASCII của phím số 1
@@ -228,7 +234,6 @@ export default {
     async loadData() {
       this.showLoading = true;
       var filterQuery = this.filterQuery;
-      console.log(filterQuery);
       try {
         var url = "https://localhost:9999/api/v1/Users/Filter";
         await this.axios.post(url, filterQuery).then((response) => {
@@ -236,7 +241,6 @@ export default {
             this.Users = response.data.Data.Data;
             this.totalPages = response.data.Data.TotalPages;
             this.totalRecords = response.data.Data.TotalRecords;
-            console.log(this.Users);
             this.showLoading = false;
             if (
               this.pageValue.pageNumber > this.totalPages &&
@@ -310,23 +314,6 @@ export default {
           break;
       }
     },
-
-    /**
-     * Mở hộp Filter cột
-     * Author: Nguyễn Văn Huy(29/03/2023)
-     */
-    // openFilterBox(data) {
-    //   this.filterBoxPosition = data.position - 302;
-    //   if (
-    //     this.selectedColumnFilter != data.index &&
-    //     this.selectedColumnFilter != -1
-    //   ) {
-    //     this.allowCloseFilterBox = false;
-    //   }
-    //   this.selectedColumnFilter = data.index;
-    //   this.txtFilter =
-    //     this.columns[this.selectedColumnFilter].condition.conditionValue;
-    // },
 
     /**
      * Click xoá nhiều bản ghi
@@ -576,53 +563,7 @@ export default {
 };
 </script>
     
-  <style scoped>
-.av__container {
-  padding: 0 24px;
-}
-.av__title {
-  height: 56px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.ac__content {
-  background: #fff;
-}
-
-.table__top {
-  padding: 0 8px;
-}
-
-.table__top,
-.table__top > div {
-  position: relative;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  column-gap: 8px;
-  height: 56px;
-}
-
-.btn-multiaction {
-  height: 36px;
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding-left: 16px;
-  box-sizing: border-box;
-  font-weight: 500px;
-  background-color: #fff;
-  border: 1px solid #1f1f20;
-}
-
-.btn-multiaction:disabled {
-  border-color: #d6d6d7;
-  background-color: #bdbec1;
-}
-
+  <style >
 /* @import url(@/css/layout/content.css);
 @import url(@/css/layout/datatables.css); */
 @import url(@/css/views/userlist.css);

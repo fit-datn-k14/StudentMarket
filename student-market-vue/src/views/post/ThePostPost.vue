@@ -62,7 +62,7 @@
               :api="apiGetLocations"
               :defaultItem="defaultLocation"
               propText="LocationName"
-              propValue="LocationsID"
+              propValue="LocationID"
               v-model="postDetail.LocationID"
             ></h-combobox>
           </div>
@@ -168,7 +168,7 @@ export default {
     onValidate() {
       if (!this.postDetail.Title) {
         this.errorMessage = "Tiêu đề không được bỏ trống";
-        this.$refs.txtTitle.onValidateFieldEmpty();
+        this.$refs.txtTitle.onValidate();
       }
 
       if (!this.postDetail.CategoryID) {
@@ -178,12 +178,13 @@ export default {
 
       if (!this.postDetail.LocationID) {
         this.errorMessage = "Khu vực không được bỏ trống";
-        this.$refs.cbbLocations.onValidateFieldEmpty();
+        this.$refs.cbbLocations.onValidate();
       }
     },
     submitPostData() {
       // create a FormData object to store the post data
       this.onValidate();
+
       if (!this.errorMessage) {
         const formData = new FormData();
 
@@ -217,8 +218,7 @@ export default {
               this.$router.push(routerPost);
             }
           })
-          .catch((error) => {
-            console.log(error);
+          .catch(() => {
             this.errorMessage = this.HResource.Message.Exception;
           });
       }

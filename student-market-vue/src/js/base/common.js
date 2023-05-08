@@ -23,7 +23,7 @@ const HCommon = {
             case "approved":
                 return this.formatApproved(data);
             case "createdDate":
-                return this.postTime(data);
+                return this.formatTime(data);
             case "property":
                 return this.formatProperty(data);
             case "active-status":
@@ -33,7 +33,7 @@ const HCommon = {
         }
     },
 
-    postTime(CreatedDate) {
+    formatTime(CreatedDate) {
         CreatedDate = new Date(CreatedDate);
         let nowDate = new Date();
         let diff = nowDate - CreatedDate;
@@ -54,6 +54,10 @@ const HCommon = {
         }
 
         let diffInMinutes = Math.floor(diff / (1000 * 60));
+
+        if (diffInMinutes < 1) {
+            return "Vừa xong";
+        }
         return diffInMinutes + " phút trước";
     },
     /**
@@ -80,6 +84,17 @@ const HCommon = {
             }
         }
         return null;
+    },
+    /**
+     * Định dạng dữ liệu kiểu Date
+     * @param {*} value biến date
+     * Author: huynv (02/03/2023)
+     */
+    formatNotify(notify) {
+        if (notify.Content && notify.Content.includes("@FullName")) {
+            return notify.Content.replace("@FullName", `<b>${notify.FullName}</b>`)
+        }
+        return notify.Content;
     },
     /**
      * Chuyển dữ liệu kiểu tiền tệ
@@ -242,5 +257,12 @@ const HCommon = {
             return "text-align-" + dataAlign;
         } else return "text-align-left";
     },
+
+    convertCamelToPascal(obj) {
+        return Object.keys(obj).reduce((acc, key) => {
+            acc[key.charAt(0).toUpperCase() + key.slice(1)] = obj[key];
+            return acc;
+        }, {});
+    }
 }
 export default HCommon

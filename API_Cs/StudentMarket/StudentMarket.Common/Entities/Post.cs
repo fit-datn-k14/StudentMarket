@@ -37,6 +37,8 @@ namespace StudentMarket.Common.Entities
         public Guid UserID { get; set; }
         public string? FullName { get; set; }
 
+        public Guid? Avatar { get; set; }
+
         [Required(ErrorMessage = "Danh mục sản phẩm không được bỏ trống")]
         public Guid CategoryID { get; set; }
         public string? CategoryName { get; set; }
@@ -49,7 +51,9 @@ namespace StudentMarket.Common.Entities
 
         public Guid? ImageName { get; set; }
 
-        public List<Guid> ListImages { get; set; }
+        public List<Guid> ListImages { get; set; } = new List<Guid>();
+
+        public List<Guid> ListImagesDel { get; set; } = new List<Guid>();
 
         #endregion
     }

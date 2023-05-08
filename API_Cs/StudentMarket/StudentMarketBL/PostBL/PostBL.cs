@@ -2,9 +2,11 @@
 using StudentMarket.Common;
 using StudentMarket.Common.Entities;
 using StudentMarket.Common.Entities.DTO;
+using StudentMarket.Common.Enums;
 using StudentMarket.DL.CategoryDL;
 using StudentMarket.DL.LocationDL;
 using StudentMarket.DL.PostDL;
+using StudentMarket.DL.UserDL;
 using System.Text;
 
 namespace StudentMarket.BL.PostBL
@@ -38,8 +40,7 @@ namespace StudentMarket.BL.PostBL
         {
             string conditionString = BuildStringQuery(filterQuery);
             int fromRecord = (filterQuery.PageNumber - 1) * filterQuery.PageSize;
-            return _postDL.SearchPosts(filterQuery.Keyword, conditionString, fromRecord, filterQuery.PageSize);
-            
+            return _postDL.SearchPosts(filterQuery.Keyword, conditionString, fromRecord, filterQuery.PageSize);      
         }
 
         /// <summary>
@@ -77,6 +78,26 @@ namespace StudentMarket.BL.PostBL
 
             stringQuery.Append(sortString);
             return stringQuery.ToString();
+        }
+
+        /// <summary>
+        /// Lấy toàn bộ bản ghi trong bảng
+        /// </summary>
+        /// <returns>Danh sách bản ghi</returns>
+        /// CreatedBy: NVHuy(19/03/2023)
+        public ServiceResult GetListPostsByUser(Guid userId)
+        {
+            return _postDL.GetListPostsByUser(userId);
+        }
+
+        /// <summary>
+        /// Phê duyệt
+        /// </summary>
+        /// <returns>Thông báo</returns>
+        /// CreatedBy: NVHuy(19/03/2023)
+        public ServiceResult SetApproved(Guid postId, Approved approved)
+        {
+            return _postDL.SetApproved(postId, approved);
         }
 
         #endregion

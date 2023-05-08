@@ -1,3 +1,10 @@
+.no-post-list {
+    display: flex;
+    min-height: calc(100vh - 208px);
+    justify-content: center;
+    align-items: center;
+}
+
 .post-list {
     width: 720px;
     display: flex;

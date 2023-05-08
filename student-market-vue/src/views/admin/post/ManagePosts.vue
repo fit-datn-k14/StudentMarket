@@ -24,11 +24,25 @@
             </button>
             <div
               v-if="isShowDropList"
-              class="table-top__dropdownlist"
+              class="dropdownmulti dropdownlist"
               v-click-outside="() => (isShowDropList = false)"
-              @click="onClickMultiDelete"
             >
-              <div>Xoá</div>
+              <ul>
+                <li
+                  v-for="(actionItem, indexAction) in multiactions"
+                  :key="indexAction"
+                >
+                  <input
+                    class="btn-link"
+                    type="button"
+                    :value="actionItem.name"
+                    @click="
+                      selectAction = -1;
+                      onClickMultiAction(actionItem.key);
+                    "
+                  />
+                </li>
+              </ul>
             </div>
           </div>
           <span
@@ -117,7 +131,6 @@ export default {
   components: { PopupPostDetail },
   created() {
     this.columns = this.HConfig.ListPostColumns;
-    console.log(this.columns);
     this.toast = { content: null, type: null };
     this.loadData();
     window.addEventListener("keydown", this.keydownList);
@@ -193,6 +206,12 @@ export default {
     },
   },
   methods: {
+    onClickMultiAction(key) {
+      switch (key) {
+        case "delete":
+          this.onClickMultiDelete();
+      }
+    },
     keydownList(event) {
       if (event.ctrlKey && event.keyCode === 49) {
         // 49 là mã ASCII của phím số 1
@@ -208,7 +227,6 @@ export default {
     async loadData() {
       this.showLoading = true;
       var filterQuery = this.filterQuery;
-      console.log(filterQuery);
       try {
         var url = "https://localhost:9999/api/v1/Posts/Filter";
         await this.axios.post(url, filterQuery).then((response) => {
@@ -216,7 +234,6 @@ export default {
             this.Posts = response.data.Data.Data;
             this.totalPages = response.data.Data.TotalPages;
             this.totalRecords = response.data.Data.TotalRecords;
-            console.log(this.Posts);
             this.showLoading = false;
             if (
               this.pageValue.pageNumber > this.totalPages &&
@@ -334,18 +351,18 @@ export default {
       var p = item;
       var url = this.HConfig.API.Posts;
       if (approved) {
-        p.Approved = 1;
+        url = url + "Approved/" + p.PostID + `?approved=${1}`;
       } else {
-        p.Approved = 2;
+        url = url + "Approved/" + p.PostID + `?approved=${2}`;
       }
       if (!this.errorMessage) {
-        url = url + p.PostID;
         try {
-          await this.axios.put(url, p).then((response) => {
+          await this.axios.put(url).then((response) => {
             if (response.data.Success) {
-              this.$refs.toast.showToast(response.data.UserMsg);
-              console.log(response.data.UserMsg);
-              this.loadData();
+              this.$emit("eventDetail", "showToast", response.data.UserMsg);
+              this.$emit("eventDetail", "refresh");
+              item.Approved = approved ? 1 : 2;
+              this.closePopup();
             } else {
               this.errorMessage = response.data.UserMsg;
             }
@@ -569,58 +586,15 @@ export default {
         { name: "Từ chối", key: "refuse" },
         { name: "Xoá", key: "delete" },
       ],
+      multiactions: [{ name: "Xoá", key: "delete" }],
     };
   },
 };
 </script>
       
-    <style scoped>
-.av__container {
-  padding: 0 24px;
-}
-.av__title {
-  height: 56px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.ac__content {
-  background: #fff;
-}
-
-.table__top {
-  padding: 0 8px;
-}
-
-.table__top,
-.table__top > div {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  column-gap: 8px;
-  height: 56px;
-}
-
-.btn-multiaction {
-  height: 36px;
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding-left: 16px;
-  box-sizing: border-box;
-  font-weight: 500px;
-  background-color: #fff;
-  border: 1px solid #1f1f20;
-}
-
-.btn-multiaction:disabled {
-  border-color: #d6d6d7;
-  background-color: #bdbec1;
-}
-
+    <style >
 /* @import url(@/css/layout/content.css);
   @import url(@/css/layout/datatables.css); */
 @import url(@/css/views/userlist.css);
+@import url(@/css/views/managepost.css);
 </style>

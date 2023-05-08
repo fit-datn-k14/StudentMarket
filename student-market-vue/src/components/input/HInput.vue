@@ -4,7 +4,12 @@
     <label v-if="label" for="hinput" :title="title"
       >{{ label }}<span v-if="required" class="color-red">&nbsp;*</span></label
     >
-    <textarea v-if="type == 'textarea'"></textarea>
+    <textarea
+      v-if="type == 'textarea'"
+      v-model="value"
+      @input="onInput"
+      @blur="onValidate"
+    ></textarea>
     <input
       v-else
       ref="hinput"
@@ -14,7 +19,7 @@
       :placeholder="placeholder"
       v-model="value"
       @input="onInput"
-      @blur="onValidateFieldEmpty"
+      @blur="onValidate"
     />
     <div v-show="isEmpty" :class="{ 'error-message': isEmpty }">
       {{ errorMessage }}
@@ -79,7 +84,7 @@ export default {
      * Kiểm tra dữ liệu trống
      * Author: NVHUY (09/03/2001)
      */
-    onValidateFieldEmpty() {
+    onValidate() {
       if ((!this.value || !this.value.trim()) && this.required) {
         this.isEmpty = true;
         this.errorMessage = this.label + " không được bỏ trống!";

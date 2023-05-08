@@ -1,8 +1,11 @@
 <template>
-  <div class="post-list">
+  <div v-if="posts.length > 0" class="post-list">
     <div v-for="(post, indexPost) in posts" :key="indexPost">
       <h-post :post="post" />
     </div>
+  </div>
+  <div v-else class="no-post-list">
+    <H1>Không có bài đăng nào</H1>
   </div>
 </template>
 

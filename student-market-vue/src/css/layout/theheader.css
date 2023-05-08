@@ -1,0 +1,254 @@
+div.text {
+    white-space: nowrap;
+}
+
+.header__logo strong {
+    font-size: 24px;
+    color: var(--primary-color);
+}
+
+.header-box {
+    position: fixed;
+    display: flex;
+    align-items: center;
+    top: 0;
+    right: 0;
+    left: 0;
+    background-color: #fff;
+    z-index: 999;
+}
+
+.logo {
+    width: 200px;
+}
+
+.logo-img {
+    height: 40px;
+    width: 40px;
+}
+
+.menu {
+    margin-bottom: 0;
+}
+
+.menu li {
+    margin-left: 24px;
+    padding: 8px;
+    height: 100%;
+}
+
+.menu li a {
+    color: var(--text-color);
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+.header-box a {
+    text-decoration: none;
+}
+
+.header-box li:hover a {
+    color: var(--primary-color);
+}
+
+.arrow {
+    height: 2px;
+    width: 0%;
+    background: #e03c31;
+    line-height: 0px;
+    font-size: 0px !important;
+    margin-top: 2px;
+    transition: 0.3s;
+}
+
+.menu li:hover .arrow {
+    width: 100%;
+}
+
+.header-icon {
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.header-icon:hover {
+    color: var(--primary-color);
+}
+
+.login-group a {
+    color: var(--text-color);
+    padding: 8px 11px;
+    display: block;
+    font-weight: bold;
+    border: 1px solid transparent;
+}
+
+.login-group a:hover {
+    background: #fafafa;
+    border: solid 1px #fafafa;
+    color: var(--primary-color);
+}
+
+.btn-post {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    text-decoration: none;
+}
+
+.btn-post:hover {
+    border: 1px solid #ccc !important;
+    background: #fafafa;
+}
+
+.line {
+    border: 0;
+    width: 1px;
+    height: 16px;
+    background: #e5e5e5;
+    margin: 15px 0;
+}
+
+.header-box .searchbox {
+    margin: 0 28px;
+    width: 460px;
+}
+
+.searchbox {
+    position: relative;
+    max-width: 720px;
+    flex-grow: 1;
+}
+
+.searchbox>.icon-search {
+    position: absolute;
+    right: 6px;
+    top: 6px;
+}
+
+.circle input {
+    border-radius: 18px;
+}
+
+div:has(.bell-icon):hover bell-icon {
+    color: var(--primary-color);
+}
+
+.bell-icon {
+    padding: 8px;
+}
+
+.header__userinfo {
+    display: flex;
+    column-gap: 8px;
+    align-items: center;
+    border: 1px solid var(--border-color);
+    padding: 2px;
+    border-radius: 20px;
+    position: relative;
+    cursor: pointer;
+}
+
+.header__userinfo img,
+.notify__avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 18px;
+    aspect-ratio: 1 / 1;
+    -o-object-fit: cover;
+    object-fit: cover;
+}
+
+.header__userinfo span {
+    white-space: nowrap;
+    overflow: hidden;
+    font-size: 16px;
+    padding-right: 8px;
+}
+
+.header__dropdown {
+    position: absolute;
+    border-radius: 4px;
+    right: 0;
+    top: 42px;
+    background-color: #fff;
+    border: 1px solid var(--border-color);
+}
+
+.header__dropdown input {
+    font-weight: bold;
+    text-decoration: unset;
+    padding: 8px 11px;
+}
+
+.header__dropdown input:hover {}
+
+.header__dropdown>div:hover input,
+.header__dropdown>a:hover {
+    background-color: #fff;
+    color: var(--primary-color);
+}
+
+.theheader__notifications {
+    position: relative;
+}
+
+.notificationbox {
+    position: absolute;
+    top: 100%;
+    left: -96px;
+    background-color: #fff;
+    width: 360px;
+    padding: 8px 16px 16px;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    row-gap: 8px;
+}
+
+.notificationbox__title {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.notificationbox__options {
+    display: flex;
+    column-gap: 8px;
+}
+
+.notificationbox__options input {
+    border-radius: 18px;
+}
+
+.notificationbox__list {
+    max-height: 360px;
+    overflow-y: auto;
+}
+
+.notificationlist {
+    display: flex;
+    flex-direction: column;
+    row-gap: 8px;
+}
+
+.notify_item {
+    display: flex;
+    align-items: start;
+    column-gap: 8px;
+}
+
+.notify_item--seen div {
+    opacity: 0.9;
+}
+
+.notify_item--unread .notify_time {
+    color: var(--blue-color);
+    font-weight: 600;
+}
+
+.no-notification {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 120px;
+}

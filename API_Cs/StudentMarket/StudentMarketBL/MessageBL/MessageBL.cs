@@ -37,24 +37,7 @@ namespace StudentMarket.BL.MessageBL
         /// <returns>Danh sách User có tin nhắn</returns>
         public ServiceResult GetUsersByID(Guid UserID)
         {
-            try
-            {
-
-                var listUserIDs = _messageDL.GetUsersByID(UserID);
-                var listUsers = new List<User>();
-                if (listUserIDs != null && listUserIDs.Count > 0)
-                {
-                    listUsers = _messageDL.GetListUsers(listUserIDs);
-                }
-                return new ServiceResult
-                {
-                    Success = true,
-                    Data = listUsers
-                };
-            }
-            catch (Exception ex) {
-                return new ServiceResult(ErrorCodes.Exception, ex.Message);
-            }
+            return _messageDL.GetUsersByID(UserID);
         }
 
         /// <summary>
@@ -63,9 +46,11 @@ namespace StudentMarket.BL.MessageBL
         /// <param name="UserID"></param>
         /// <param name="withUser"></param>
         /// <returns>danh sách tin nhắn</returns>
-        public ServiceResult GetListMessages(Guid UserID, Guid withUser)
+        public ServiceResult GetListMessages(MessageDataModel messageData)
         {
-            return new ServiceResult();
+            var userId = messageData.UserID;
+            var withUser = messageData.WithUser;
+            return _messageDL.GetListMessages(userId, withUser);
         }
 
         #endregion

@@ -23,7 +23,7 @@
               {{ HCommon.formatDate(User.DateOfBirth, 1) }}
             </p>
             <p v-else class=""><strong>Ngày Sinh:&nbsp;</strong>Chưa có</p>
-            <p v-if="User.Gender" class="">
+            <p v-if="User.Gender != null" class="">
               <strong>Giới Tính:&nbsp;</strong>
               {{ HCommon.formatGender(User.Gender) }}
             </p>
@@ -85,87 +85,10 @@ export default {
     },
   },
   async created() {
-    this.User = getUserFromLocalStorage();
-    await this.loadData();
+    this.User = await getUserFromLocalStorage();
     this.ImageID = this.Post.ImageName;
-    await this.getSeller();
-    await this.getComments();
-    this.newComment.PostID = this.id;
-    this.newComment.UserID = this.User.UserID;
   },
-  methods: {
-    addComment() {
-      if (this.newComment.Content) {
-        var url = HConfig.API.Comments;
-        this.axios
-          .post(url, this.newComment)
-          .then((response) => {
-            if (response.data.Success) {
-              this.newComment.Content = null;
-              this.getComments();
-            }
-          })
-          .catch((error) => {
-            this.errorMessage = error;
-          });
-      }
-    },
-
-    async loadData() {
-      this.isLoading = true;
-      try {
-        var url = this.HConfig.API.Posts + this.id;
-        await this.axios.get(url).then((response) => {
-          if (response.data.Success) {
-            this.Post = response.data.Data;
-            this.isLoading = false;
-          } else {
-            this.errorMessage = response.data.UserMsg;
-            this.dialogType = this.HEnum.DialogType.Error;
-          }
-        });
-      } catch (error) {
-        this.errorMessage = this.HResource.Text.MessageException;
-        this.dialogType = this.HEnum.DialogType.Error;
-      }
-    },
-    async getSeller() {
-      this.isLoading = true;
-      try {
-        var url = this.HConfig.API.Users + this.Post.UserID;
-        await this.axios.get(url).then((response) => {
-          if (response.data.Success) {
-            this.Seller = response.data.Data;
-            this.isLoading = false;
-          } else {
-            this.errorMessage = response.data.UserMsg;
-            this.dialogType = this.HEnum.DialogType.Error;
-          }
-        });
-      } catch (error) {
-        this.errorMessage = this.HResource.Text.MessageException;
-        this.dialogType = this.HEnum.DialogType.Error;
-      }
-    },
-    async getComments() {
-      this.isLoading = true;
-      try {
-        var url = this.HConfig.API.Comments + this.Post.PostID;
-        await this.axios.get(url).then((response) => {
-          if (response.data.Success) {
-            this.Comments = response.data.Data;
-            this.isLoading = false;
-          } else {
-            this.errorMessage = response.data.UserMsg;
-            this.dialogType = this.HEnum.DialogType.Error;
-          }
-        });
-      } catch (error) {
-        this.errorMessage = this.HResource.Text.MessageException;
-        this.dialogType = this.HEnum.DialogType.Error;
-      }
-    },
-  },
+  methods: {},
 
   data() {
     return {
@@ -176,7 +99,6 @@ export default {
       Comments: [],
       newComment: {},
       ImageID: null,
-      isLoading: true,
     };
   },
 };
@@ -186,106 +108,17 @@ export default {
 .udv_avatar {
   width: 100%;
   border-radius: 50%;
+  aspect-ratio: 1 / 1;
+  -o-object-fit: cover;
+  object-fit: cover;
 }
 
-.addCommentBox {
-  display: flex;
-  padding-top: 12px;
-}
-
-.listcomments {
-  display: flex;
-  flex-direction: column;
-  row-gap: 8px;
-}
-.listcomments > div {
-  display: flex;
-  padding: 12px 0;
-  align-items: start;
-  border-bottom: 1px solid var(--border-color);
-}
-
-.cmt__fullname {
-  font-weight: bold;
-}
-
-.comment__time {
-  font-weight: normal;
-}
-
-.tpd__comments img {
-  width: 40px;
-  height: 40px;
-  border-radius: 20px;
-  margin-right: 12px;
-}
-.addCommentBox {
-  position: relative;
-}
-.addCommentBox > .icon-send {
-  position: absolute;
-  right: 8px;
-  bottom: 0;
-  width: 36px;
-  height: 36px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-}
-.addCommentBox i {
-  font-size: 32px;
-  text-align: center;
-  rotate: 45deg;
-  color: var(--primary-color);
-}
-.tpd__seller {
-  height: 132px;
-  display: flex;
-  column-gap: 16px;
-}
-.tpd__seller > div:first-child {
-  display: flex;
-  align-items: center;
-  column-gap: 8px;
-  width: 40%;
-}
-.tpd__seller > div:last-child {
-  display: flex;
-  align-items: center;
-  column-gap: 20px;
-  width: 40%;
-}
-
-.tpd__seller span {
-  display: block;
-}
-
-.seller__name {
-  font-size: 24px;
-  font-weight: 600;
-}
-.seller__avatar {
-  height: 84px;
-  width: 84px;
-  border-radius: 42px;
-}
 .ppd__img {
   width: 100%;
 }
 
 .single-product-describe {
   min-height: 180px;
-}
-.imglist {
-  display: flex;
-  column-gap: 2%;
-  margin-top: 16px;
-}
-.imglist img {
-  width: 15%;
-  box-sizing: border-box;
-  border: 1px solid var(--border-color);
 }
 
 .single-product {

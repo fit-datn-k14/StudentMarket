@@ -1,0 +1,97 @@
+.mdv__header {
+    background-color: #fff;
+    height: 64px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 12px;
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
+    column-gap: 8px;
+}
+
+.mdv__header span {
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.mdv__header>.mdv__userinfo {
+    display: flex;
+    column-gap: 8px;
+}
+
+.mdv__header>.mdv__userinfo img {
+    width: 40px;
+    height: 40px;
+    border-radius: 20px;
+    object-fit: cover;
+}
+
+.mdv__content {
+    height: calc(100vh - 60px - 64px - 48px) !important;
+    overflow-y: scroll;
+    background-color: #fff;
+}
+
+.btn-send {
+    cursor: pointer;
+}
+
+.mdv__footer {
+    background-color: #fff;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    column-gap: 8px;
+    padding: 0 8px;
+}
+
+.addMessage input {
+    border-radius: 18px;
+}
+
+.addMessage i {
+    color: var(--primary-color);
+    font-size: 20px;
+}
+
+.listMess {
+    display: flex;
+    row-gap: 4px;
+    padding: 8px 0;
+    flex-direction: column-reverse;
+}
+
+.listMess>div {
+    display: flex;
+    padding: 0 8px;
+    padding-left: 62px;
+    position: relative;
+}
+
+.listMess img {
+    position: absolute;
+    left: 14px;
+    top: 0;
+}
+
+.listMess .mess__left,
+.listMess .mess__right {
+    padding: 8px 12px;
+    line-height: 20px;
+    border-radius: 18px;
+}
+
+.listMess .mess__left {
+    background-color: #e4e6eb;
+    max-width: 90%;
+}
+
+.listMess .mess__right {
+    background-color: #0084ff;
+    max-width: 80%;
+    color: #fff;
+}
+
+.listMess>div:has(.mess__right) {
+    justify-content: end;
+}

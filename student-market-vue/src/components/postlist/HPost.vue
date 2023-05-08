@@ -16,7 +16,7 @@
         <strong>{{ post.Title }}</strong>
       </div>
       <div class="post__price">
-        <strong v-if="post.Price">{{ post.Price }}</strong>
+        <strong v-if="post.Price">{{ post.Price }} đ</strong>
         <strong v-else>Liên hệ</strong>
       </div>
       <div class="post__describe">
@@ -24,16 +24,20 @@
       </div>
       <div class="post__info">
         <span class="poster__info">
-          <img v-if="post.avatar" :src="post.avatar" alt="" />
           <img
-            v-if="!post.avatar"
+            v-if="post.Avatar"
+            :src="URL + `images/users/avatar/` + post.Avatar"
+            alt=""
+          />
+          <img
+            v-if="!post.Avatar"
             src="@/assets/img/default-avatar.jpg"
             alt=""
           />
           {{ post.FullName }}</span
         >
         <span class="post__time"
-          >&nbsp;{{ HCommon.postTime(post.CreatedDate) }}&nbsp;</span
+          >&nbsp;{{ HCommon.formatTime(post.CreatedDate) }}&nbsp;</span
         >
         <span class="post__address">{{ post.LocationName }}</span>
       </div>

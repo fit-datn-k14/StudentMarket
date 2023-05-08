@@ -16,7 +16,7 @@
           :required="true"
           v-model="password"
         />
-        <div class="errorMessage">{{ errorMessage }}</div>
+        <div class="errorMessage text-danger">{{ errorMessage }}</div>
         <HButton
           class="btnLogin"
           ref="btn-login"
@@ -47,7 +47,29 @@ export default {
     };
   },
   methods: {
+    /**
+     * Kiểm tra dữ liệu hợp lệ
+     * Author: Nguyễn Văn Huy (30/03/2023)
+     */
+    onValidate() {
+      this.errorMessage = null;
+      this.$refs.txtUserName.onValidate();
+      this.$refs.txtPassword.onValidate();
+      if (!this.password) {
+        this.errorMessage = "Mật khẩu không được bỏ trống";
+      }
+      if (this.username && this.username.length > 24) {
+        this.errorMessage = "Tài khoản quá dài";
+        this.$refs.txtUserName.errorMessage =
+          "Tài khoản có độ dài tối đa 24 ký tự";
+      }
+      if (!this.username) {
+        this.errorMessage = "Tài khoản không được bỏ trống";
+      }
+    },
+
     login() {
+      this.onValidate();
       axios
         .post("https://localhost:9999/api/v1/Users/Login", {
           UserName: this.username,
@@ -65,8 +87,8 @@ export default {
             this.errorMessage = response.data.UserMsg;
           }
         })
-        .catch((error) => {
-          console.log(error);
+        .catch(() => {
+          this.errorMessage = this.HResource.Message.Exception;
         });
     },
   },
@@ -74,24 +96,5 @@ export default {
 </script>
 
 <style scoped>
-.form_login {
-  margin-top: 48px;
-  background-color: #fff;
-  padding: 12px;
-  border-radius: 8px;
-  padding-bottom: 48px;
-}
-
-.btnLogin {
-  display: flex;
-  justify-content: center;
-}
-
-.link-register {
-  text-align: center;
-}
-
-.the-login a {
-  text-decoration: none;
-}
+@import url(@/css/views/login.css);
 </style>

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using StudentMarket.Common.Enums;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -26,7 +27,15 @@ namespace StudentMarket.Common.Entities
         [Required(ErrorMessage = "Người nhận không đuược bỏ trống")]
         public Guid ToUser { get; set; }
 
-        public string Content { get; set; }
+        [Required(ErrorMessage = "Nội dung tin nhắn không đuược bỏ trống")]
+        public string? Content { get; set; }
+
+
+        public string? FullName { get; set; }
+
+        public Guid? Avatar { get; set; }
+
+        public Seen Seen { get; set; } = Seen.Unread;
 
         #endregion
     }

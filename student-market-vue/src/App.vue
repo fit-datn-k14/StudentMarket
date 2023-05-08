@@ -1,6 +1,6 @@
 <template>
   <div class="app">
-    <div style="height: 80px"></div>
+    <div style="height: 60px"></div>
     <TheHeader class="the-header" />
     <TheContent class="the-content" />
     <TheFooter class="the-footer" />
@@ -29,9 +29,9 @@ export default {
   background-color: #f4f4f4;
 }
 .the-header {
-  min-height: 80px;
+  min-height: 60px;
 }
 .the-content {
-  min-height: calc(100vh - 80px);
+  min-height: calc(100vh - 60px);
 }
 </style>

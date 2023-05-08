@@ -147,7 +147,6 @@ namespace StudentMarket.API.Controllers
             }
         }
 
-
         private async Task<Guid> UploadImage(IFormFile image, Guid userId)
         {
             // Khởi tạo danh sách các đường dẫn ảnh

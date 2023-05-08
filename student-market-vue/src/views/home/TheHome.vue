@@ -14,7 +14,7 @@
         :api="apiGetLocations"
         :defaultItem="defaultLocation"
         propText="LocationName"
-        propValue="LocationsID"
+        propValue="LocationID"
         v-model="location_id"
       ></h-combobox>
       <h-combobox
@@ -28,7 +28,7 @@
         <h-input
           ref="txtSearch"
           v-model="txtSearch"
-          @keyup.enter="filterData"
+          @keyup.enter="loadData"
           placeholder="Tìm kiếm"
         />
         <div class="icon-search" @click="onSearch">
@@ -40,7 +40,7 @@
         value="Lọc"
         type="btn-pri"
         :disabled="false"
-        @click="filterData"
+        @click="loadData"
       />
     </div>
     <h-post-list :posts="posts" />
@@ -70,22 +70,22 @@ export default {
     this.loadData();
   },
   watch: {
-    category_id() {
+    category_id: function () {
       this.loadData();
     },
-    location_id() {
+    location_id: function () {
       this.loadData();
     },
   },
   methods: {
-    filterData() {},
     /**
      * Lấy dữ liệu
      * Author: Nguyễn Văn Huy(03/04/2023)
      */
     async loadData() {
       this.showLoading = true;
-      var filterQuery = this.filterQuery;
+
+      var filterQuery = await this.filterQuery();
       try {
         var url = "https://localhost:9999/api/v1/Posts/Search";
         await this.axios.post(url, filterQuery).then((response) => {
@@ -111,29 +111,33 @@ export default {
       const keywordStore = useKeyword();
       eventBus.on("search", (keyword) => {
         keywordStore.setKeyword(keyword);
+        this.keyword = keyword;
+        this.loadData();
       });
+    },
+    filterQuery() {
+      var result = {
+        Keyword: this.txtSearch,
+        CategoryID: this.category_id,
+        LocationID: this.location_id,
+        SortType: this.sortType,
+        PageNumber: this.pageNumber,
+      };
+      return result;
     },
   },
   mounted() {
     const keywordStore = useKeyword();
     eventBus.on("search", (keyword) => {
       keywordStore.setKeyword(keyword);
-      this.$router.push("/Home");
+      this.keyword = keyword;
+      this.loadData();
+      this.$router.push("/trang-chu");
     });
-  },
-  computed: {
-    filterQuery() {
-      return {
-        Keyword: this.keyword,
-        CategoryID: this.category_id,
-        LocationID: this.location_id,
-        SortType: this.sortType,
-        PageNumber: this.pageNumber,
-      };
-    },
   },
   data() {
     return {
+      keyword: null,
       showLoading: true,
       pageNumber: 1,
       totalPages: 0,
@@ -160,60 +164,6 @@ export default {
 };
 </script>
 
-<style >
-.the-home {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  row-gap: 16px;
-}
-
-.the-home.the-content {
-  padding-top: 52px;
-}
-
-.filter-top {
-  position: fixed;
-  top: 80px;
-  height: 48px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: #fff;
-  column-gap: 16px;
-  width: 100%;
-  z-index: 3;
-}
-.filter-top > div {
-  max-width: 240px;
-  margin: 0;
-}
-.pagination {
-  column-gap: 8px;
-}
-.page-item.active {
-  border: none !important;
-}
-
-.page-item.disabled {
-  opacity: 0.7;
-}
-
-.page-item.active .page-link {
-  background-color: var(--primary-color);
-  border-color: var(--primary-color);
-}
-
-.page-item > .page-link {
-  color: var(--text-color);
-  border-radius: 4px;
-  width: 36px;
-  box-sizing: border-box;
-}
-
-.page-item:not(.active, .disabled):hover > .page-link {
-  background-color: #fff;
-  color: var(--primary-color);
-}
+<style scope>
+@import url(@/css/views/home.css);
 </style>

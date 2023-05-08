@@ -17,6 +17,8 @@ namespace StudentMarket.Common.Entities
         [Key]
         public Guid UserID { get; set; }
 
+        [Required(ErrorMessage = "Tài khoản không được bỏ trống")]
+        [DuplicateCode(ErrorMessage = "Tài khoản đã tồn tại")]
         public string UserName { get; set; }
 
         [Required(ErrorMessage = "Họ tên không được bỏ trống")]

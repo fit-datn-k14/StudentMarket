@@ -23,6 +23,6 @@ namespace StudentMarket.BL.MessageBL
         /// <param name="UserID"></param>
         /// <param name="withUser"></param>
         /// <returns>danh sách tin nhắn</returns>
-        public ServiceResult GetListMessages(Guid UserID, Guid withUser);
+        public ServiceResult GetListMessages(MessageDataModel messageData);
     }
 }

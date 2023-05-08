@@ -83,7 +83,7 @@
               :api="apiGetLocations"
               :defaultItem="defaultLocation"
               propText="LocationName"
-              propValue="LocationsID"
+              propValue="LocationID"
               v-model="User.LocationID"
             ></h-combobox>
             <h-input ref="txtAddress" label="Địa Chỉ" v-model="User.Address" />
@@ -133,7 +133,10 @@
 </template>
       <script>
 import HConfig from "@/js/base/config";
-import { getUserFromLocalStorage } from "@/stores/localStorage.js";
+import {
+  saveUserToLocalStorage,
+  getUserFromLocalStorage,
+} from "@/stores/localStorage.js";
 export default {
   name: "ChangeUserInfo",
   props: {
@@ -145,29 +148,11 @@ export default {
   async created() {
     this.User = getUserFromLocalStorage();
     this.User.DateOfBirth = this.HCommon.formatDate(this.User.DateOfBirth);
-    console.log(this.User.DateOfBirth);
     this.ImageID = this.Post.ImageName;
     this.newComment.PostID = this.id;
     this.newComment.UserID = this.User.UserID;
   },
   methods: {
-    addComment() {
-      if (this.newComment.Content) {
-        var url = HConfig.API.Comments;
-        this.axios
-          .post(url, this.newComment)
-          .then((response) => {
-            if (response.data.Success) {
-              this.newComment.Content = null;
-              this.getComments();
-            }
-          })
-          .catch((error) => {
-            this.errorMessage = error;
-          });
-      }
-    },
-
     onClickLoadAvatar() {
       this.$refs.fileInput.click();
     },
@@ -183,16 +168,16 @@ export default {
 
     updateUser() {
       // create a FormData object to store the post data
-      //   this.onValidate();
+      //this.onValidate();
       if (!this.errorMessage) {
         const formData = new FormData();
-
         formData.append("User.UserID", this.User.UserID);
+        formData.append("User.UserName", this.User.UserName);
         formData.append("User.FullName", this.User.FullName);
         if (this.User.DateOfBirth) {
           formData.append("User.DateOfBirth", this.User.DateOfBirth);
         }
-        if (this.User.Gender) {
+        if (this.User.Gender != null) {
           formData.append("User.Gender", this.User.Gender);
         }
         if (this.User.LocationID) {
@@ -218,7 +203,11 @@ export default {
         }
         formData.append("User.Role", this.User.Role);
 
-        formData.append("Image", this.previewFile);
+        if (this.previewFile) {
+          formData.append("Image", this.previewFile);
+        } else {
+          formData.append("User.Avatar", this.User.Avatar);
+        }
 
         this.axios
           .put("https://localhost:9999/api/v1/Users/", formData, {
@@ -228,12 +217,11 @@ export default {
           })
           .then((response) => {
             if (response.data.Success) {
-              var routerPost = `/post/${response.data.Data.PostID}`;
-              this.$router.push(routerPost);
+              saveUserToLocalStorage(response.data.Data);
+              this.$router.push(`cai-dat-tai-khoan`);
             }
           })
-          .catch((error) => {
-            console.log(error);
+          .catch(() => {
             this.errorMessage = this.HResource.Message.Exception;
           });
       }
@@ -339,59 +327,8 @@ export default {
   align-items: center;
   cursor: pointer;
 }
-.addCommentBox i {
-  font-size: 32px;
-  text-align: center;
-  rotate: 45deg;
-  color: var(--primary-color);
-}
-.tpd__seller {
-  height: 132px;
-  display: flex;
-  column-gap: 16px;
-}
-.tpd__seller > div:first-child {
-  display: flex;
-  align-items: center;
-  column-gap: 8px;
-  width: 40%;
-}
-.tpd__seller > div:last-child {
-  display: flex;
-  align-items: center;
-  column-gap: 20px;
-  width: 40%;
-}
-
-.tpd__seller span {
-  display: block;
-}
-
-.seller__name {
-  font-size: 24px;
-  font-weight: 600;
-}
-.seller__avatar {
-  height: 84px;
-  width: 84px;
-  border-radius: 42px;
-}
-.ppd__img {
-  width: 100%;
-}
-
 .single-product-describe {
   min-height: 180px;
-}
-.imglist {
-  display: flex;
-  column-gap: 2%;
-  margin-top: 16px;
-}
-.imglist img {
-  width: 15%;
-  box-sizing: border-box;
-  border: 1px solid var(--border-color);
 }
 
 .single-product {

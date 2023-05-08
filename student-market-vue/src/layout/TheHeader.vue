@@ -56,7 +56,73 @@
               <i class="header-icon d-block fa-regular fa-heart"></i>
             </router-link>
 
-            <div><i class="bell-icon fa-solid fa-bell header-icon"></i></div>
+            <div
+              class="theheader__notifications"
+              title="Thông báo"
+              v-click-outside="hiddenNotifications"
+            >
+              <i
+                class="bell-icon fa-solid fa-bell header-icon"
+                @click="showNotifications = !showNotifications"
+              ></i>
+              <div class="notificationbox shadow" v-show="showNotifications">
+                <div class="notificationbox__title">Thông báo</div>
+                <div class="notificationbox__options">
+                  <h-button
+                    class="btn-option"
+                    :type="
+                      HEnum.optionNotify.All == selectedOptionNotify
+                        ? 'btn-pri'
+                        : 'btn-second'
+                    "
+                    value="Tất cả"
+                    @click="onSelectOptionNotify(HEnum.optionNotify.All)"
+                  />
+                  <h-button
+                    class="btn-option"
+                    :type="
+                      HEnum.optionNotify.Unread == selectedOptionNotify
+                        ? 'btn-pri'
+                        : 'btn-second'
+                    "
+                    value="Chưa đọc"
+                    @click="onSelectOptionNotify(HEnum.optionNotify.Unread)"
+                  />
+                </div>
+                <div class="notificationbox__list">
+                  <div
+                    class="notificationlist"
+                    v-if="notificationFilter.length > 0"
+                  >
+                    <div
+                      class="notify_item"
+                      v-for="(notify, notifyIndex) in notificationFilter"
+                      :class="
+                        notify.Seen
+                          ? 'notify_item--seen'
+                          : 'notify_item--unread'
+                      "
+                      :key="notifyIndex"
+                      @click="onClickNotify(notify)"
+                    >
+                      <img
+                        class="notify__avatar"
+                        :src="URL + `Images/users/avatar/${notify.Avatar}`"
+                      />
+                      <div>
+                        <div v-html="HCommon.formatNotify(notify)"></div>
+                        <div class="notify_time">
+                          {{ HCommon.formatTime(notify.CreatedDate) }}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="no-notification" v-else>
+                    <h3>{{ notifyMessage }}</h3>
+                  </div>
+                </div>
+              </div>
+            </div>
 
             <router-link to="/dang-tin">
               <HButton
@@ -80,6 +146,7 @@
               v-else
               class="header__userinfo"
               @click="showDropdown = !showDropdown"
+              v-click-outside="() => (showDropdown = false)"
             >
               <img
                 class="theheader__avatar"
@@ -87,10 +154,18 @@
               />
               <span>{{ user.FullName }}</span>
               <div v-show="showDropdown" class="header__dropdown">
-                <router-link to="/cai-dat-tai-khoan" class="link">
+                <router-link
+                  to="/cai-dat-tai-khoan"
+                  class="link"
+                  @click="showDropdown = false"
+                >
                   <div class="text">Cài Đặt Tài Khoản</div>
                 </router-link>
-                <router-link to="/doi-mat-khau" class="link">
+                <router-link
+                  to="/doi-mat-khau"
+                  class="link"
+                  @click="showDropdown = false"
+                >
                   <div class="text">Đổi mật khẩu</div>
                 </router-link>
                 <HButton type="btn-link" value="Đăng Xuất" @click="logout" />
@@ -110,11 +185,13 @@ import {
   getUserFromLocalStorage,
   removeUserFromLocalStorage,
 } from "@/stores/localStorage.js";
+import connection from "@/js/hubs/notificationHub";
 import HConfig from "@/js/base/config.js";
+
 export default {
   name: "TheHeader",
-  created() {
-    this.setUser();
+  async created() {
+    await this.setUser();
   },
   methods: {
     onSearch() {
@@ -122,37 +199,106 @@ export default {
       this.$router.push("/trang-chu");
     },
     logout() {
+      connection.invoke("LeaveGroup", this.user.UserID);
+      connection.stop();
       removeUserFromLocalStorage();
+      this.showDropdown = false;
+      this.$router.push("/");
       this.setUser();
     },
-    setUser() {
+    onSelectOptionNotify(value) {
+      this.selectedOptionNotify = value;
+    },
+    async setUser() {
       this.user = getUserFromLocalStorage();
       this.censor = isCensor();
+      if (this.user) {
+        await this.getNotifications();
+        this.notifyMessage = "Không có thông báo nào";
+      } else {
+        this.notifyMessage = "Bạn phải đăng nhập để xem thông báo";
+      }
+    },
+    async onClickNotify(notify) {
+      await this.seenNotify(notify);
+      notify.Seen = 1;
+    },
+    async seenNotify(notify) {
+      var urlNotify = this.HConfig.API.Notifications + notify.NotificationID;
+      await this.axios.put(urlNotify).catch(() => {
+        this.errorMessage = this.HResource.Message.Exception;
+      });
+    },
+    async getNotifications() {
+      var urlNotify = this.HConfig.API.Notifications + this.user.UserID;
+      await this.axios
+        .get(urlNotify)
+        .then((response) => {
+          if (response.data.Success) {
+            this.notificationList = response.data.Data;
+          }
+        })
+        .catch(() => {
+          this.errorMessage = this.HResource.Message.Exception;
+        });
+    },
+    hiddenNotifications() {
+      this.showNotifications = false;
     },
   },
-  mounted() {
+  computed: {
+    notificationFilter() {
+      if (this.selectedOptionNotify == this.HEnum.optionNotify.Unread) {
+        var result = this.notificationList.filter(
+          (n) => n.Seen == this.HEnum.seen.Unread
+        );
+        return result;
+      }
+      return this.notificationList;
+    },
+  },
+  async mounted() {
+    await connection.start();
+
     eventBus.on("login", () => {
       this.setUser();
+      if (connection.state === "Disconnected") {
+        connection.start().then(() => {
+          connection.invoke("JoinGroup", this.user.UserID);
+        });
+      }
     });
+    if (this.user) {
+      connection.invoke("JoinGroup", this.user.UserID);
+    }
+    connection.on("ReceiveNotification", (notification) => {
+      this.notificationList.unshift(
+        this.HCommon.convertCamelToPascal(notification)
+      );
+    });
+  },
+  beforeUnmount() {
+    connection.invoke("LeaveGroup", this.user.UserID);
+    connection.stop();
   },
   data() {
     return {
       URL: HConfig.URL,
       showDropdown: false,
+      selectedOptionNotify: 0,
+      showNotifications: false,
       txtSearch: "",
       censor: false,
       user: {},
       userInfo: {},
+      notificationList: [],
+      notifyMessage: "",
+      numberNotifyUnread: 0,
       headerList: [
         {
           link: "/trang-chu",
           icon: "",
           title: "Trang Chủ",
-        },
-        {
-          link: "/tin-dang",
-          icon: "",
-          title: "Tin Đăng",
         },
         {
           link: "/quan-ly-tin-dang",
@@ -166,183 +312,6 @@ export default {
 </script>
   
 <style >
-div.text {
-  white-space: nowrap;
-}
-.header__logo strong {
-  font-size: 24px;
-  color: var(--primary-color);
-}
-.header-box {
-  position: fixed;
-  top: 0;
-  right: 0;
-  left: 0;
-  background-color: #fff;
-  z-index: 999;
-}
-.logo {
-  width: 184px;
-}
-.logo-img {
-  height: 60px;
-  width: 60px;
-}
-
-.menu {
-  margin-bottom: 0;
-}
-
-.menu li {
-  margin-left: 24px;
-  padding: 8px;
-  height: 100%;
-}
-
-.menu li a {
-  color: var(--text-color);
-  font-weight: bold;
-  line-height: 54px;
-  cursor: pointer;
-}
-
-.header-box a {
-  text-decoration: none;
-}
-
-.header-box li:hover a {
-  color: var(--primary-color);
-}
-
-.arrow {
-  height: 2px;
-  width: 0%;
-  background: #e03c31;
-  line-height: 0px;
-  font-size: 0px !important;
-  margin-top: 2px;
-  transition: 0.3s;
-}
-
-.menu li:hover .arrow {
-  width: 100%;
-}
-
-.header-icon {
-  font-size: 24px;
-  cursor: pointer;
-}
-
-.header-icon:hover {
-  color: var(--primary-color);
-}
-
-.login-group a {
-  color: var(--text-color);
-  padding: 8px 11px;
-  display: block;
-  font-weight: bold;
-  border: 1px solid transparent;
-}
-
-.login-group a:hover {
-  background: #fafafa;
-  border: solid 1px #fafafa;
-  color: var(--primary-color);
-}
-
-.btn-post {
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  text-decoration: none;
-}
-
-.btn-post:hover {
-  border: 1px solid #ccc !important;
-  background: #fafafa;
-}
-
-.line {
-  border: 0;
-  width: 1px;
-  height: 16px;
-  background: #e5e5e5;
-  margin: 15px 0;
-}
-.header-box .searchbox {
-  margin: 0 28px;
-  width: 460px;
-}
-.searchbox {
-  position: relative;
-  max-width: 720px;
-  flex-grow: 1;
-}
-
-.searchbox > .icon-search {
-  position: absolute;
-  right: 6px;
-  top: 6px;
-}
-
-.circle input {
-  border-radius: 18px;
-}
-
-div:has(.bell-icon):hover bell-icon {
-  color: var(--primary-color);
-}
-.bell-icon {
-  padding: 8px;
-}
-
-.header__userinfo {
-  display: flex;
-  column-gap: 8px;
-  align-items: center;
-  border: 1px solid var(--border-color);
-  padding: 2px;
-  border-radius: 20px;
-  position: relative;
-  cursor: pointer;
-}
-
-.header__userinfo img {
-  width: 36px;
-  height: 36px;
-  border-radius: 18px;
-}
-
-.header__userinfo span {
-  white-space: nowrap;
-  overflow: hidden;
-  font-size: 16px;
-  padding-right: 8px;
-}
-
-.header__dropdown {
-  position: absolute;
-  width: 100%;
-  border-radius: 4px;
-  right: 0;
-  top: 42px;
-  background-color: #fff;
-  border: 1px solid var(--border-color);
-}
-
-.header__dropdown input {
-  font-weight: bold;
-  text-decoration: unset;
-  padding: 8px 11px;
-}
-
-.header__dropdown input:hover {
-}
-
-.header__dropdown > div:hover input,
-.header__dropdown > a:hover {
-  background-color: #fff;
-  color: var(--primary-color);
-}
+@import url(@/css/layout/theheader.css);
 </style>
   
