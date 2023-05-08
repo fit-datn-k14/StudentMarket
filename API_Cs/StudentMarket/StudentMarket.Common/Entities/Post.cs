@@ -53,8 +53,6 @@ namespace StudentMarket.Common.Entities
 
         public List<Guid> ListImages { get; set; } = new List<Guid>();
 
-        public List<Guid> ListImagesDel { get; set; } = new List<Guid>();
-
         #endregion
     }
 }

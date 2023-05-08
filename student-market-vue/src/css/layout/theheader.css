@@ -252,3 +252,22 @@ div:has(.bell-icon):hover bell-icon {
     justify-content: center;
     height: 120px;
 }
+
+.favorite-post-link,
+.theheader__notifications {
+    position: relative;
+}
+
+.number_unread_chat,
+.number_unread_notify {
+    position: absolute;
+    color: #fff;
+    font-size: 10px;
+    top: 0;
+    right: 0;
+    background-color: red;
+    min-width: 20px;
+    line-height: 20px;
+    text-align: center;
+    border-radius: 10px;
+}

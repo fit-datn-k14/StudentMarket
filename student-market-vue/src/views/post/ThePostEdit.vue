@@ -3,20 +3,52 @@
     <div class="tpp__container">
       <div class="tpp__left">
         <h5 class="title__img">Ảnh Sản Phẩm</h5>
-        <div class="listImages" v-if="previewUrls.length">
+        <div
+          v-if="
+            postDetail.ListImages &&
+            previewUrls.length + postDetail.ListImages.length <= 6
+          "
+          class="btnUploadImage"
+          @click="onClickFileInput"
+        >
+          Thêm ảnh
+          <input
+            type="file"
+            ref="fileInput"
+            @change="addImage"
+            accept="image/jpeg, image/png"
+          />
+        </div>
+        <div class="listImages">
+          <div
+            v-for="(image, indexImg) in postDetail.ListImages"
+            :key="indexImg"
+          >
+            <span class="removeImg" @click="removeOldImg(indexImg)"
+              >&times;</span
+            >
+            <img :src="URL + `Images/posts/${id}/${image}`" />
+          </div>
           <div v-for="(url, index) in previewUrls" :key="index">
-            <span class="removeImg" @click="removeImg(index)">&times;</span>
+            <span class="removeImg" @click="removeNewImg(index)">&times;</span>
             <img :src="url" />
           </div>
         </div>
-        <input
-          type="file"
-          ref="fileInput"
-          @change="previewImages"
-          multiple
-          accept="image/jpeg, image/png"
+        <img
+          v-if="postDetail.ListImages && postDetail.ListImages.length > 0"
+          class="ppd__img border border-dark"
+          :src="URL + `Images/posts/${id}/${postDetail.ListImages[0]}`"
         />
-        <div class="inputImage" @click="onClickFileInput"></div>
+        <img
+          v-else-if="previewUrls && previewUrls.length > 0"
+          class="ppd__img border border-dark"
+          :src="previewUrls[0]"
+        />
+        <img
+          v-else
+          class="ppd__img border border-dark"
+          src="@/assets/img/noimage.jpg"
+        />
       </div>
       <div class="tpp__right">
         <div class="form-group">
@@ -60,7 +92,6 @@
               label="Khu vực"
               :required="true"
               :api="apiGetLocations"
-              :defaultItem="defaultLocation"
               propText="LocationName"
               propValue="LocationID"
               v-model="postDetail.LocationID"
@@ -87,7 +118,7 @@
           <HButton
             class="circle"
             ref="btnDangTin"
-            value="Đăng Tin"
+            value="Lưu thay đổi"
             type="btn-pri"
             :disabled="false"
             @click="submitPostData"
@@ -110,14 +141,50 @@ import { getUserFromLocalStorage } from "@/stores/localStorage";
 import axios from "axios";
 export default {
   name: "ThePostPost",
-  created() {
-    this.user = getUserFromLocalStorage();
-    this.postDetail.UserID = this.user.UserID;
-    this.postDetail.LocationID = this.user.LocationID;
+  props: {
+    id: {
+      type: String,
+      required: true,
+    },
+  },
+  async created() {
+    this.user = await getUserFromLocalStorage();
+    await this.loadData();
   },
   methods: {
+    async loadData() {
+      this.isLoading = true;
+      try {
+        var url = this.HConfig.API.Posts + this.id;
+        await this.axios.get(url).then((response) => {
+          if (response.data.Success) {
+            this.postDetail = response.data.Data;
+            this.isLoading = false;
+          } else {
+            this.errorMessage = response.data.UserMsg;
+            this.dialogType = this.HEnum.DialogType.Error;
+          }
+        });
+      } catch (error) {
+        this.errorMessage = this.HResource.Text.MessageException;
+        this.dialogType = this.HEnum.DialogType.Error;
+      }
+    },
+
     onClickFileInput() {
       this.$refs.fileInput.click();
+    },
+    addImage(event) {
+      const files = event.target.files;
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => {
+          this.previewUrls.push(reader.result);
+        };
+        this.previewFiles.push(file);
+      }
     },
 
     /**
@@ -133,31 +200,11 @@ export default {
           break;
       }
     },
-
-    previewImages(event) {
-      this.previewFiles = event.target.files;
-      const files = event.target.files;
-      if (files.length > 6) {
-        alert("Bạn chỉ được tải lên tối đa 6 ảnh!");
-        return;
-      }
-      for (let i = 0; i < files.length; i++) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          if (
-            !this.previewUrls.includes(e.target.result) &&
-            this.previewUrls.length < 6
-          ) {
-            this.previewUrls.push(e.target.result);
-          } else {
-            alert("Bạn chỉ được tải lên tối đa 6 ảnh!");
-            return;
-          }
-        };
-        reader.readAsDataURL(files[i]);
-      }
+    removeOldImg(index) {
+      this.postDetail.imagesDel.push(this.postDetail.ListImages[index]);
+      this.postDetail.ListImages.splice(index, 1);
     },
-    removeImg(index) {
+    removeNewImg(index) {
       this.previewUrls.splice(index, 1);
     },
 
@@ -188,6 +235,7 @@ export default {
       if (!this.errorMessage) {
         const formData = new FormData();
 
+        formData.append("Post.PostID", this.postDetail.PostID);
         formData.append("Post.Title", this.postDetail.Title);
         if (this.postDetail.Price) {
           formData.append("Post.Price", this.postDetail.Price);
@@ -201,13 +249,21 @@ export default {
         if (this.postDetail.PostDescribe) {
           formData.append("Post.PostDescribe", this.postDetail.PostDescribe);
         }
+        for (let i = 0; i < this.imagesDel.length; i++) {
+          formData.append("ImagesDel", this.imagesDel[i]);
+        }
+
+        if (this.postDetail.ListImages.length > 0) {
+          formData.append("Post.ImageName", this.postDetail.ListImages[0]);
+        }
 
         for (let i = 0; i < this.previewFiles.length; i++) {
           formData.append("Images", this.previewFiles[i]);
         }
 
+        var url = this.URL + `Posts/${this.id}`;
         axios
-          .post("https://localhost:9999/api/v1/Posts/", formData, {
+          .put(url, formData, {
             headers: {
               "Content-Type": "multipart/form-data",
             },
@@ -226,10 +282,12 @@ export default {
   },
   data() {
     return {
+      URL: this.HConfig.URL,
       user: {},
       errorMessage: null,
       previewUrls: [],
       previewFiles: [],
+      imagesDel: [],
       apiGetCategories: "https://localhost:9999/api/v1/Categories",
       apiGetLocations: "https://localhost:9999/api/v1/Locations",
       defaultCategory: {

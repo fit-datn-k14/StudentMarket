@@ -18,8 +18,8 @@ const HEnum = {
         Unread: 1,
     },
     seen: {
-        Seen: 0,
-        Unread: 1,
+        Unread: 0,
+        Seen: 1,
     }
 };
 export default HEnum;

@@ -1,6 +1,6 @@
 <template>
   <div class="mess_detail">
-    <div class="mdv__container">
+    <div class="mdv__container" @focus="seenMess">
       <div class="mdv__header shadow-sm">
         <div class="mdv__userinfo">
           <img :src="url + `Images/users/avatar/${withUser.Avatar}`" />
@@ -72,6 +72,7 @@ export default {
     this.messDataModel.UserID = this.user.UserID;
     this.messDataModel.WithUser = this.id;
     await this.loadMess();
+    await this.seenMess();
   },
   async mounted() {
     // Sau khi component được mounted, tính chiều cao của .mdv__content
@@ -87,6 +88,20 @@ export default {
     });
   },
   methods: {
+    async seenMess() {
+      console.log(this.listMessages);
+      if (
+        this.listMessages.length > 0 &&
+        this.listMessages[0].Seen == this.HEnum.seen.Unread &&
+        this.listMessages[0].ToUser == this.user.UserID
+      ) {
+        var urlMess =
+          this.HConfig.API.Messages + this.user.UserID + "/" + this.id;
+        await this.axios.put(urlMess).catch(() => {
+          this.errorMessage = this.HResource.Message.Exception;
+        });
+      }
+    },
     loadWithUser() {
       var url = this.HConfig.API.Users + this.id;
       try {
@@ -101,15 +116,17 @@ export default {
         this.errorMessage = this.HResource.Text.MessageException;
       }
     },
-    loadMess() {
+    async loadMess() {
       try {
-        this.axios.post(this.urlMess, this.messDataModel).then((response) => {
-          if (response.data.Success) {
-            this.listMessages = response.data.Data;
-          } else {
-            this.errorMessage = response.data.UserMsg;
-          }
-        });
+        await this.axios
+          .post(this.urlMess, this.messDataModel)
+          .then((response) => {
+            if (response.data.Success) {
+              this.listMessages = response.data.Data;
+            } else {
+              this.errorMessage = response.data.UserMsg;
+            }
+          });
       } catch {
         this.errorMessage = this.HResource.Text.MessageException;
       }

@@ -47,6 +47,9 @@
               title="Tin nhắn"
             >
               <i class="header-icon fa-sharp fa-solid fa-comment"></i>
+              <div v-if="numberChatUnread" class="number_unread_chat">
+                {{ numberChatUnread }}
+              </div>
             </router-link>
             <router-link
               to="/"
@@ -65,6 +68,9 @@
                 class="bell-icon fa-solid fa-bell header-icon"
                 @click="showNotifications = !showNotifications"
               ></i>
+              <div v-if="numberNotifyUnread" class="number_unread_notify">
+                {{ numberNotifyUnread }}
+              </div>
               <div class="notificationbox shadow" v-show="showNotifications">
                 <div class="notificationbox__title">Thông báo</div>
                 <div class="notificationbox__options">
@@ -186,6 +192,7 @@ import {
   removeUserFromLocalStorage,
 } from "@/stores/localStorage.js";
 import connection from "@/js/hubs/notificationHub";
+import connectionChat from "@/js/hubs/chatHub";
 import HConfig from "@/js/base/config.js";
 
 export default {
@@ -194,6 +201,28 @@ export default {
     await this.setUser();
   },
   methods: {
+    loadMessageList() {
+      try {
+        var url = this.HConfig.API.Messages + this.user.UserID;
+        this.axios.get(url).then((response) => {
+          if (response.data.Success) {
+            var list_mess = response.data.Data;
+            console.log(list_mess);
+            this.numberChatUnread = list_mess.filter(
+              (n) =>
+                n.Seen == this.HEnum.seen.Unread && n.ToUser == this.user.UserID
+            ).length;
+          } else {
+            this.errorMessage = response.data.UserMsg;
+          }
+        });
+      } catch {
+        this.errorMessage = this.HResource.Text.MessageException;
+      }
+    },
+    getWithUser(mess) {
+      return mess.FromUser == this.user.UserID ? mess.ToUser : mess.FromUser;
+    },
     onSearch() {
       eventBus.emit("search", this.txtSearch);
       this.$router.push("/trang-chu");
@@ -201,6 +230,8 @@ export default {
     logout() {
       connection.invoke("LeaveGroup", this.user.UserID);
       connection.stop();
+      connectionChat.invoke("LeaveGroup", this.user.UserID);
+      connectionChat.stop();
       removeUserFromLocalStorage();
       this.showDropdown = false;
       this.$router.push("/");
@@ -247,6 +278,12 @@ export default {
     },
   },
   computed: {
+    numberNotifyUnread() {
+      var result = this.notificationList.filter(
+        (n) => n.Seen == this.HEnum.seen.Unread
+      ).length;
+      return result;
+    },
     notificationFilter() {
       if (this.selectedOptionNotify == this.HEnum.optionNotify.Unread) {
         var result = this.notificationList.filter(
@@ -259,7 +296,7 @@ export default {
   },
   async mounted() {
     await connection.start();
-
+    await connectionChat.start();
     eventBus.on("login", () => {
       this.setUser();
       if (connection.state === "Disconnected") {
@@ -267,14 +304,25 @@ export default {
           connection.invoke("JoinGroup", this.user.UserID);
         });
       }
+      if (connectionChat.state === "Disconnected") {
+        connectionChat.start().then(() => {
+          connectionChat.invoke("JoinGroup", this.user.UserID);
+        });
+      }
+      this.loadMessageList();
     });
     if (this.user) {
       connection.invoke("JoinGroup", this.user.UserID);
+      connectionChat.invoke("JoinGroup", this.user.UserID);
     }
     connection.on("ReceiveNotification", (notification) => {
       this.notificationList.unshift(
         this.HCommon.convertCamelToPascal(notification)
       );
+    });
+    connectionChat.invoke("JoinGroup", this.user.UserID);
+    connectionChat.on("ReceiveMessage", () => {
+      this.loadMessageList();
     });
   },
   beforeUnmount() {
@@ -287,13 +335,13 @@ export default {
       showDropdown: false,
       selectedOptionNotify: 0,
       showNotifications: false,
+      numberChatUnread: 0,
       txtSearch: "",
       censor: false,
       user: {},
       userInfo: {},
       notificationList: [],
       notifyMessage: "",
-      numberNotifyUnread: 0,
       headerList: [
         {
           link: "/trang-chu",

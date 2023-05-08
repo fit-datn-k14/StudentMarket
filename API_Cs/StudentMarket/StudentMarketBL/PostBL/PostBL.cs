@@ -7,6 +7,7 @@ using StudentMarket.DL.CategoryDL;
 using StudentMarket.DL.LocationDL;
 using StudentMarket.DL.PostDL;
 using StudentMarket.DL.UserDL;
+using System.Collections.Generic;
 using System.Text;
 
 namespace StudentMarket.BL.PostBL
@@ -98,6 +99,31 @@ namespace StudentMarket.BL.PostBL
         public ServiceResult SetApproved(Guid postId, Approved approved)
         {
             return _postDL.SetApproved(postId, approved);
+        }
+
+        /// <summary>
+        /// Chỉnh sửa tin đăng
+        /// </summary>
+        /// <param name="postId"></param>
+        /// <param name="imagesDel"></param>
+        /// <returns></returns>
+        public ServiceResult UpdatePostByID(Post post, List<Guid> imagesDel)
+        {
+            var validateFailures = ValidateRequestData(post);
+            var validateFailuresCustom = ValidateRequestDataCustom(post);
+            validateFailures = validateFailures.Concat(validateFailuresCustom).ToList();
+
+            if (validateFailures.Count > 0)
+            {
+                return new ServiceResult
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.Validate,
+                    DevMsg = Resource.DevMsg_Invalid,
+                    Data = validateFailures
+                };
+            }
+            return _postDL.UpdatePostByID(post, imagesDel);
         }
 
         #endregion

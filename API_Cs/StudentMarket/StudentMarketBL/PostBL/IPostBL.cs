@@ -31,5 +31,13 @@ namespace StudentMarket.BL.PostBL
         /// <returns>Thông báo</returns>
         /// CreatedBy: NVHuy(19/03/2023)
         public ServiceResult SetApproved(Guid postId, Approved approved);
+
+        /// <summary>
+        /// Chỉnh sửa tin đăng
+        /// </summary>
+        /// <param name="postId"></param>
+        /// <param name="imagesDel"></param>
+        /// <returns></returns>
+        public ServiceResult UpdatePostByID(Post post, List<Guid> imagesDel);
     }
 }

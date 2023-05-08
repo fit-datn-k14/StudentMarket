@@ -22,13 +22,14 @@
           <div class="single-product-content">
             <div class="tpd__title">
               <h3>{{ Post.Title }}</h3>
-              <h-button
-                v-if="Post.UserID == User.UserID"
-                class="edit-post"
-                type="btn-pri"
-                value="Chỉnh Sửa"
-                @click="onClickEdit"
-              />
+              <router-link :to="`/chinh-sua-tin-dang/${id}`">
+                <h-button
+                  v-if="Post.UserID == User.UserID"
+                  class="edit-post"
+                  type="btn-pri"
+                  value="Chỉnh Sửa"
+                />
+              </router-link>
             </div>
             <p v-if="Post.Price" class="single-product-pricing">
               {{ Post.Price }} đ

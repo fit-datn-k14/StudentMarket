@@ -24,5 +24,12 @@ namespace StudentMarket.BL.MessageBL
         /// <param name="withUser"></param>
         /// <returns>danh sách tin nhắn</returns>
         public ServiceResult GetListMessages(MessageDataModel messageData);
+
+        /// <summary>
+        /// Set trạng thái đã xem
+        /// </summary>
+        /// <param name="messageId"></param>
+        /// <returns></returns>
+        public ServiceResult SeenMessage(Guid id, Guid withId);
     }
 }

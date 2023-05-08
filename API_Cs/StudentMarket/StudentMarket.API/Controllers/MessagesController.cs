@@ -91,6 +91,28 @@ namespace StudentMarket.API.Controllers
             }
         }
 
+        [HttpPut("{id}/{withId}")]
+        public async Task<ServiceResult> SeenMessage(Guid id,Guid withId)
+        {
+            try
+            {
+                var serviceResult = _messageBL.SeenMessage(id, withId);
+                if (serviceResult.Success)
+                {
+                    Message result = (Message)serviceResult.Data;
+                    if (result != null)
+                    {
+                        // Gửi tin nhắn tới các người dùng cùng thuộc một group với record
+                        await _hubContext.SendMessage(result);
+                    }
+                }
+                return serviceResult;
+            }
+            catch (Exception ex)
+            {
+                return new ServiceResult(ErrorCodes.Exception, ex.Message);
+            }
+        }
 
         #endregion
     }

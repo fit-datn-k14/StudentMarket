@@ -21,7 +21,10 @@ namespace StudentMarket.API.Hubs
 
         public async Task JoinGroup(string groupName)
         {
-            await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
+            if(groupName != null)
+            {
+                await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
+            }
         }
 
         public async Task LeaveGroup(string groupName)

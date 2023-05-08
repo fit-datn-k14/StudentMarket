@@ -6,6 +6,7 @@ using StudentMarket.Common.Entities.DTO;
 using StudentMarket.Common.Enums;
 using StudentMarket.Common.Utilities;
 using StudentMarket.DL;
+using StudentMarket.DL.NotificationDL;
 using StudentMarket.DL.UserDL;
 using System;
 using System.Collections.Generic;
@@ -105,6 +106,48 @@ namespace StudentMarket.DL.MessageDL
                     Success = true,
                     Data = result
                 };
+            }
+        }
+
+        /// <summary>
+        /// Set trạng thái đã xem
+        /// </summary>
+        /// <param name="messageId"></param>
+        /// <returns></returns>
+        public ServiceResult SeenMessage(Guid id, Guid withId)
+        {
+            try
+            {
+                using (var connection = new MySqlConnection(connectionDB))
+                {
+                    var stored = $"UPDATE messages SET Seen = 1 WHERE ToUser = @id AND FromUser = @withId";
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@id", id);
+                    parameters.Add("@withId", withId);
+
+                    var record = connection.QueryFirstOrDefault<Message>(stored, parameters);
+
+                    if (record != null)
+                    {
+                        return new ServiceResult
+                        {
+                            Success = true,
+                            Data = record,
+                        };
+                    }
+                    else
+                    {
+                        return new ServiceResult
+                        {
+                            Success = false,
+                            UserMsg = Resource.UsrMsg_NotFoundRecord,
+                        };
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return new ServiceResult(ErrorCodes.Exception, ex.Message);
             }
         }
     }

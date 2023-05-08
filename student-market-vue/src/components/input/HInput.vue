@@ -74,7 +74,7 @@ export default {
      * Author: NVHUY (09/03/2001)
      */
     onInput() {
-      if (this.value) {
+      if (this.value && this.type != "Number") {
         this.$emit("update:modelValue", this.value.trim());
       } else {
         this.$emit("update:modelValue", null);
@@ -85,7 +85,7 @@ export default {
      * Author: NVHUY (09/03/2001)
      */
     onValidate() {
-      if ((!this.value || !this.value.trim()) && this.required) {
+      if (this.required && (!this.value || !this.value.trim())) {
         this.isEmpty = true;
         this.errorMessage = this.label + " không được bỏ trống!";
       } else {

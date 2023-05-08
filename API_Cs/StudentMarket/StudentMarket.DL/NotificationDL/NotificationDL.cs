@@ -74,14 +74,14 @@ namespace StudentMarket.DL.NotificationDL
                     var parameters = new DynamicParameters();
                     parameters.Add("@notifyId", notificationId);
 
-                    var records = connection.Query<Notification>(stored, parameters);
+                    var record = connection.QueryFirstOrDefault<Notification>(stored, parameters);
 
-                    if (records != null)
+                    if (record != null)
                     {
                         return new ServiceResult
                         {
                             Success = true,
-                            Data = records.ToList(),
+                            Data = record,
                         };
                     }
                     else

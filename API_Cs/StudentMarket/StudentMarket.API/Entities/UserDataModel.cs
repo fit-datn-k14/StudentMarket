@@ -6,5 +6,7 @@ namespace StudentMarket.API.Entities
     {
         public User User { get; set; }
         public IFormFile? Image { get; set; }
+
+
     }
 }

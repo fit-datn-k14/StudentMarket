@@ -7,6 +7,7 @@ import TheLogin from '@/views/login/TheLogin.vue';
 import TheRegister from '@/views/register/TheRegister.vue';
 import ThePostDetail from '@/views/post/ThePostDetail.vue';
 import ThePostPost from '@/views/post/ThePostPost.vue';
+import ThePostEdit from '@/views/post/ThePostEdit.vue';
 import TheAdmin from '@/views/admin/TheAdmin.vue'
 import UserList from '@/views/admin/user/UserList'
 import ManagePosts from '@/views/admin/post/ManagePosts'
@@ -16,6 +17,7 @@ import ChangePassword from '@/views/login/ChangePassword'
 import ChangeUserInfo from '@/views/login/ChangeUserInfo'
 import UserDetail from '@/views/login/UserDetail'
 import MyPostList from '@/views/post/MyPostList'
+
 
 const routes = [
     { path: '/', component: TheHome },
@@ -27,6 +29,12 @@ const routes = [
     { path: '/thay-doi-thong-tin-ca-nhan', component: ChangeUserInfo, meta: { requiresAuth: true }, },
     { path: '/cai-dat-tai-khoan', component: UserDetail, meta: { requiresAuth: true }, },
     { path: '/dang-tin', component: ThePostPost, meta: { requiresAuth: true }, },
+    {
+        path: '/chinh-sua-tin-dang/:id',
+        component: ThePostEdit,
+        meta: { requiresAuth: true },
+        props: true
+    },
     { path: '/403', component: NotFound },
     { path: '/:pathMatch(.*)*', component: NotFound },
     {

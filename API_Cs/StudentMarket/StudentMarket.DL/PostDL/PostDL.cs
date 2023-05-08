@@ -173,6 +173,101 @@ namespace StudentMarket.DL.PostDL
             }
         }
 
+        /// <summary>
+        /// Chỉnh sửa tin đăng
+        /// </summary>
+        /// <param name="postId"></param>
+        /// <param name="imagesDel"></param>
+        /// <returns></returns>
+        public ServiceResult UpdatePostByID(Post post, List<Guid> imagesDel)
+        {
+            // Chuẩn bị stored procedure
+            var storedProcedureName = $"Proc_Posts_Update";
+            var properties = typeof(Post).GetProperties();
+            // Chuẩn bị tham số vào cho procedure
+            var parameters = new DynamicParameters();
+            parameters.Add("@Id", post.PostID);
+            foreach (var property in properties)
+            {
+                string propertyName = $"@{property.Name}";
+                var propertyValue = property.GetValue(post);
+                parameters.Add(propertyName, propertyValue);
+            }
+            // Khởi tạo kết nối tới Database
+            using (var sqlConnection = new MySqlConnection(connectionDB))
+            {
+                sqlConnection.Open();
+                // Thực hiện gọi vào Database để chạy stored procedure
+                MySqlTransaction transaction = sqlConnection.BeginTransaction();
+                try
+                {
+                    var result = sqlConnection.QueryFirstOrDefault<Post>(storedProcedureName, parameters, transaction, commandType: System.Data.CommandType.StoredProcedure);
+
+                    var listImages = post.ListImages;
+                    if (listImages != null)
+                    {
+
+                        var postId = post.PostID;
+                        var parametersImgs = new DynamicParameters();
+                        foreach (var image in listImages)
+                        {
+                            var storedProcedureNameImgs = $"Proc_ImagesPost_Insert";
+                            parametersImgs.Add("@Img", image);
+                            parametersImgs.Add("@Post", postId);
+
+                            var resultImgs = sqlConnection.Execute(storedProcedureNameImgs, parametersImgs, transaction, commandType: System.Data.CommandType.StoredProcedure);
+                            if (resultImgs <= 0)
+                            {
+                                throw new Exception();
+                            }
+                        }
+                    }
+
+                    if (imagesDel.Count > 0)
+                    {
+                        var postId = post.PostID;
+                        string listIds = string.Join("','", imagesDel);
+                        string stored = $"Delete FROM imagespost Where ImageID IN ('{listIds}')";
+
+                        var resultDel = sqlConnection.Execute(stored, parameters, transaction);
+
+                        if (resultDel != imagesDel.Count())
+                        {
+                            throw new Exception();
+                        }
+                    }
+
+                    if (result != null)
+                    {
+                        transaction.Commit();
+                        return new ServiceResult
+                        {
+                            Success = true,
+                            UserMsg = Resource.UsrMsg_InsertSuccess,
+                            Data = result
+                        };
+                    }
+                    else
+                    {
+                        throw new Exception();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+
+                    return new ServiceResult
+                    {
+                        Success = false,
+                        ErrorCode = ErrorCodes.Exception,
+                        UserMsg = Resource.DevMsg_Invalid,
+                        DevMsg = ex.Message,
+                    };
+                }
+
+            }
+        }
+
         #endregion
 
         #region Override

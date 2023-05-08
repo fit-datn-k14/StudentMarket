@@ -95,33 +95,39 @@ namespace StudentMarket.API.Controllers
         /// <returns>Thông báo</returns>
         /// CreatedBy: NVHuy(20/03/2023)
         [HttpPut("{id}")]
-        public async Task<ServiceResult> UpdateRecord([FromRoute] Guid id, [FromBody] PostDataModel postData)
+        public async Task<ServiceResult> UpdateRecord([FromRoute] Guid id, [FromForm] PostDataModel postData)
         {
             try
             {
                 var post = postData.Post;
                 var images = postData.Images;
                 var imagesDel = postData.ImagesDel;
-                post.PostID = Guid.NewGuid();
+                List<Guid> imageUrls = new List<Guid>();
                 if (images.Count > 0)
                 {
-                    var imageUrls = await UploadImages(images, post.PostID);
+                    imageUrls = await UploadImages(images, post.PostID);
                     if (post.ImageName == null)
                     {
                         post.ImageName = imageUrls[0];
                     }
                     post.ListImages = imageUrls.ToList();
                 }
-                if (imagesDel.Count > 0)
+                
+
+                var serviceResult = _postBL.UpdatePostByID(post, imagesDel);
+                if (serviceResult.Success)
                 {
-                    DeleteImages(imagesDel, post.PostID);
+                    if (imagesDel.Count > 0)
+                    {
+                        DeleteImages(imagesDel, post.PostID);
+                    }
                 }
-
-                var serviceResult = _postBL.InsertRecord(post);
-
-                if (!serviceResult.Success)
+                else
                 {
-                    DeleteFolder(post.PostID);
+                    if(imageUrls.Count > 0)
+                    {
+                        DeleteImages(imageUrls, post.PostID);
+                    }
                 }
 
                 return serviceResult;

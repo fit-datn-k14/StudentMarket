@@ -53,6 +53,16 @@ namespace StudentMarket.BL.MessageBL
             return _messageDL.GetListMessages(userId, withUser);
         }
 
+        /// <summary>
+        /// Set trạng thái đã xem
+        /// </summary>
+        /// <param name="messageId"></param>
+        /// <returns></returns>
+        public ServiceResult SeenMessage(Guid id, Guid withId)
+        {
+            return _messageDL.SeenMessage(id,withId);
+        }
+
         #endregion
     }
 }
