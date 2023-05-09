@@ -95,3 +95,12 @@
 .listMess>div:has(.mess__right) {
     justify-content: end;
 }
+
+.listMess img {
+    width: 40px;
+    height: 40px;
+    border-radius: 20px;
+    aspect-ratio: 1 / 1;
+    -o-object-fit: cover;
+    object-fit: cover;
+}

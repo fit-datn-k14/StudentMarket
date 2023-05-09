@@ -24,7 +24,7 @@
               width="40"
               height="40"
               style="border-radius: 20px"
-              src="@/assets/img/default-avatar.jpg"
+              :src="url + `Images/users/avatar/${withUser.Avatar}`"
               alt=""
             />
             <div v-if="mess.FromUser === id" class="mess__left">

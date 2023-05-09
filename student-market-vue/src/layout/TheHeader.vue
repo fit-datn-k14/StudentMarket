@@ -51,13 +51,13 @@
                 {{ numberChatUnread }}
               </div>
             </router-link>
-            <router-link
+            <!-- <router-link
               to="/"
               class="favorite-post-link"
               title="Danh sách tin yêu thích"
             >
               <i class="header-icon d-block fa-regular fa-heart"></i>
-            </router-link>
+            </router-link> -->
 
             <div
               class="theheader__notifications"

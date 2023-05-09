@@ -201,7 +201,7 @@ export default {
       }
     },
     removeOldImg(index) {
-      this.postDetail.imagesDel.push(this.postDetail.ListImages[index]);
+      this.imagesDel.push(this.postDetail.ListImages[index]);
       this.postDetail.ListImages.splice(index, 1);
     },
     removeNewImg(index) {
