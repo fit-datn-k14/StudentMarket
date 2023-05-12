@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using StudentMarket.API.Entities;
+using StudentMarket.API.Hubs;
+using StudentMarket.BL.NotificationBL;
 using StudentMarket.BL.PostBL;
 using StudentMarket.Common;
 using StudentMarket.Common.Entities;
@@ -17,15 +19,19 @@ namespace StudentMarket.API.Controllers
         #region Field
         private readonly IWebHostEnvironment _hostingEnvironment;
         private readonly string _uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "uploads");
+        private readonly NotificationHub _hubContext;
+        private INotificationBL _notificationBL;
         private IPostBL _postBL;
         #endregion
 
         #region Contructor
 
-        public PostsController(IPostBL postBL, IWebHostEnvironment hostingEnvironment)
+        public PostsController(IPostBL postBL, IWebHostEnvironment hostingEnvironment, INotificationBL notificationBL, NotificationHub hubContext)
         {
             _hostingEnvironment = hostingEnvironment;
             _postBL = postBL;
+            _hubContext = hubContext;
+            _notificationBL = notificationBL;
         }
         #endregion
 
@@ -112,7 +118,7 @@ namespace StudentMarket.API.Controllers
                     }
                     post.ListImages = imageUrls.ToList();
                 }
-                
+
 
                 var serviceResult = _postBL.UpdatePostByID(post, imagesDel);
                 if (serviceResult.Success)
@@ -124,7 +130,7 @@ namespace StudentMarket.API.Controllers
                 }
                 else
                 {
-                    if(imageUrls.Count > 0)
+                    if (imageUrls.Count > 0)
                     {
                         DeleteImages(imageUrls, post.PostID);
                     }
@@ -152,11 +158,21 @@ namespace StudentMarket.API.Controllers
         /// <returns>Thông báo</returns>
         /// CreatedBy: NVHuy(20/03/2023)
         [HttpPut("Approved/{id}")]
-        public async Task<ServiceResult> SetApproved([FromRoute] Guid id, [FromQuery] Approved approved)
+        public async Task<ServiceResult> SetApproved([FromRoute] Guid id, [FromBody] ApprovedModel approvedModel)
         {
             try
             {
-                ServiceResult serviceResult = _postBL.SetApproved(id,approved);
+                ServiceResult serviceResult = _postBL.SetApproved(id, approvedModel);
+
+                if (serviceResult.Success)
+                {
+                    Notification result = (Notification) serviceResult.Data;
+                    if (result != null)
+                    {
+                        // Gửi thông báo tới các người dùng cùng thuộc một group với record
+                        await _hubContext.SendNotification(result);
+                    }
+                }
 
                 return serviceResult;
             }

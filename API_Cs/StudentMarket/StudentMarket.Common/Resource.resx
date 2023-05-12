@@ -120,6 +120,9 @@
   <data name="DevMsg_Invalid" xml:space="preserve">
     <value>Invalid data</value>
   </data>
+  <data name="UsrMsg_ApprovedSuccess" xml:space="preserve">
+    <value>Kiểm duyệt thành công</value>
+  </data>
   <data name="UsrMsg_ChangePassSuccess" xml:space="preserve">
     <value>Đổi mật khẩu thành công</value>
   </data>

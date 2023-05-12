@@ -20,6 +20,11 @@ const HEnum = {
     seen: {
         Unread: 0,
         Seen: 1,
+    },
+    Approved: {
+        UnApproved: 0,
+        Approved: 1,
+        Refuse: 2,
     }
 };
 export default HEnum;

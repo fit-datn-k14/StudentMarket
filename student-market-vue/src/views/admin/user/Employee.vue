@@ -525,7 +525,7 @@ export default {
     return {
       txtFilter: "",
       toast: {},
-      dialogType: this.HEnum.DialogType.Warning,
+      dialogType: this.HEnum.DialogType.Error,
       selectedColumnFilter: -1,
       allowCloseFilterBox: true,
       filterBoxPosition: 0,

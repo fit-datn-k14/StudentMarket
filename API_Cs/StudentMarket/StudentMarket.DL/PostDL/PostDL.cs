@@ -82,7 +82,7 @@ namespace StudentMarket.DL.PostDL
                 };
             }
         }
-        
+
         /// <summary>
         /// Lấy toàn bộ bản ghi trong bảng
         /// </summary>
@@ -134,42 +134,68 @@ namespace StudentMarket.DL.PostDL
         /// </summary>
         /// <returns>Thông báo</returns>
         /// CreatedBy: NVHuy(19/03/2023)
-        public ServiceResult SetApproved(Guid postId, Approved approved)
+        public ServiceResult SetApproved(Guid postId, ApprovedModel approvedModel)
         {
-            try
+            using (var connection = new MySqlConnection(connectionDB))
             {
-                using (var connection = new MySqlConnection(connectionDB))
+                connection.Open();
+                MySqlTransaction transaction = connection.BeginTransaction();
+                try
                 {
-                    int a = (int)approved;
-                    var stored = $"UPDATE posts p SET p.Approved = {a} WHERE p.PostID = '{postId}'";
+                    string query = $"UPDATE posts p SET p.Approved = @approved WHERE p.PostID = @id";
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@approved", (int)approvedModel.Approved);
+                    parameters.Add("@id", postId);
+                    var result = connection.Execute(query, parameters, transaction);
 
-                    var records = connection.Execute(stored);
-
-                    if (records > 0)
+                    query = $"SELECT * FROM View_Posts WHERE PostID = @id";
+                    Post post = connection.QueryFirstOrDefault<Post>(query, parameters, transaction);
+                    string contentNotify = "";
+                    if (approvedModel.Approved == Approved.Approved)
                     {
+                        contentNotify = "@FullName đã phê duyệt bài đăng của bạn.";
+                    }
+                    else
+                    {
+                        contentNotify = "@FullName đã từ chối bài đăng của bạn.";
+                    }
+                   
+
+                    string stored = $"Proc_Notifications_Insert";
+                    parameters = new DynamicParameters();
+                    parameters.Add("@FromUser", approvedModel.UserID);
+                    parameters.Add("@ToUser", post.UserID);
+                    parameters.Add("@Content", contentNotify);
+                    parameters.Add("@PostID", postId);
+                    var result2 = connection.QueryFirstOrDefault<Notification>(stored, parameters, transaction, commandType: System.Data.CommandType.StoredProcedure);
+
+                    if (result > 0 && result2 != null)
+                    {
+                        transaction.Commit();
                         return new ServiceResult
                         {
                             Success = true,
+                            UserMsg = Resource.UsrMsg_ApprovedSuccess,
+                            Data = result2
                         };
                     }
                     else
                     {
-                        return new ServiceResult
-                        {
-                            Success = false,
-                            UserMsg = Resource.UsrMsg_NotFoundRecord,
-                        };
+                        throw new Exception();
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                return new ServiceResult
+                catch (Exception ex)
                 {
-                    Success = false,
-                    ErrorCode = ErrorCodes.Exception,
-                    DevMsg = ex.Message,
-                };
+                    transaction.Rollback();
+
+                    return new ServiceResult
+                    {
+                        Success = false,
+                        ErrorCode = ErrorCodes.Exception,
+                        UserMsg = Resource.DevMsg_Invalid,
+                        DevMsg = ex.Message,
+                    };
+                }
             }
         }
 
@@ -281,7 +307,7 @@ namespace StudentMarket.DL.PostDL
         public override Boolean InsertCustom(MySqlConnection sqlConnection, MySqlTransaction transaction, Post record)
         {
             var listImages = record.ListImages;
-            if(listImages != null)
+            if (listImages != null)
             {
 
                 var postId = record.PostID;

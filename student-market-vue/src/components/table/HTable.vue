@@ -97,6 +97,10 @@
               >
                 <ul>
                   <li
+                    v-show="
+                      !(item.Approved == 1 && actionItem.key == 'approved') &&
+                      !(item.Approved == 2 && actionItem.key == 'refuse')
+                    "
                     v-for="(actionItem, indexAction) in actions"
                     :key="indexAction"
                   >

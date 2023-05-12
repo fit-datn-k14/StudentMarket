@@ -96,9 +96,9 @@ namespace StudentMarket.BL.PostBL
         /// </summary>
         /// <returns>Thông báo</returns>
         /// CreatedBy: NVHuy(19/03/2023)
-        public ServiceResult SetApproved(Guid postId, Approved approved)
+        public ServiceResult SetApproved(Guid postId, ApprovedModel approvedModel)
         {
-            return _postDL.SetApproved(postId, approved);
+            return _postDL.SetApproved(postId, approvedModel);
         }
 
         /// <summary>

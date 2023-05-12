@@ -67,13 +67,19 @@
       </div>
       <div>
         <p class="">
-          <strong>Số Điện Thoại: </strong><span>{{ Seller.PhoneNumber }}</span>
+          <strong>Số Điện Thoại: </strong>
+          <span v-if="Seller.PhoneNumber">{{ Seller.PhoneNumber }}</span>
+          <span v-else>Chưa có</span>
         </p>
         <p class="">
-          <strong>Email: </strong><span>{{ Seller.Email }}</span>
+          <strong>Email: </strong>
+          <span v-if="Seller.Email">{{ Seller.Email }}</span>
+          <span v-else>Chưa có</span>
         </p>
         <p class="">
-          <strong>Địa Chỉ: </strong><span>{{ Seller.LocationName }}</span>
+          <strong>Địa Chỉ: </strong>
+          <span v-if="Seller.LocationName">{{ Seller.LocationName }}</span>
+          <span v-else>Chưa có</span>
         </p>
       </div>
     </div>

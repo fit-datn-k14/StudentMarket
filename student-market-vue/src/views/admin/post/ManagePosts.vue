@@ -126,6 +126,7 @@
     <script>
 import PopupPostDetail from "./PopupPostDetail.vue";
 import { saveAs } from "file-saver";
+import { getUserFromLocalStorage } from "@/stores/localStorage";
 export default {
   name: "ManagePosts",
   components: { PopupPostDetail },
@@ -134,6 +135,7 @@ export default {
     this.toast = { content: null, type: null };
     this.loadData();
     window.addEventListener("keydown", this.keydownList);
+    this.approvedModel.UserID = getUserFromLocalStorage().UserID;
   },
   beforeUnmount() {
     window.removeEventListener("keydown", this.keydownList);
@@ -349,25 +351,28 @@ export default {
      */
     async approvedPost(item, approved) {
       var p = item;
-      var url = this.HConfig.API.Posts;
+      var url = this.HConfig.API.Posts + "Approved/" + p.PostID;
       if (approved) {
-        url = url + "Approved/" + p.PostID + `?approved=${1}`;
+        this.approvedModel.Approved = this.HEnum.Approved.Approved;
       } else {
-        url = url + "Approved/" + p.PostID + `?approved=${2}`;
+        this.approvedModel.Approved = this.HEnum.Approved.Refuse;
       }
       if (!this.errorMessage) {
         try {
-          await this.axios.put(url).then((response) => {
+          await this.axios.put(url, this.approvedModel).then((response) => {
             if (response.data.Success) {
               this.$emit("eventDetail", "showToast", response.data.UserMsg);
               this.$emit("eventDetail", "refresh");
-              item.Approved = approved ? 1 : 2;
+              item.Approved = approved
+                ? this.HEnum.Approved.Approved
+                : this.HEnum.Approved.Refuse;
               this.closePopup();
             } else {
               this.errorMessage = response.data.UserMsg;
             }
           });
         } catch (error) {
+          this.dialogType = this.HEnum.DialogType.Error;
           this.errorMessage = this.HResource.Message.Exception;
         }
       }
@@ -467,8 +472,8 @@ export default {
           }
         });
       } catch (error) {
-        this.errorMessage = this.HResource.Text.MessageException;
         this.dialogType = this.HEnum.DialogType.Error;
+        this.errorMessage = this.HResource.Text.MessageException;
       }
     },
 
@@ -509,8 +514,8 @@ export default {
           saveAs(blob, fileName);
         })
         .catch(() => {
-          this.errorMessage = this.HResource.MessageException;
           this.dialogType = this.HEnum.DialogType.Error;
+          this.errorMessage = this.HResource.MessageException;
         });
       this.showLoading = false;
     },
@@ -557,7 +562,7 @@ export default {
     return {
       txtFilter: "",
       toast: {},
-      dialogType: this.HEnum.DialogType.Warning,
+      dialogType: this.HEnum.DialogType.Error,
       selectedColumnFilter: -1,
       allowCloseFilterBox: true,
       filterBoxPosition: 0,
@@ -571,6 +576,7 @@ export default {
         pageNumber: 1,
         pageSize: 20,
       },
+      approvedModel: {},
       totalPages: 0,
       totalRecords: 0,
       PostTargetId: "",

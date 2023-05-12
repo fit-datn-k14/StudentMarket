@@ -259,6 +259,9 @@ export default {
       await this.axios.put(urlNotify).catch(() => {
         this.errorMessage = this.HResource.Message.Exception;
       });
+      if (notify.PostID) {
+        this.$router.push(`post/${notify.PostID}`);
+      }
     },
     async getNotifications() {
       var urlNotify = this.HConfig.API.Notifications + this.user.UserID;

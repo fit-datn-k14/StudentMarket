@@ -30,7 +30,7 @@ namespace StudentMarket.BL.PostBL
         /// </summary>
         /// <returns>Thông báo</returns>
         /// CreatedBy: NVHuy(19/03/2023)
-        public ServiceResult SetApproved(Guid postId, Approved approved);
+        public ServiceResult SetApproved(Guid postId, ApprovedModel approvedModel);
 
         /// <summary>
         /// Chỉnh sửa tin đăng

@@ -70,6 +70,15 @@ namespace StudentMarket.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Kiểm duyệt thành công.
+        /// </summary>
+        public static string UsrMsg_ApprovedSuccess {
+            get {
+                return ResourceManager.GetString("UsrMsg_ApprovedSuccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Đổi mật khẩu thành công.
         /// </summary>
         public static string UsrMsg_ChangePassSuccess {

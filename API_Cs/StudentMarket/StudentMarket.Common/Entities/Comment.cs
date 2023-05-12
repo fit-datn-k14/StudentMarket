@@ -23,8 +23,6 @@ namespace StudentMarket.Common.Entities
 
         public string? Content { get; set; }
 
-        public string? Rate { get; set; }
-
         [Required(ErrorMessage = "Người dùng không được bỏ trống")]
         public Guid UserID { get; set; }
 
