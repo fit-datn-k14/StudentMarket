@@ -88,6 +88,15 @@ namespace StudentMarket.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Xoá thất bại.
+        /// </summary>
+        public static string UsrMsg_DeleteFailed {
+            get {
+                return ResourceManager.GetString("UsrMsg_DeleteFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Xoá thành công.
         /// </summary>
         public static string UsrMsg_DeleteSuccess {
@@ -111,6 +120,15 @@ namespace StudentMarket.Common {
         public static string UsrMsg_IncorrectPassword {
             get {
                 return ResourceManager.GetString("UsrMsg_IncorrectPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Thêm thất bại.
+        /// </summary>
+        public static string UsrMsg_InsertFailed {
+            get {
+                return ResourceManager.GetString("UsrMsg_InsertFailed", resourceCulture);
             }
         }
         

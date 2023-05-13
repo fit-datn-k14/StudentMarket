@@ -27,7 +27,7 @@ namespace StudentMarket.Common.Entities.DTO
         /// <summary>
         /// Thông tin sắp xếp  
         /// </summary>
-        public int SortType { get; set; } = 1;
+        public int SortType { get; set; } = 0;
 
         /// <summary>
         /// Từ khoá tìm kiếm theo Mã, Họ Tên, Số điện thoại

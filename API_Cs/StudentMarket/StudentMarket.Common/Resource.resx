@@ -126,6 +126,9 @@
   <data name="UsrMsg_ChangePassSuccess" xml:space="preserve">
     <value>Đổi mật khẩu thành công</value>
   </data>
+  <data name="UsrMsg_DeleteFailed" xml:space="preserve">
+    <value>Xoá thất bại</value>
+  </data>
   <data name="UsrMsg_DeleteSuccess" xml:space="preserve">
     <value>Xoá thành công</value>
   </data>
@@ -134,6 +137,9 @@
   </data>
   <data name="UsrMsg_IncorrectPassword" xml:space="preserve">
     <value>Mật khẩu không chính xác</value>
+  </data>
+  <data name="UsrMsg_InsertFailed" xml:space="preserve">
+    <value>Thêm thất bại</value>
   </data>
   <data name="UsrMsg_InsertSuccess" xml:space="preserve">
     <value>Thêm mới thành công</value>

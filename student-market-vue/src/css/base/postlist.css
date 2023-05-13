@@ -116,4 +116,5 @@
 
 .post__heart i {
     font-size: 28px;
+    color: var(--red-color);
 }

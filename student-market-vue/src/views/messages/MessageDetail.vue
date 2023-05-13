@@ -101,7 +101,6 @@ export default {
   },
   methods: {
     async seenMess() {
-      console.log(this.listMessages);
       if (
         this.listMessages.length > 0 &&
         this.listMessages[0].Seen == this.HEnum.seen.Unread &&

@@ -198,7 +198,7 @@ export default {
         this.textInput = this.propText ? item[this.propText] : item;
         // Binding 2 chiều
         let value = this.propValue ? item[this.propValue] : item;
-        if (value) {
+        if (value != null) {
           await this.$emit("update:modelValue", value);
         } else {
           await this.$emit("update:modelValue", null);

@@ -77,14 +77,7 @@ namespace StudentMarket.API
             {
                 options.AddPolicy("CorsPolicy", builder =>
                 {
-                    builder.WithOrigins("http://localhost:8081")
-                           .AllowAnyHeader()
-                           .AllowAnyMethod()
-                           .AllowCredentials();
-                });
-                options.AddPolicy("CorsPolicy", builder =>
-                {
-                    builder.WithOrigins("http://localhost:8082")
+                    builder.WithOrigins("http://localhost:8081", "http://localhost:8082")
                            .AllowAnyHeader()
                            .AllowAnyMethod()
                            .AllowCredentials();

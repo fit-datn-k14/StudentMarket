@@ -159,7 +159,7 @@ namespace StudentMarket.DL.PostDL
                     {
                         contentNotify = "@FullName đã từ chối bài đăng của bạn.";
                     }
-                   
+
 
                     string stored = $"Proc_Notifications_Insert";
                     parameters = new DynamicParameters();
@@ -291,6 +291,131 @@ namespace StudentMarket.DL.PostDL
                     };
                 }
 
+            }
+        }
+
+        /// <summary>
+        /// Thêm tin đăng yêu thích
+        /// </summary>
+        /// <param name="favouritePost"></param>
+        /// <returns>Thông báo</returns>
+        public ServiceResult AddFavouritePost(FavouritePost favouritePost)
+        {
+            try
+            {
+                using (var connection = new MySqlConnection(connectionDB))
+                {
+                    var storedProcedureName = $"Proc_FavouritePost_Insert";
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@UserID", favouritePost.UserID);
+                    parameters.Add("@PostID", favouritePost.PostID);
+
+                    var result = connection.QueryFirstOrDefault<FavouritePost>(storedProcedureName, parameters, commandType: System.Data.CommandType.StoredProcedure);
+
+                    if (result != null)
+                    {
+                        return new ServiceResult
+                        {
+                            Success = true,
+                            Data = result
+                        };
+                    }
+                    else
+                    {
+                        return new ServiceResult
+                        {
+                            Success = false,
+                            UserMsg = Resource.UsrMsg_InsertFailed,
+                        };
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return new ServiceResult
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.Exception,
+                    DevMsg = ex.Message,
+                };
+            }
+        }
+
+        /// <summary>
+        /// Lấy danh sách tin đăng yêu thích
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns>Danh sách PostID</returns>
+        public ServiceResult GetListFavouritePost(Guid userId, string keyword, string condition)
+        {
+            using (var connection = new MySqlConnection(connectionDB))
+            {
+                var storedProcedureName = $"Proc_FavouritePosts_Search";
+                var parameters = new DynamicParameters();
+                parameters.Add("@Keyword", keyword);
+                parameters.Add("@Condition", condition);
+                parameters.Add("@UserID", userId);
+
+                var result = connection.Query<Post>(storedProcedureName, parameters, commandType: System.Data.CommandType.StoredProcedure);
+
+                return new ServiceResult
+                {
+                    Success = true,
+                    Data = result
+                };
+            }
+        }
+
+        /// <summary>
+        /// Lấy danh sách id tin đăng yêu thích
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns>Danh sách PostID</returns>
+        public ServiceResult GetListFavouritePostID(Guid userId)
+        {
+            using (var connection = new MySqlConnection(connectionDB))
+            {
+                var query = $"SELECT PostID FROM favouritepost WHERE UserID = '{userId}'";
+
+                var result = connection.Query<Guid>(query);
+
+                return new ServiceResult
+                {
+                    Success = true,
+                    Data = result
+                };
+            }
+        }
+
+        /// <summary>
+        /// Loại bỏ tin đăng yêu thích
+        /// </summary>
+        /// <param name="favouritePost"></param>
+        /// <returns>Thông báo</returns>
+        public ServiceResult RemoveFavouritePost(FavouritePost favouritePost)
+        {
+            using (var connection = new MySqlConnection(connectionDB))
+            {
+                var query = $"DELETE FROM favouritepost WHERE UserID = '{favouritePost.UserID}' && PostID = '{favouritePost.PostID}'";
+
+                var result = connection.Execute(query);
+
+                if(result > 0)
+                {
+                    return new ServiceResult
+                    {
+                        Success = true,
+                        Data = result
+                    };
+                }
+                else
+                {
+                    return new ServiceResult
+                    {
+                        Success = false,
+                        Data = Resource.UsrMsg_DeleteFailed
+                    };
+                }
             }
         }
 

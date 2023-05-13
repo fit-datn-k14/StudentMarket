@@ -51,13 +51,13 @@
                 {{ numberChatUnread }}
               </div>
             </router-link>
-            <!-- <router-link
-              to="/"
+            <router-link
+              to="/tin-dang-yeu-thich"
               class="favorite-post-link"
               title="Danh sách tin yêu thích"
             >
               <i class="header-icon d-block fa-regular fa-heart"></i>
-            </router-link> -->
+            </router-link>
 
             <div
               class="theheader__notifications"
@@ -190,6 +190,8 @@ import { eventBus } from "@/js/eventbus";
 import {
   getUserFromLocalStorage,
   removeUserFromLocalStorage,
+  saveFavouritePostsToLocalStorage,
+  removeAllFavouritesFromLocalStorage,
 } from "@/stores/localStorage.js";
 import connection from "@/js/hubs/notificationHub";
 import connectionChat from "@/js/hubs/chatHub";
@@ -207,12 +209,10 @@ export default {
         this.axios.get(url).then((response) => {
           if (response.data.Success) {
             var list_mess = response.data.Data;
-            console.log(list_mess);
             this.numberChatUnread = list_mess.filter(
               (n) =>
                 n.Seen == this.HEnum.seen.Unread && n.ToUser == this.user.UserID
             ).length;
-            console.log(this.numberChatUnread);
           } else {
             this.errorMessage = response.data.UserMsg;
           }
@@ -232,6 +232,7 @@ export default {
       connection.invoke("LeaveGroup", this.user.UserID);
       connectionChat.invoke("LeaveGroup", this.user.UserID);
       removeUserFromLocalStorage();
+      removeAllFavouritesFromLocalStorage();
       this.showDropdown = false;
       this.$router.push("/");
       this.setUser();
@@ -244,6 +245,9 @@ export default {
       this.user = await getUserFromLocalStorage();
       this.censor = isCensor();
       if (this.user) {
+        await this.getFavouritePosts();
+      }
+      if (this.user) {
         await this.getNotifications();
         this.notifyMessage = "Không có thông báo nào";
       } else {
@@ -251,7 +255,6 @@ export default {
       }
     },
     async onClickNotify(notify) {
-      console.log(notify);
       await this.seenNotify(notify);
       notify.Seen = 1;
     },
@@ -265,6 +268,20 @@ export default {
       }
       this.showNotifications = false;
     },
+    async getFavouritePosts() {
+      var url =
+        this.HConfig.API.FavouritePosts + "GetListIds/" + this.user.UserID;
+      await this.axios
+        .get(url)
+        .then((response) => {
+          if (response.data.Success) {
+            saveFavouritePostsToLocalStorage(response.data.Data);
+          }
+        })
+        .catch(() => {
+          this.errorMessage = this.HResource.Message.Exception;
+        });
+    },
     async getNotifications() {
       var urlNotify = this.HConfig.API.Notifications + this.user.UserID;
       await this.axios
@@ -272,7 +289,6 @@ export default {
         .then((response) => {
           if (response.data.Success) {
             this.notificationList = response.data.Data;
-            console.log(response.data.Data);
           }
         })
         .catch(() => {

@@ -8,6 +8,7 @@ using StudentMarket.DL.LocationDL;
 using StudentMarket.DL.PostDL;
 using StudentMarket.DL.UserDL;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Text;
 
 namespace StudentMarket.BL.PostBL
@@ -70,7 +71,10 @@ namespace StudentMarket.BL.PostBL
             switch (sortType)
             {
                 case 1:
-                    sortString = $" ORDER BY CreatedDate DESC ";
+                    sortString = $" ORDER BY Price DESC ";
+                    break;
+                case 2:
+                    sortString = $" ORDER BY Price ";
                     break;
                 default:
                     sortString = $" ORDER BY CreatedDate DESC ";
@@ -124,6 +128,69 @@ namespace StudentMarket.BL.PostBL
                 };
             }
             return _postDL.UpdatePostByID(post, imagesDel);
+        }
+
+        /// <summary>
+        /// Thêm tin đăng yêu thích
+        /// </summary>
+        /// <param name="favouritePost"></param>
+        /// <returns>Thông báo</returns>
+        public ServiceResult AddFavouritePost(FavouritePost favouritePost)
+        {
+            var validateFailures = new List<string>();
+            if(favouritePost != null && favouritePost.UserID == null)
+            {
+                validateFailures.Add("Người dùng không được bỏ trống");
+            }else if(favouritePost != null && favouritePost.PostID == null)
+            {
+                validateFailures.Add("Tin đăng không được bỏ trống");
+            }
+            if (validateFailures.Count > 0)
+            {
+                return new ServiceResult
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.Validate,
+                    UserMsg = validateFailures[0].ToString(),
+                    DevMsg = Resource.DevMsg_Invalid,
+                    Data = validateFailures
+                };
+            }
+            else
+            {
+                return _postDL.AddFavouritePost(favouritePost);
+            }
+        }
+
+        /// <summary>
+        /// Loại bỏ tin đăng yêu thích
+        /// </summary>
+        /// <param name="favouritePost"></param>
+        /// <returns>Thông báo</returns>
+        public ServiceResult RemoveFavouritePost(FavouritePost favouritePost)
+        {
+            return _postDL.RemoveFavouritePost(favouritePost);
+        }
+
+        /// <summary>
+        /// Lấy danh sách tin đăng yêu thích
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns>Danh sách PostID</returns>
+        public ServiceResult GetListFavouritePost(Guid userId, FilterQuery filterQuery)
+        {
+            string conditionString = BuildStringQuery(filterQuery);
+            return _postDL.GetListFavouritePost(userId, filterQuery.Keyword, conditionString);
+        }
+
+        /// <summary>
+        /// Lấy danh sách tin đăng yêu thích
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns>Danh sách PostID</returns>
+        public ServiceResult GetListFavouritePostID(Guid userId)
+        {
+            return _postDL.GetListFavouritePostID(userId);
         }
 
         #endregion

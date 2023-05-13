@@ -39,5 +39,33 @@ namespace StudentMarket.BL.PostBL
         /// <param name="imagesDel"></param>
         /// <returns></returns>
         public ServiceResult UpdatePostByID(Post post, List<Guid> imagesDel);
+
+        /// <summary>
+        /// Thêm tin đăng yêu thích
+        /// </summary>
+        /// <param name="favouritePost"></param>
+        /// <returns>Thông báo</returns>
+        public ServiceResult AddFavouritePost(FavouritePost favouritePost);
+
+        /// <summary>
+        /// Loại bỏ tin đăng yêu thích
+        /// </summary>
+        /// <param name="favouritePost"></param>
+        /// <returns>Thông báo</returns>
+        public ServiceResult RemoveFavouritePost(FavouritePost favouritePost);
+
+        /// <summary>
+        /// Lấy danh sách tin đăng yêu thích
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns>Danh sách PostID</returns>
+        public ServiceResult GetListFavouritePost(Guid userId, FilterQuery filterQuery);
+
+        /// <summary>
+        /// Lấy danh sách tin đăng yêu thích
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns>Danh sách PostID</returns>
+        public ServiceResult GetListFavouritePostID(Guid userId);
     }
 }

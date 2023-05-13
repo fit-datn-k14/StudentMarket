@@ -58,7 +58,6 @@ export default {
         this.axios.get(this.urlMess).then((response) => {
           if (response.data.Success) {
             this.listMess = response.data.Data;
-            console.log(this.listMess);
           } else {
             this.errorMessage = response.data.UserMsg;
           }

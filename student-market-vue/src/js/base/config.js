@@ -7,6 +7,7 @@ const HConfig = {
         Posts: "https://localhost:9999/api/v1/Posts/",
         Comments: "https://localhost:9999/api/v1/Comments/",
         Messages: "https://localhost:9999/api/v1/Messages/",
+        FavouritePosts: "https://localhost:9999/api/v1/FavouritePosts/",
         Notifications: "https://localhost:9999/api/v1/Notifications/"
     },
     ListUserColumns: [

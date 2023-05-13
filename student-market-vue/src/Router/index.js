@@ -17,12 +17,15 @@ import ChangePassword from '@/views/login/ChangePassword'
 import ChangeUserInfo from '@/views/login/ChangeUserInfo'
 import UserDetail from '@/views/login/UserDetail'
 import MyPostList from '@/views/post/MyPostList'
+import FavouritePosts from '@/views/post/FavouritePosts'
+
 
 
 const routes = [
     { path: '/', component: TheHome },
     { path: '/trang-chu', component: TheHome },
     { path: '/quan-ly-tin-dang', component: MyPostList, meta: { requiresAuth: true }, },
+    { path: '/tin-dang-yeu-thich', component: FavouritePosts, meta: { requiresAuth: true }, },
     { path: '/dang-nhap', component: TheLogin },
     { path: '/dang-ky', component: TheRegister },
     { path: '/doi-mat-khau', component: ChangePassword, meta: { requiresAuth: true }, },

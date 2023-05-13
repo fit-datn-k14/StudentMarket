@@ -44,30 +44,22 @@
       />
     </div>
     <h-post-list :posts="posts" />
-    <div class="paging-box">
-      <h-paging
-        :page-count="totalPages"
-        :click-handler="loadData"
-        prev-text="&#10096;"
-        next-text="&#10097;"
-        :container-class="'pagination'"
-        v-model="pageNumber"
-      ></h-paging>
-    </div>
     <h-loading v-show="showLoading"></h-loading>
   </div>
 </template>
-
-<script>
+  
+  <script>
 import HPostList from "@/components/postlist/HPostList.vue";
 import { eventBus } from "@/js/eventbus";
 import { useKeyword } from "@/stores/keyword";
+import { getUserFromLocalStorage } from "@/stores/localStorage";
 import HCombobox from "@/components/combobox/HCombobox.vue";
 export default {
   components: { HPostList, HCombobox },
   name: "TheHome",
   async created() {
-    this.loadData();
+    this.user = await getUserFromLocalStorage();
+    await this.loadData();
   },
   watch: {
     category_id: function () {
@@ -87,15 +79,12 @@ export default {
      */
     async loadData() {
       this.showLoading = true;
-
       var filterQuery = await this.filterQuery();
       try {
-        var url = "https://localhost:9999/api/v1/Posts/Search";
+        var url = this.HConfig.API.FavouritePosts + this.user.UserID;
         await this.axios.post(url, filterQuery).then((response) => {
           if (response.data.Success) {
-            this.posts = response.data.Data.Data;
-            this.totalPages = response.data.Data.TotalPages;
-            this.totalRecords = response.data.Data.TotalRecords;
+            this.posts = response.data.Data;
             this.showLoading = false;
           } else {
             this.errorMessage = response.data.UserMsg;
@@ -120,7 +109,6 @@ export default {
         CategoryID: this.category_id,
         LocationID: this.location_id,
         SortType: this.sortType,
-        PageNumber: this.pageNumber,
       };
       return result;
     },
@@ -136,11 +124,10 @@ export default {
   },
   data() {
     return {
+      user: {},
       keyword: null,
       sortType: 0,
       showLoading: true,
-      pageNumber: 1,
-      totalPages: 0,
       apiGetCategories: "https://localhost:9999/api/v1/Categories",
       category_id: null,
       defaultCategory: {
@@ -163,7 +150,7 @@ export default {
   },
 };
 </script>
-
-<style scope>
+  
+  <style scope>
 @import url(@/css/views/home.css);
 </style>
