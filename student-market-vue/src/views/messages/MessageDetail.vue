@@ -74,6 +74,18 @@ export default {
     await this.loadMess();
     await this.seenMess();
   },
+  watch: {
+    id: async function () {
+      await this.loadWithUser();
+      this.newMessage.FromUser = this.user.UserID;
+      this.newMessage.ToUser = this.id;
+      this.urlMess = this.HConfig.API.Messages + "ListMess";
+      this.messDataModel.UserID = this.user.UserID;
+      this.messDataModel.WithUser = this.id;
+      await this.loadMess();
+      await this.seenMess();
+    },
+  },
   async mounted() {
     // Sau khi component được mounted, tính chiều cao của .mdv__content
     this.contentHeight =

@@ -37,6 +37,8 @@ namespace StudentMarket.Common.Entities
 
         public Seen Seen { get; set; } = Seen.Unread;
 
+        public Guid? PostID { get; set; }
+
         #endregion
     }
 }

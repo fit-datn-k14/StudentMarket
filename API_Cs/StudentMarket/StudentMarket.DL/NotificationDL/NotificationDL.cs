@@ -29,11 +29,9 @@ namespace StudentMarket.DL.NotificationDL
             {
                 using (var connection = new MySqlConnection(connectionDB))
                 {
-                    var stored = $"SELECT * FROM view_notifications WHERE ToUser = @UserID";
-                    var parameters = new DynamicParameters();
-                    parameters.Add("@UserID", userId);
+                    var stored = $"SELECT * FROM view_notifications WHERE ToUser = '{userId}'";
 
-                    var records = connection.Query<Notification>(stored, parameters);
+                    var records = connection.Query<Notification>(stored);
 
                     if (records != null)
                     {

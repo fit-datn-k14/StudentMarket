@@ -212,6 +212,7 @@ export default {
               (n) =>
                 n.Seen == this.HEnum.seen.Unread && n.ToUser == this.user.UserID
             ).length;
+            console.log(this.numberChatUnread);
           } else {
             this.errorMessage = response.data.UserMsg;
           }
@@ -229,19 +230,18 @@ export default {
     },
     logout() {
       connection.invoke("LeaveGroup", this.user.UserID);
-      connection.stop();
       connectionChat.invoke("LeaveGroup", this.user.UserID);
-      connectionChat.stop();
       removeUserFromLocalStorage();
       this.showDropdown = false;
       this.$router.push("/");
       this.setUser();
+      this.numberChatUnread = 0;
     },
     onSelectOptionNotify(value) {
       this.selectedOptionNotify = value;
     },
     async setUser() {
-      this.user = getUserFromLocalStorage();
+      this.user = await getUserFromLocalStorage();
       this.censor = isCensor();
       if (this.user) {
         await this.getNotifications();
@@ -251,6 +251,7 @@ export default {
       }
     },
     async onClickNotify(notify) {
+      console.log(notify);
       await this.seenNotify(notify);
       notify.Seen = 1;
     },
@@ -260,8 +261,9 @@ export default {
         this.errorMessage = this.HResource.Message.Exception;
       });
       if (notify.PostID) {
-        this.$router.push(`post/${notify.PostID}`);
+        this.$router.push(`/post/${notify.PostID}`);
       }
+      this.showNotifications = false;
     },
     async getNotifications() {
       var urlNotify = this.HConfig.API.Notifications + this.user.UserID;
@@ -270,6 +272,7 @@ export default {
         .then((response) => {
           if (response.data.Success) {
             this.notificationList = response.data.Data;
+            console.log(response.data.Data);
           }
         })
         .catch(() => {
@@ -298,8 +301,12 @@ export default {
     },
   },
   async mounted() {
-    await connection.start();
-    await connectionChat.start();
+    if (connection.state === "Disconnected") {
+      connection.start();
+    }
+    if (connectionChat.state === "Disconnected") {
+      await connectionChat.start();
+    }
     eventBus.on("login", () => {
       this.setUser();
       if (connection.state === "Disconnected") {
@@ -323,7 +330,6 @@ export default {
         this.HCommon.convertCamelToPascal(notification)
       );
     });
-    connectionChat.invoke("JoinGroup", this.user.UserID);
     connectionChat.on("ReceiveMessage", () => {
       this.loadMessageList();
     });

@@ -82,6 +82,13 @@ namespace StudentMarket.API
                            .AllowAnyMethod()
                            .AllowCredentials();
                 });
+                options.AddPolicy("CorsPolicy", builder =>
+                {
+                    builder.WithOrigins("http://localhost:8082")
+                           .AllowAnyHeader()
+                           .AllowAnyMethod()
+                           .AllowCredentials();
+                });
             });
         }
 
