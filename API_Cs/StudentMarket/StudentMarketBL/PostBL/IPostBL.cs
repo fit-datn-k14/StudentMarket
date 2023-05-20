@@ -55,6 +55,13 @@ namespace StudentMarket.BL.PostBL
         public ServiceResult RemoveFavouritePost(FavouritePost favouritePost);
 
         /// <summary>
+        /// Lấy số lượt yêu thích
+        /// </summary>
+        /// <param name="favouritePost"></param>
+        /// <returns>Thông báo</returns>
+        public ServiceResult getNumberFavourite(Guid postId);
+
+        /// <summary>
         /// Lấy danh sách tin đăng yêu thích
         /// </summary>
         /// <param name="userId"></param>

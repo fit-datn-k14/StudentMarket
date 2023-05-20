@@ -77,8 +77,11 @@ export default {
     },
   },
   async created() {
-    await this.getListIdFavouritePosts();
-    this.userId = getUserFromLocalStorage().UserID;
+    var user = getUserFromLocalStorage();
+    if (user) {
+      this.userId = user.UserID;
+      await this.getListIdFavouritePosts();
+    }
   },
   methods: {
     setDefaultImage(event) {
@@ -86,11 +89,19 @@ export default {
     },
     async onClickFavouritePosts(event) {
       event.preventDefault();
-      this.favouritePosts();
+      if (this.userId) {
+        this.favouritePosts();
+      } else {
+        this.$router.push("/dang-nhap");
+      }
     },
     async onClickUnFavouritePosts(event) {
       event.preventDefault();
-      this.unFavouritePosts();
+      if (this.userId) {
+        this.unFavouritePosts();
+      } else {
+        this.$router.push("/dang-nhap");
+      }
     },
     async getListIdFavouritePosts() {
       this.listIdFavouritePosts = await getFavouritePostsFromLocalStorage();
@@ -115,7 +126,7 @@ export default {
         });
     },
     unFavouritePosts() {
-      var url = `https://localhost:9999/api/v1/FavouritePosts?userId${this.userId}=&postId=${this.post.PostID}`;
+      var url = `https://localhost:9999/api/v1/FavouritePosts?userId=${this.userId}&postId=${this.post.PostID}`;
       this.axios
         .delete(url)
         .then((response) => {

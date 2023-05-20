@@ -171,6 +171,15 @@ namespace StudentMarket.BL.PostBL
         {
             return _postDL.RemoveFavouritePost(favouritePost);
         }
+        /// <summary>
+        /// Lấy số lượt yêu thích
+        /// </summary>
+        /// <param name="favouritePost"></param>
+        /// <returns>Thông báo</returns>
+        public ServiceResult getNumberFavourite(Guid postId)
+        {
+            return _postDL.getNumberFavourite(postId);
+        }
 
         /// <summary>
         /// Lấy danh sách tin đăng yêu thích

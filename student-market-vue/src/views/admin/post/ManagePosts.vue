@@ -245,7 +245,7 @@ export default {
               this.loadData();
             }
           } else {
-            this.errorMessage = response.data.PostMsg;
+            this.errorMessage = response.data.UserMsg;
             this.dialogType = this.HEnum.DialogType.Error;
           }
         });
@@ -437,11 +437,11 @@ export default {
           .delete(this.HConfig.API.Posts + this.PostTargetId)
           .then((response) => {
             if (response.data.Success) {
-              this.$refs.toast.showToast(response.data.Data.UserMsg);
+              this.$refs.toast.showToast(response.data.UserMsg);
               this.removeSelectedId(this.PostSelected);
               this.loadData();
             } else {
-              this.$refs.toast.showToast(response.data.Data.UserMsg, "error");
+              this.$refs.toast.showToast(response.data.UserMsg, "error");
             }
           });
       } catch (error) {
@@ -526,7 +526,7 @@ export default {
      */
     displayDeleteWarningPopup(text, item) {
       if (item) {
-        this.PostTargetId = item["PostId"];
+        this.PostTargetId = item["PostID"];
       }
       this.dialogType = this.HEnum.DialogType.Warning;
       this.errorMessage = text;

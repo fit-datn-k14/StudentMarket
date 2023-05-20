@@ -37,11 +37,13 @@ export default {
   },
   methods: {
     hideToast() {
-      this.$refs.toast.classList.add("hide_toast");
-      setTimeout(() => {
-        this.$refs.toast.classList.remove("hide_toast");
-        this.isShowToast = false;
-      }, 300);
+      if (this.$refs.toast) {
+        this.$refs.toast.classList.add("hide_toast");
+        setTimeout(() => {
+          this.$refs.toast.classList.remove("hide_toast");
+          this.isShowToast = false;
+        }, 300);
+      }
     },
     showToast(content, type) {
       if (content) {

@@ -40,7 +40,9 @@
             <div class="ppd__title">
               {{ Post.Title }}
             </div>
-            <div v-if="Post.Price" class="ppd__price">{{ Post.Price }} đ</div>
+            <div v-if="Post.Price" class="ppd__price">
+              {{ HCommon.formatMoney(Post.Price) }}
+            </div>
             <div v-else class="ppd__price">Liên hệ</div>
 
             <div class="row">

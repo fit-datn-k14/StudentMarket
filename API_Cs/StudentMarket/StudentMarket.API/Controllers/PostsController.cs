@@ -285,6 +285,9 @@ namespace StudentMarket.API.Controllers
             try
             {
                 var serviceResult = _postBL.GetRecordByID(id);
+                Post record = (Post)serviceResult.Data;
+                record.NumberFavourite = (int) _postBL.getNumberFavourite(id).Data;
+                serviceResult.Data = record;
                 return serviceResult;
             }
             catch (Exception ex)
@@ -305,6 +308,30 @@ namespace StudentMarket.API.Controllers
             try
             {
                 var serviceResult = _postBL.DeleteMultiRecordByID(ids);
+                if (serviceResult.Success)
+                {
+                    foreach (var id in ids)
+                    {
+                        DeleteFolder(id);
+                    }
+                }
+                return serviceResult;
+            }
+            catch (Exception ex)
+            {
+                return new ServiceResult(ErrorCodes.Exception, ex.Message);
+            }
+        }
+        [HttpDelete("{id}")]
+        public ServiceResult DeleteRecord(Guid id)
+        {
+            try
+            {
+                var serviceResult = _postBL.DeleteRecordByID(id);
+                if (serviceResult.Success)
+                {
+                    DeleteFolder(id);
+                }
                 return serviceResult;
             }
             catch (Exception ex)

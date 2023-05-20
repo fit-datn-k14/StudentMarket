@@ -22,30 +22,59 @@
           <div class="single-product-content">
             <div class="tpd__title">
               <h3>{{ Post.Title }}</h3>
-              <router-link :to="`/chinh-sua-tin-dang/${id}`">
-                <h-button
-                  v-if="Post.UserID == User.UserID"
-                  class="edit-post"
-                  type="btn-pri"
-                  value="Chỉnh Sửa"
-                />
-              </router-link>
             </div>
             <p v-if="Post.Price" class="single-product-pricing">
-              {{ Post.Price }} đ
+              {{ HCommon.formatMoney(Post.Price) }}
             </p>
             <p v-else class="single-product-pricing">Liên hệ</p>
             <p class="single-product-categories">
               <strong>Danh Mục: </strong>{{ Post.CategoryName }}
             </p>
+            <p class="single-product-categories">
+              <strong>Khu vực: </strong>{{ Post.LocationName }}
+            </p>
             <p v-if="Post.Address" class="single-product-categories">
               <strong>Địa Chỉ: </strong>{{ Post.Address }}
             </p>
             <strong>Chi Tiết Sản Phẩm:</strong>
-            <p v-if="Post.PostDescribe" class="single-product-describe">
+            <p
+              v-if="Post.PostDescribe"
+              class="single-product-describe"
+              style="white-space: pre-line"
+            >
               {{ Post.PostDescribe }}
             </p>
             <p v-else class="single-product-describe">Không có mô tả</p>
+            <div class="post-actions">
+              <div class="post__heart">
+                <i
+                  v-if="listIdFavouritePosts.includes(Post.PostID)"
+                  class="fa-solid fa-heart"
+                  @click.prevent="onClickUnFavouritePosts($event)"
+                ></i>
+                <i
+                  v-else
+                  class="fa-regular fa-heart"
+                  @click.prevent="onClickFavouritePosts($event)"
+                ></i>
+                Đã thích ({{ Post.NumberFavourite }})
+              </div>
+              <router-link :to="`/chinh-sua-tin-dang/${id}`">
+                <h-button
+                  v-if="User && Post.UserID == User.UserID"
+                  class="edit-post"
+                  type="btn-pri"
+                  value="Chỉnh Sửa"
+                />
+              </router-link>
+              <h-button
+                v-if="User && Post.UserID == User.UserID"
+                class="delete-post"
+                type="btn-pri"
+                value="Xoá"
+                @click="onClickDelete"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -60,7 +89,7 @@
           <div class="seller__name">
             {{ Seller.FullName }}
           </div>
-          <div class="btn-mess" v-if="Post.UserID != User.UserID">
+          <div class="btn-mess" v-if="User && Post.UserID != User.UserID">
             <router-link :to="`/tin-nhan/${Post.UserID}`">Nhắn Tin</router-link>
           </div>
         </div>
@@ -86,7 +115,7 @@
     <div class="container tpd__comments">
       <div>
         <h2>Bình luận</h2>
-        <div class="listcomments">
+        <div v-if="Comments.length > 0" class="listcomments">
           <div v-for="comment in Comments" :key="comment.CommentID">
             <img
               class="user__avatar border border-dark"
@@ -105,6 +134,7 @@
             </div>
           </div>
         </div>
+        <div v-else class="listcomments">Chưa có bình luận nào</div>
         <div class="addCommentBox">
           <img
             v-if="User"
@@ -122,20 +152,32 @@
             v-model="newComment.Content"
             @keyup.enter="addComment"
             placeholder="Viết bình luận..."
+            :disabled="!User"
           />
-          <div class="icon-send" @click="addComment">
+          <div v-if="User" class="icon-send" @click="addComment">
             <i class="fa-regular fa-paper-plane"></i>
           </div>
         </div>
       </div>
     </div>
   </div>
+  <h-dialog
+    v-if="errorMessage"
+    :content="errorMessage"
+    :type="dialogType"
+    @dialogEvent="dialogEvent"
+  />
   <h-loading v-if="isLoading"></h-loading>
 </template>
   <script>
 import HConfig from "@/js/base/config";
 import HInput from "@/components/input/HInput.vue";
-import { getUserFromLocalStorage } from "@/stores/localStorage.js";
+import {
+  getFavouritePostsFromLocalStorage,
+  addFavouritePostIdToLocalStorage,
+  removeFavouritePostIdFromLocalStorage,
+  getUserFromLocalStorage,
+} from "@/stores/localStorage.js";
 export default {
   components: { HInput },
   name: "ThePostDetail",
@@ -151,11 +193,68 @@ export default {
     this.ImageID = this.Post.ImageName;
     await this.getSeller();
     await this.getComments();
-    this.newComment.PostID = this.id;
-    this.newComment.UserID = this.User.UserID;
-    this.newComment.Content = null;
+    if (this.User) {
+      await this.getListIdFavouritePosts();
+      this.newComment.PostID = this.id;
+      this.newComment.UserID = this.User.UserID;
+      this.newComment.Content = null;
+    } else {
+      this.newComment.Content = "Đăng nhập để gửi bình luận";
+    }
   },
   methods: {
+    async onClickFavouritePosts(event) {
+      event.preventDefault();
+      if (this.User) {
+        this.favouritePosts();
+      } else {
+        this.$router.push("/dang-nhap");
+      }
+    },
+    async onClickUnFavouritePosts(event) {
+      event.preventDefault();
+      this.unFavouritePosts();
+    },
+    async getListIdFavouritePosts() {
+      this.listIdFavouritePosts = await getFavouritePostsFromLocalStorage();
+    },
+    favouritePosts() {
+      var url = this.HConfig.API.FavouritePosts;
+      this.axios
+        .post(url, {
+          UserID: this.User.UserID,
+          PostID: this.Post.PostID,
+        })
+        .then((response) => {
+          if (response.data.Success) {
+            this.Post.NumberFavourite++;
+            addFavouritePostIdToLocalStorage(this.Post.PostID);
+            this.getListIdFavouritePosts();
+          } else {
+            this.errorMessage = response.data.UserMsg;
+          }
+        })
+        .catch(() => {
+          this.errorMessage = this.HResource.Message.Exception;
+        });
+    },
+    unFavouritePosts() {
+      var url = `https://localhost:9999/api/v1/FavouritePosts?userId=${this.User.UserID}&postId=${this.Post.PostID}`;
+      this.axios
+        .delete(url)
+        .then((response) => {
+          if (response.data.Success) {
+            this.Post.NumberFavourite--;
+            removeFavouritePostIdFromLocalStorage(this.Post.PostID);
+            this.getListIdFavouritePosts();
+          } else {
+            this.errorMessage = response.data.UserMsg;
+          }
+        })
+        .catch(() => {
+          this.errorMessage = this.HResource.Message.Exception;
+        });
+    },
     addComment() {
       if (this.newComment.Content) {
         var url = HConfig.API.Comments;
@@ -170,6 +269,53 @@ export default {
           .catch((error) => {
             this.errorMessage = error;
           });
+      }
+    },
+
+    /**
+     * Sự kiện cho component Dialog
+     * Author: Nguyễn Văn Huy(01/04/2023)
+     */
+    dialogEvent(key) {
+      switch (key) {
+        case "close":
+          this.errorMessage = null;
+          break;
+        case "cancel":
+          this.errorMessage = null;
+          this.dialogType = this.HEnum.DialogType.Error;
+          break;
+        case "no":
+          this.errorMessage = null;
+          this.dialogType = this.HEnum.DialogType.Error;
+          break;
+        case "yes":
+          this.deleteData();
+          this.dialogType = this.HEnum.DialogType.Error;
+          break;
+        default:
+          break;
+      }
+    },
+
+    onClickDelete() {
+      this.dialogType = this.HEnum.DialogType.Warning;
+      this.errorMessage = "Bạn có chắc muốn xoá tin đăng này không?";
+    },
+
+    deletePost() {
+      try {
+        this.axios.delete(this.HConfig.API.Posts + this.id).then((response) => {
+          if (response.data.Success) {
+            this.$router.push("/quan-ly-tin-dang");
+          } else {
+            this.dialogType = this.HEnum.DialogType.Error;
+            this.errorMessage = response.data.UserMsg;
+          }
+        });
+      } catch (error) {
+        this.dialogType = this.HEnum.DialogType.Error;
+        this.errorMessage = error;
       }
     },
 
@@ -231,6 +377,7 @@ export default {
 
   data() {
     return {
+      listIdFavouritePosts: [],
       URL: HConfig.URL,
       User: {},
       Post: {},
@@ -239,224 +386,13 @@ export default {
       newComment: {},
       ImageID: null,
       isLoading: true,
+      showDialog: false,
+      errorMessage: null,
     };
   },
 };
 </script>
 
-<style scoped>
-.addCommentBox {
-  display: flex;
-  padding-top: 12px;
-}
-
-.tpd__post {
-  position: relative;
-}
-.listcomments {
-  display: flex;
-  flex-direction: column;
-  flex-direction: column-reverse;
-  row-gap: 8px;
-}
-.listcomments > div {
-  display: flex;
-  padding: 12px 0;
-  align-items: start;
-  border-bottom: 1px solid var(--border-color);
-}
-
-.cmt__fullname {
-  font-weight: bold;
-}
-
-.comment__time {
-  font-weight: normal;
-}
-
-.tpd__comments img {
-  width: 40px;
-  height: 40px;
-  border-radius: 20px;
-  margin-right: 12px;
-  aspect-ratio: 1 / 1;
-  -o-object-fit: cover;
-  object-fit: cover;
-}
-.addCommentBox {
-  position: relative;
-}
-.addCommentBox > .icon-send {
-  position: absolute;
-  right: 8px;
-  bottom: 0;
-  width: 36px;
-  height: 36px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-}
-.addCommentBox i {
-  font-size: 24px;
-  text-align: center;
-  color: var(--primary-color);
-}
-.tpd__seller {
-  height: 132px;
-  display: flex;
-  column-gap: 16px;
-}
-.tpd__seller > div:first-child {
-  display: flex;
-  align-items: center;
-  column-gap: 8px;
-  width: 40%;
-}
-.tpd__seller > div:last-child {
-  display: flex;
-  align-items: center;
-  column-gap: 20px;
-  width: 40%;
-}
-
-.tpd__seller span {
-  display: block;
-}
-
-.seller__name {
-  font-size: 24px;
-  font-weight: 600;
-}
-.seller__avatar {
-  height: 84px;
-  width: 84px;
-  border-radius: 42px;
-  aspect-ratio: 1 / 1;
-  -o-object-fit: cover;
-  object-fit: cover;
-}
-.ppd__img {
-  width: 100%;
-}
-
-.single-product-describe {
-  min-height: 180px;
-}
-.imglist {
-  display: flex;
-  column-gap: 2%;
-  margin-top: 16px;
-}
-.imglist img {
-  width: 15%;
-  box-sizing: border-box;
-  border: 1px solid var(--border-color);
-}
-
-.single-product {
-  padding: 70px 0;
-}
-
-.single-product > div {
-  background-color: #fff;
-  padding: 24px;
-  border-radius: 4px;
-  margin-bottom: 12px;
-}
-
-.single-product-img {
-  width: 100%;
-}
-
-.single-product-content {
-  padding-left: 40px;
-}
-
-.single-product-content h3 {
-  font-size: 36px;
-  font-weight: 700;
-  margin-bottom: 20px;
-}
-
-.single-product-pricing {
-  font-size: 24px;
-  font-weight: 600;
-  margin-bottom: 30px;
-  color: var(--red-color);
-}
-
-.single-product-pricing span {
-  font-size: 18px;
-  margin-right: 10px;
-}
-
-.single-product-content p {
-  font-size: 18px;
-  line-height: 28px;
-  margin-bottom: 30px;
-}
-
-.btn-mess {
-  background-color: var(--primary-color);
-  width: 96px;
-  height: 32px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 16px;
-}
-
-.btn-mess a {
-  color: #fff;
-}
-
-.cart-btn {
-  display: inline-block;
-  padding: 10px 30px;
-  font-size: 18px;
-  font-weight: 700;
-  background-color: #000;
-  color: #fff;
-  border-radius: 30px;
-  transition: all 0.3s ease;
-}
-
-.cart-btn:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-}
-
-.single-product-content strong {
-  font-weight: 700;
-  font-size: 18px;
-}
-
-.single-product-categories {
-}
-
-.product-share {
-  display: flex;
-  align-items: center;
-  margin-top: 40px;
-}
-
-body {
-  font-family: "Open Sans", sans-serif;
-  font-weight: 400;
-  font-size: 1rem;
-  letter-spacing: 0.1px;
-  line-height: 1.8;
-  color: #051922;
-  overflow-x: hidden;
-}
-
-.edit-post {
-  top: -24px;
-  right: 24px;
-}
-.tpd__title {
-  display: flex;
-  justify-content: space-between;
-}
+<style>
+@import url(@/css/views/thepostdetail.css);
 </style>

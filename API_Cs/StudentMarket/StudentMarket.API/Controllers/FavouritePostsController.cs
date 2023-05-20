@@ -101,5 +101,22 @@ namespace StudentMarket.API.Controllers
                 return new ServiceResult(ErrorCodes.Exception, ex.Message);
             }
         }
+        /// <summary>
+        /// Lấy số lượt yêu thích
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns>Danh sách PostID</returns>
+        [HttpGet("{postId}")]
+        public ServiceResult GetNumberFavourite([FromRoute] Guid postId)
+        {
+            try
+            {
+                return _postBL.getNumberFavourite(postId);
+            }
+            catch (Exception ex)
+            {
+                return new ServiceResult(ErrorCodes.Exception, ex.Message);
+            }
+        }
     }
 }

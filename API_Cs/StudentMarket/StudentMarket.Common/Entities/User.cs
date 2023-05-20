@@ -24,7 +24,7 @@ namespace StudentMarket.Common.Entities
         [Required(ErrorMessage = "Họ tên không được bỏ trống")]
         public string FullName { get; set; }
 
-        public string Password { get; set; }
+        public string? Password { get; set; }
 
         public Gender? Gender { get; set; }
 

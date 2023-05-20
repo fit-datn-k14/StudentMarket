@@ -70,6 +70,13 @@ namespace StudentMarket.DL.PostDL
         /// <returns>Danh sách PostID</returns>
         public ServiceResult GetListFavouritePostID(Guid userId);
 
+        /// <summary>
+        /// Lấy số lượt yêu thích
+        /// </summary>
+        /// <param name="favouritePost"></param>
+        /// <returns>Thông báo</returns>
+        public ServiceResult getNumberFavourite(Guid postId);
+
         #endregion
     }
 }

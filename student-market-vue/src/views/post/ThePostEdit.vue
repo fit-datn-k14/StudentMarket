@@ -237,6 +237,7 @@ export default {
 
         formData.append("Post.PostID", this.postDetail.PostID);
         formData.append("Post.Title", this.postDetail.Title);
+        console.log(this.postDetail.Price);
         if (this.postDetail.Price) {
           formData.append("Post.Price", this.postDetail.Price);
         }

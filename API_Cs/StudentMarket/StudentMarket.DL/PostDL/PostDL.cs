@@ -419,6 +419,27 @@ namespace StudentMarket.DL.PostDL
             }
         }
 
+        /// <summary>
+        /// Lấy số lượt yêu thích
+        /// </summary>
+        /// <param name="favouritePost"></param>
+        /// <returns>Thông báo</returns>
+        public ServiceResult getNumberFavourite(Guid postId)
+        {
+            using (var connection = new MySqlConnection(connectionDB))
+            {
+                var query = $"Select Count(1) FROM favouritepost WHERE PostID = '{postId}'";
+
+                var result = connection.QueryFirstOrDefault<int>(query);
+
+                    return new ServiceResult
+                    {
+                        Success = true,
+                        Data = result
+                    };
+            }
+        }
+
         #endregion
 
         #region Override

@@ -80,33 +80,33 @@ const HConfig = {
         {
             title: "Email",
             dataField: "Email",
-            width: "240px",
+            width: "234px",
             condition: {
                 type: "contains",
                 operator: "contains",
                 conditionValue: null,
             },
         },
-        {
-            title: "Khu Vực",
-            dataField: "LocationName",
-            width: "160px",
-            condition: {
-                type: "contains",
-                operator: "contains",
-                conditionValue: null,
-            },
-        },
-        {
-            title: "Địa chỉ",
-            dataField: "Address",
-            width: "240px",
-            condition: {
-                type: "contains",
-                operator: "contains",
-                conditionValue: null,
-            },
-        },
+        // {
+        //     title: "Khu Vực",
+        //     dataField: "LocationName",
+        //     width: "160px",
+        //     condition: {
+        //         type: "contains",
+        //         operator: "contains",
+        //         conditionValue: null,
+        //     },
+        // },
+        // {
+        //     title: "Địa chỉ",
+        //     dataField: "Address",
+        //     width: "240px",
+        //     condition: {
+        //         type: "contains",
+        //         operator: "contains",
+        //         conditionValue: null,
+        //     },
+        // },
     ],
     ListPostColumns: [
         {
@@ -164,23 +164,23 @@ const HConfig = {
             title: "Trạng Thái",
             formatType: "approved",
             dataField: "Approved",
-            width: "140px",
+            width: "138px",
             condition: {
                 type: "select",
                 operator: "equal",
                 conditionValue: "0",
             },
         },
-        {
-            title: "Khu Vực",
-            dataField: "LocationName",
-            width: "160px",
-            condition: {
-                type: "contains",
-                operator: "contains",
-                conditionValue: null,
-            },
-        },
+        // {
+        //     title: "Khu Vực",
+        //     dataField: "LocationName",
+        //     width: "160px",
+        //     condition: {
+        //         type: "contains",
+        //         operator: "contains",
+        //         conditionValue: null,
+        //     },
+        // },
     ],
     ColumnWidthDefault: "120px"
 };

@@ -209,6 +209,7 @@ export default {
         this.axios.get(url).then((response) => {
           if (response.data.Success) {
             var list_mess = response.data.Data;
+            console.log(list_mess);
             this.numberChatUnread = list_mess.filter(
               (n) =>
                 n.Seen == this.HEnum.seen.Unread && n.ToUser == this.user.UserID
@@ -249,6 +250,7 @@ export default {
       }
       if (this.user) {
         await this.getNotifications();
+        this.loadMessageList();
         this.notifyMessage = "Không có thông báo nào";
       } else {
         this.notifyMessage = "Bạn phải đăng nhập để xem thông báo";

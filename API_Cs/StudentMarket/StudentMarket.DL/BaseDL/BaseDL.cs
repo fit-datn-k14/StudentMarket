@@ -168,7 +168,7 @@ namespace StudentMarket.DL
         /// </summary>
         /// <returns>Thông báo</returns>
         /// CreatedBy: NVHuy(19/03/2023)
-        public ServiceResult UpdateRecordByID(T entity, Guid id)
+        virtual public ServiceResult UpdateRecordByID(T entity, Guid id)
         {
             // Chuẩn bị stored procedure
             string tableName = EntityUtilities.GetTableName<T>();

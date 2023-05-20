@@ -13,12 +13,6 @@
           <p>Quản lý người dùng</p>
         </div></router-link
       >
-      <router-link to="/admin/bao-cao-vi-pham">
-        <div class="menu__item">
-          <h-icon position="-636px -1588px" size="19 18" />
-          <p>Báo cáo vi phạm</p>
-        </div></router-link
-      >
     </div>
   </div>
 </template>
@@ -61,21 +55,4 @@ export default {
 .menu__item:hover {
   background-color: #757575;
 }
-/* .the_sidebar {
-  height: 100%;
-  background-color: #393a3d;
-  width: 240px;
-}
-
-.menu__list {
-  top: 0;
-  width: calc(240px);
-  padding: 16px 12px 0;
-  box-sizing: border-box;
-  overflow-y: overlay;
-  height: calc(100vh - 56px);
-}
-
-
-} */
 </style>

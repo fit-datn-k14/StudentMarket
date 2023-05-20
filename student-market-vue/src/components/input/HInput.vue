@@ -7,6 +7,7 @@
     <textarea
       v-if="type == 'textarea'"
       v-model="value"
+      :disabled="disabled"
       @input="onInput"
       @blur="onValidate"
     ></textarea>
@@ -17,6 +18,7 @@
       autocomplete="off"
       :class="{ 'error-input': isEmpty }"
       :placeholder="placeholder"
+      :disabled="disabled"
       v-model="value"
       @input="onInput"
       @blur="onValidate"
@@ -43,6 +45,11 @@ export default {
       default: "text",
     },
     required: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    disabled: {
       type: Boolean,
       required: false,
       default: false,
@@ -76,6 +83,8 @@ export default {
     onInput() {
       if (this.value && this.type != "Number") {
         this.$emit("update:modelValue", this.value.trim());
+      } else if (this.value && this.type == "Number") {
+        this.$emit("update:modelValue", this.value);
       } else {
         this.$emit("update:modelValue", null);
       }

@@ -1,0 +1,250 @@
+.addCommentBox {
+    display: flex;
+    padding-top: 12px;
+}
+
+.tpd__post {
+    position: relative;
+}
+
+.listcomments {
+    display: flex;
+    flex-direction: column;
+    flex-direction: column-reverse;
+    row-gap: 8px;
+}
+
+.listcomments>div {
+    display: flex;
+    padding: 12px 0;
+    align-items: start;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.cmt__fullname {
+    font-weight: bold;
+}
+
+.comment__time {
+    font-weight: normal;
+}
+
+.tpd__comments img {
+    width: 40px;
+    height: 40px;
+    border-radius: 20px;
+    margin-right: 12px;
+    aspect-ratio: 1 / 1;
+    -o-object-fit: cover;
+    object-fit: cover;
+}
+
+.addCommentBox {
+    position: relative;
+}
+
+.addCommentBox>.icon-send {
+    position: absolute;
+    right: 8px;
+    bottom: 0;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.addCommentBox i {
+    font-size: 24px;
+    text-align: center;
+    color: var(--primary-color);
+}
+
+.tpd__seller {
+    height: 132px;
+    display: flex;
+    column-gap: 16px;
+}
+
+.tpd__seller>div:first-child {
+    display: flex;
+    align-items: center;
+    column-gap: 8px;
+    width: 40%;
+}
+
+.tpd__seller>div:last-child {
+    display: flex;
+    align-items: center;
+    column-gap: 20px;
+    width: 40%;
+}
+
+.tpd__seller span {
+    display: block;
+}
+
+.seller__name {
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.seller__avatar {
+    height: 84px;
+    width: 84px;
+    border-radius: 42px;
+    aspect-ratio: 1 / 1;
+    -o-object-fit: cover;
+    object-fit: cover;
+}
+
+.ppd__img {
+    width: 100%;
+}
+
+.single-product-describe {
+    min-height: 180px;
+}
+
+.imglist {
+    display: flex;
+    column-gap: 2%;
+    margin-top: 16px;
+}
+
+.imglist img {
+    width: 15%;
+    box-sizing: border-box;
+    border: 1px solid var(--border-color);
+}
+
+.single-product {
+    padding: 70px 0;
+}
+
+.single-product>div {
+    background-color: #fff;
+    padding: 24px;
+    border-radius: 4px;
+    margin-bottom: 12px;
+}
+
+.single-product-img {
+    width: 100%;
+}
+
+.single-product-content {
+    padding-left: 40px;
+}
+
+.single-product-content h3 {
+    font-size: 36px;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+.single-product-pricing {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 30px;
+    color: var(--red-color);
+}
+
+.single-product-pricing span {
+    font-size: 18px;
+    margin-right: 10px;
+}
+
+.single-product-content p {
+    font-size: 18px;
+    line-height: 28px;
+    margin-bottom: 30px;
+}
+
+.btn-mess {
+    background-color: var(--primary-color);
+    width: 96px;
+    height: 32px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 16px;
+}
+
+.btn-mess a {
+    color: #fff;
+}
+
+.cart-btn {
+    display: inline-block;
+    padding: 10px 30px;
+    font-size: 18px;
+    font-weight: 700;
+    background-color: #000;
+    color: #fff;
+    border-radius: 30px;
+    transition: all 0.3s ease;
+}
+
+.cart-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.single-product-content strong {
+    font-weight: 700;
+    font-size: 18px;
+}
+
+.single-product-categories {}
+
+.product-share {
+    display: flex;
+    align-items: center;
+    margin-top: 40px;
+}
+
+body {
+    font-family: "Open Sans", sans-serif;
+    font-weight: 400;
+    font-size: 1rem;
+    letter-spacing: 0.1px;
+    line-height: 1.8;
+    color: #051922;
+    overflow-x: hidden;
+}
+
+.edit-post {
+    top: -24px;
+    right: 24px;
+}
+
+.tpd__title {
+    display: flex;
+    justify-content: space-between;
+}
+
+.post-actions {
+    display: flex;
+    column-gap: 16px;
+    justify-content: end;
+}
+
+.delete-post .btn-pri {
+    background-color: var(--red-color) !important;
+}
+
+.post-actions>.post__heart {
+    position: relative;
+    right: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    column-gap: 4px;
+}
+
+.post-actions>.post__heart>div {
+    font-size: 16px;
+
+}

@@ -17,13 +17,6 @@
           @click="onClickClose"
         />
       </div>
-      <!-- <div class="icon popup__btn-help" title="Hỗ trợ"></div>
-      <div
-        id="btnClose"
-        class="icon popup__btn-close"
-        title="Đóng(ESC)"
-        @click="onClickClose"
-      ></div> -->
       <div class="popup__title">
         <div class="popup__title-text">{{ this.title }}</div>
       </div>
@@ -36,57 +29,69 @@
                 label="Tài khoản"
                 :required="true"
                 v-model="User.UserName"
+                :disabled="UserInput.UserID"
               />
-              <h-input
-                ref="txtFullName"
-                label="Tên"
-                :required="true"
-                v-model="User.FullName"
-              />
-            </div>
-            <div class="m-row">
               <h-input
                 ref="txtPassword"
                 label="Mật khẩu"
                 :required="true"
+                type="password"
                 v-model="User.Password"
               />
-              <div class="input-wrapper item-gt">
-                <label for="radioGender">Vai trò</label>
-                <div ref="radioGender" class="btn-radio">
-                  <div class="btn-radio__option">
-                    <input
-                      type="radio"
-                      name="role"
-                      :value="0"
-                      v-model="this.User.Role"
-                    />
-                    <label for="user">Người dùng</label>
-                    <div></div>
-                  </div>
-
-                  <div class="btn-radio__option">
-                    <input
-                      type="radio"
-                      name="role"
-                      :value="1"
-                      v-model="this.User.Role"
-                    />
-                    <label for="censor">Kiểm duyệt</label>
-                    <div></div>
-                  </div>
-                </div>
+            </div>
+            <div class="m-row">
+              <h-input
+                ref="txtFullName"
+                label="Họ   Tên"
+                :required="true"
+                v-model="User.FullName"
+              />
+              <div class="textfield">
+                <h-combobox
+                  ref="cbbLocations"
+                  :api="apiGetLocations"
+                  label="Khu vực"
+                  propText="LocationName"
+                  propValue="LocationID"
+                  v-model="User.LocationID"
+                ></h-combobox>
               </div>
             </div>
-            <div class="textfield">
-              <h-combobox
-                ref="cbbLocations"
-                :api="apiGetLocations"
-                label="Khu vực"
-                propText="LocationName"
-                propValue="LocationId"
-                v-model="User.LocationID"
-              ></h-combobox>
+            <div class="input-wrapper item-gt">
+              <label for="radioGender">Vai trò</label>
+              <div ref="radioGender" class="btn-radio">
+                <div class="btn-radio__option">
+                  <input
+                    type="radio"
+                    name="role"
+                    :value="0"
+                    v-model="this.User.Role"
+                  />
+                  <label for="user">Người dùng</label>
+                  <div></div>
+                </div>
+
+                <div class="btn-radio__option">
+                  <input
+                    type="radio"
+                    name="role"
+                    :value="1"
+                    v-model="this.User.Role"
+                  />
+                  <label for="censor">Kiểm duyệt</label>
+                  <div></div>
+                </div>
+                <div class="btn-radio__option">
+                  <input
+                    type="radio"
+                    name="role"
+                    :value="2"
+                    v-model="this.User.Role"
+                  />
+                  <label for="censor">Admin</label>
+                  <div></div>
+                </div>
+              </div>
             </div>
           </div>
           <div class="form-group form-info-right">
@@ -235,9 +240,10 @@ export default {
     },
   },
   async created() {
-    this.UserRoot = JSON.stringify(this.UserInput);
-    this.User = JSON.parse(this.UserRoot);
-    if (!this.UserInput.UserId) {
+    this.UserRoot = await JSON.stringify(this.UserInput);
+    this.oldPassword = this.UserInput.Password;
+    this.User = await JSON.parse(this.UserRoot);
+    if (!this.UserInput.UserID) {
       await this.GetNewCode();
     }
     if (this.User.DateOfBirth)
@@ -402,13 +408,16 @@ export default {
      */
     async updateUser(addContinue) {
       var e = this.User;
+      if (e.Password == this.oldPassword) {
+        e.Password = null;
+      }
       var url = this.HConfig.API.Users;
       await this.onValidate();
       if (!this.errorMessage) {
         if (e.UserID) {
           url = url + e.UserID;
           try {
-            await this.axios.put(url, this.User).then((response) => {
+            await this.axios.put(url, e).then((response) => {
               if (response.data.Success) {
                 this.$emit("eventDetail", "showToast", response.data.UserMsg);
                 if (addContinue) {
@@ -456,6 +465,7 @@ export default {
   },
   data() {
     return {
+      oldPassword: null,
       isLoading: false,
       dialogType: this.HEnum.DialogType.Error,
       errorMessage: "",
@@ -481,6 +491,7 @@ export default {
   right: 0;
   bottom: 0;
   left: 0;
+  z-index: 4;
 }
 
 .bgshadow {
@@ -628,7 +639,7 @@ export default {
 }
 
 .m-row > div:first-child {
-  width: 40%;
+  width: 50%;
 }
 
 .second-row > div:first-child {
@@ -647,10 +658,6 @@ export default {
 
 .m-row > div:last-child {
   flex: 1;
-}
-
-.form-group .item-gt {
-  padding-left: 8px;
 }
 
 .item-contact {

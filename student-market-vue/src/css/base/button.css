@@ -8,7 +8,7 @@ input {
     font-weight: 500px;
 }
 
-input[disabled] {
+input[type="button"][disabled] {
     pointer-events: none;
     opacity: 56%;
 }
