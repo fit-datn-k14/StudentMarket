@@ -237,7 +237,6 @@ export default {
 
         formData.append("Post.PostID", this.postDetail.PostID);
         formData.append("Post.Title", this.postDetail.Title);
-        console.log(this.postDetail.Price);
         if (this.postDetail.Price) {
           formData.append("Post.Price", this.postDetail.Price);
         }
@@ -383,7 +382,8 @@ export default {
   width: 100%;
   height: 240px;
   background: url(@/assets/img/add-img.jpg);
-  background-size: cover;
+  background-size: 50%;
+  background-repeat: no-repeat;
   background-position: center;
 }
 

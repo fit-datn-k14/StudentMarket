@@ -239,6 +239,7 @@
 
 .ppd__img {
     width: 100%;
+    max-height: 400px;
 }
 
 .imglist {
@@ -282,4 +283,6 @@
     overflow: auto;
 }
 
-.ppd__describe p {}
+.ppd__describe p {
+    white-space: pre-line;
+}

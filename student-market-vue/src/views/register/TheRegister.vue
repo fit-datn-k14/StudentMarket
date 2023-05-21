@@ -121,8 +121,7 @@ export default {
           .then((response) => {
             if (response.data.Success) {
               // Lưu thông tin tài khoản vào localStorage
-              var user = response.data.Data;
-              this.login(user);
+              this.login(this.newAccount);
             } else {
               this.errorMessage = response.data.UserMsg;
             }

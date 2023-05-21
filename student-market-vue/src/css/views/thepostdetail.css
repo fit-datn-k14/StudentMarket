@@ -105,6 +105,7 @@
 
 .single-product-describe {
     min-height: 180px;
+    white-space: pre-line;
 }
 
 .imglist {

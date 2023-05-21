@@ -9,18 +9,17 @@
         class="post__img"
         :src="URL + `Images/posts/${post.PostID}/${post.ImageName}`"
       />
-      <div>{{ post.NumberOfPhotos }} ảnh</div>
     </div>
     <div class="post__right">
       <div class="post__title">
         <strong>{{ post.Title }}</strong>
       </div>
       <div class="post__price">
-        <strong v-if="post.Price">{{ post.Price }} đ</strong>
+        <strong v-if="post.Price">{{ HCommon.formatMoney(post.Price) }}</strong>
         <strong v-else>Liên hệ</strong>
       </div>
       <div class="post__describe">
-        <p>{{ post.Describe }}</p>
+        <p>{{ post.PostDescribe }}</p>
       </div>
       <div class="post__info">
         <span class="poster__info">

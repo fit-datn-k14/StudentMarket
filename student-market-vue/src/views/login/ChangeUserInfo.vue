@@ -133,6 +133,7 @@
 </template>
       <script>
 import HConfig from "@/js/base/config";
+import { eventBus } from "@/js/eventbus";
 import {
   saveUserToLocalStorage,
   getUserFromLocalStorage,
@@ -218,6 +219,7 @@ export default {
           .then((response) => {
             if (response.data.Success) {
               saveUserToLocalStorage(response.data.Data);
+              eventBus.emit("updateUser");
               this.$router.push(`cai-dat-tai-khoan`);
             }
           })

@@ -324,7 +324,8 @@ export default {
   width: 100%;
   height: 240px;
   background: url(@/assets/img/add-img.jpg);
-  background-size: cover;
+  background-size: 50%;
+  background-repeat: no-repeat;
   background-position: center;
 }
 

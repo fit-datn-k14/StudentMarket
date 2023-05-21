@@ -209,7 +209,6 @@ export default {
         this.axios.get(url).then((response) => {
           if (response.data.Success) {
             var list_mess = response.data.Data;
-            console.log(list_mess);
             this.numberChatUnread = list_mess.filter(
               (n) =>
                 n.Seen == this.HEnum.seen.Unread && n.ToUser == this.user.UserID
@@ -228,6 +227,7 @@ export default {
     onSearch() {
       eventBus.emit("search", this.txtSearch);
       this.$router.push("/trang-chu");
+      this.txtSearch = null;
     },
     logout() {
       connection.invoke("LeaveGroup", this.user.UserID);
@@ -235,9 +235,9 @@ export default {
       removeUserFromLocalStorage();
       removeAllFavouritesFromLocalStorage();
       this.showDropdown = false;
-      this.$router.push("/");
       this.setUser();
       this.numberChatUnread = 0;
+      this.$router.push("/");
     },
     onSelectOptionNotify(value) {
       this.selectedOptionNotify = value;
@@ -253,6 +253,7 @@ export default {
         this.loadMessageList();
         this.notifyMessage = "Không có thông báo nào";
       } else {
+        this.notificationList = [];
         this.notifyMessage = "Bạn phải đăng nhập để xem thông báo";
       }
     },
@@ -350,6 +351,9 @@ export default {
     });
     connectionChat.on("ReceiveMessage", () => {
       this.loadMessageList();
+    });
+    eventBus.on("updateUser", () => {
+      this.user = getUserFromLocalStorage();
     });
   },
   beforeUnmount() {

@@ -110,7 +110,7 @@ export default {
       const keywordStore = useKeyword();
       eventBus.on("search", (keyword) => {
         keywordStore.setKeyword(keyword);
-        this.keyword = keyword;
+        this.txtSearch = keyword;
         this.loadData();
       });
     },
@@ -129,7 +129,7 @@ export default {
     const keywordStore = useKeyword();
     eventBus.on("search", (keyword) => {
       keywordStore.setKeyword(keyword);
-      this.keyword = keyword;
+      this.txtSearch = keyword;
       this.loadData();
       this.$router.push("/trang-chu");
     });
@@ -155,8 +155,8 @@ export default {
       },
       sortDefault: { text: "Mới nhất", value: 0 },
       sortDataCombobox: [
-        { text: "Giá tăng dần", value: 1 },
-        { text: "Giá giảm dần", value: 2 },
+        { text: "Giá tăng dần", value: 2 },
+        { text: "Giá giảm dần", value: 1 },
       ],
       posts: [],
     };

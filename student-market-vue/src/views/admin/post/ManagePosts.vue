@@ -361,8 +361,7 @@ export default {
         try {
           await this.axios.put(url, this.approvedModel).then((response) => {
             if (response.data.Success) {
-              this.$emit("eventDetail", "showToast", response.data.UserMsg);
-              this.$emit("eventDetail", "refresh");
+              this.$refs.toast.showToast(response.data.UserMsg);
               item.Approved = approved
                 ? this.HEnum.Approved.Approved
                 : this.HEnum.Approved.Refuse;

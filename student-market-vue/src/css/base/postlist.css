@@ -72,7 +72,7 @@
 }
 
 .post__describe p {
-    max-height: calc(1.2em * 3);
+    max-height: calc(1.2em * 5);
     /* chiều cao tối đa bằng 3 dòng, mỗi dòng có chiều cao là 1.2em */
     line-height: 1.2em;
     /* chiều cao của mỗi dòng */
@@ -82,10 +82,11 @@
     /* thêm dấu chấm ba khi văn bản bị cắt */
     display: -webkit-box;
     /* sử dụng kiểu hiển thị -webkit-box để hỗ trợ hiển thị dạng dòng */
-    -webkit-line-clamp: 3;
+    -webkit-line-clamp: 5;
     /* giới hạn số dòng bằng 3 */
     -webkit-box-orient: vertical;
     /* chiều dọc của các dòng */
+    white-space: pre-line;
 }
 
 .post__info {

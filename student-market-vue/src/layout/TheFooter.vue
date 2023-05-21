@@ -12,12 +12,9 @@
         <div class="col-md-6">
           <h5>Contact Us</h5>
           <ul>
-            <li>
-              <i class="fa fa-map-marker"></i> 123 Main Street, New York, NY
-              10001
-            </li>
-            <li><i class="fa fa-phone"></i> (123) 456-7890</li>
-            <li><i class="fa fa-envelope"></i> info@example.com</li>
+            <li><i class="fa fa-map-marker"></i> Nguyên Xá, Hà Nội</li>
+            <li><i class="fa fa-phone"></i> 0364 568 958</li>
+            <li><i class="fa fa-envelope"></i> ngvanhuy153@gmail.com</li>
           </ul>
         </div>
       </div>

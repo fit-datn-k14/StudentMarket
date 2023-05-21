@@ -142,8 +142,8 @@ export default {
       },
       sortDefault: { text: "Mới nhất", value: 0 },
       sortDataCombobox: [
-        { text: "Giá tăng dần", value: 1 },
-        { text: "Giá giảm dần", value: 2 },
+        { text: "Giá tăng dần", value: 2 },
+        { text: "Giá giảm dần", value: 1 },
       ],
       posts: [],
     };

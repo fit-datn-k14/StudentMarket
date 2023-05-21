@@ -199,27 +199,10 @@ export default {
      * Author: Văn Huy (16/03/2023)
      */
     async approvedPost(approved) {
-      var p = this.Post;
-      var url = this.HConfig.API.Posts;
       if (approved) {
-        url = url + "Approved/" + p.PostID + `?approved=${1}`;
+        this.$emit("eventDetail", "approved", this.Post);
       } else {
-        url = url + "Approved/" + p.PostID + `?approved=${2}`;
-      }
-      if (!this.errorMessage) {
-        try {
-          await this.axios.put(url).then((response) => {
-            if (response.data.Success) {
-              this.$emit("eventDetail", "showToast", response.data.UserMsg);
-              this.$emit("eventDetail", "refresh");
-              this.closePopup();
-            } else {
-              this.errorMessage = response.data.UserMsg;
-            }
-          });
-        } catch (error) {
-          this.errorMessage = this.HResource.Message.Exception;
-        }
+        this.$emit("eventDetail", "refuse", this.Post);
       }
     },
 

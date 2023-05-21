@@ -37,11 +37,7 @@
               <strong>Địa Chỉ: </strong>{{ Post.Address }}
             </p>
             <strong>Chi Tiết Sản Phẩm:</strong>
-            <p
-              v-if="Post.PostDescribe"
-              class="single-product-describe"
-              style="white-space: pre-line"
-            >
+            <p v-if="Post.PostDescribe" class="single-product-describe">
               {{ Post.PostDescribe }}
             </p>
             <p v-else class="single-product-describe">Không có mô tả</p>
@@ -257,6 +253,7 @@ export default {
     },
     addComment() {
       if (this.newComment.Content) {
+        console.log(this.newComment);
         var url = HConfig.API.Comments;
         this.axios
           .post(url, this.newComment)
@@ -290,7 +287,7 @@ export default {
           this.dialogType = this.HEnum.DialogType.Error;
           break;
         case "yes":
-          this.deleteData();
+          this.deletePost();
           this.dialogType = this.HEnum.DialogType.Error;
           break;
         default:
